@@ -1693,6 +1693,25 @@ function showEscalationUI() {
     resolved: false
   });
   sessionStorage.setItem("chat_history", JSON.stringify(chatHistory));
+
+  // Update status in recentConversations array to Escalated
+  const lastUserMsg = chatHistory.filter(m => m.sender === 'user').slice(-1)[0];
+  if (lastUserMsg) {
+    const qText = lastUserMsg.text.trim();
+    const item = recentConversations.find(c => c.q.toLowerCase() === qText.toLowerCase());
+    if (item) {
+      item.status = "Escalated";
+      item.statusClass = "escalated";
+    } else {
+      recentConversations.unshift({
+        q: qText,
+        status: "Escalated",
+        statusClass: "escalated"
+      });
+    }
+    sessionStorage.setItem("recent_conversations", JSON.stringify(recentConversations));
+    renderRecentConversations();
+  }
   
   renderEscalationUI(escalId);
 }
@@ -1770,6 +1789,21 @@ window.escalateQuery = function(escalId) {
     sessionStorage.setItem("escalated_tickets", JSON.stringify(escalatedTickets));
     renderAllOpenings();
   }
+
+  // Update status in recentConversations array to Escalated
+  const item = recentConversations.find(c => c.q.toLowerCase() === queryText.toLowerCase());
+  if (item) {
+    item.status = "Escalated";
+    item.statusClass = "escalated";
+  } else {
+    recentConversations.unshift({
+      q: queryText,
+      status: "Escalated",
+      statusClass: "escalated"
+    });
+  }
+  sessionStorage.setItem("recent_conversations", JSON.stringify(recentConversations));
+  renderRecentConversations();
 
   // Track metrics in dashboard
   escalatedCount++;
