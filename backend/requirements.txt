@@ -4,3 +4,5 @@ sentence-transformers
 pydantic
 numpy
 python-dotenv
+pypdf
+python-multipart
