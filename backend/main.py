@@ -16,6 +16,7 @@ from fastapi import FastAPI, HTTPException, status, Depends, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
+# pyrefly: ignore [missing-import]
 from fastembed import TextEmbedding
 import numpy as np
 import pypdf
