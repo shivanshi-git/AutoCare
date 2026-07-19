@@ -530,6 +530,12 @@
     background: #eff6ff;
     color: #2563eb;
   }
+  .dept-select-card:hover {
+    background: var(--blue-50) !important;
+    border-color: var(--blue-500) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.05);
+  }
   @keyframes modal-fade {
     from { opacity: 0; transform: scale(0.95); }
     to { opacity: 1; transform: scale(1); }
@@ -549,10 +555,10 @@
     <div style="display: flex; flex-direction: column; gap: 2px; margin-bottom: 16px;">
       <button class="nav-item active" data-page="dashboard"><span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg></span> Dashboard</button>
       <button class="nav-item" data-page="chat"><span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></span> AI Chat</button>
+      <button class="nav-item" data-page="departments"><span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></span> Departments</button>
       <button class="nav-item" data-page="documents"><span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></span> Documents</button>
       <button class="nav-item" data-page="search"><span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span> Search</button>
       <button class="nav-item" data-page="projects"><span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg></span> Projects</button>
-      <button class="nav-item" data-page="departments"><span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></span> Departments</button>
     </div>
 
     <div style="border-top: 1px solid #f1f5f9; padding-top: 12px; display: flex; flex-direction: column; flex: 1; min-height: 0;">
@@ -824,6 +830,8 @@ if (sessionStorage.getItem("escalated_tickets")) {
 if (sessionStorage.getItem("escalated_count")) {
   escalatedCount = parseInt(sessionStorage.getItem("escalated_count")) || 33;
 }
+let activeChatDept = sessionStorage.getItem("active_chat_dept") || null;
+
 if (sessionStorage.getItem("chat_history")) {
   try {
     chatHistory = JSON.parse(sessionStorage.getItem("chat_history")) || [];
@@ -944,6 +952,12 @@ window.toggleOpenings = function(deptId) {
 // ---------- Render Department Ticket Openings ----------
 function renderAllOpenings() {
   const keys = ["service", "insurance", "parts", "roadside"];
+  const keyToDeptMap = {
+    "service": "Service & Maintenance",
+    "insurance": "Insurance & Claims",
+    "parts": "Spare Parts",
+    "roadside": "Roadside Assistance"
+  };
   keys.forEach(key => {
     const listEl = document.getElementById(`openings-${key}`);
     const badgeEl = document.getElementById(`badge-${key}`);
@@ -951,15 +965,47 @@ function renderAllOpenings() {
       if (badgeEl) {
         badgeEl.textContent = `${escalatedTickets[key].length} open`;
       }
-      listEl.innerHTML = escalatedTickets[key].map(t => `
+      const ticketsHtml = escalatedTickets[key].map(t => `
         <div class="opening-ticket">
           <span class="ticket-q">"${escapeHtml(t.q)}"</span>
           <span class="ticket-meta">User: ${escapeHtml(t.user)} | Status: <span class="ticket-status ${t.statusClass}">${escapeHtml(t.status)}</span></span>
         </div>
       `).join("");
+
+      const actionHtml = `
+        <div style="padding: 10px 0 2px 0; border-top: 1px solid var(--border); margin-top: 8px; display: flex; justify-content: flex-end;">
+          <button class="btn-primary" onclick="startChatWithDept('${keyToDeptMap[key]}')" style="padding: 6px 12px; border-radius: var(--radius-sm); font-size: 11.5px; display: flex; align-items: center; gap: 4px; border: none; cursor: pointer;">
+            <span>💬</span> Ask chatbot about this department
+          </button>
+        </div>
+      `;
+      listEl.innerHTML = ticketsHtml + actionHtml;
     }
   });
 }
+
+window.startChatWithDept = function(deptName) {
+  const chatBtn = document.querySelector('.nav-item[data-page="chat"]');
+  if (chatBtn) chatBtn.click();
+  
+  if (chatHistory.length === 0) {
+    clearActiveChat();
+    selectChatDepartment(deptName);
+  } else {
+    // Check if the current chat history only contains the welcome bot message for this department
+    const isWelcomeOnly = chatHistory.length === 1 && chatHistory[0].sender === 'bot' && chatHistory[0].meta === `Connected to ${deptName}`;
+    if (isWelcomeOnly) {
+      return;
+    }
+    
+    // Prompt to save/clear current chat first
+    const modal = document.getElementById("newChatModal");
+    if (modal) {
+      window.pendingStartDept = deptName;
+      modal.style.display = "flex";
+    }
+  }
+};
 
 // ---------- Render Dashboard Recent Conversations ----------
 function renderRecentConversations() {
@@ -1123,14 +1169,163 @@ async function deleteKbEntry(question) {
 const chatWindow = document.getElementById("chatWindow");
 const chatInput = document.getElementById("chatInput");
 
+function setChatInputDisabled(disabled) {
+  if (chatInput) {
+    chatInput.disabled = disabled;
+    chatInput.placeholder = disabled ? "Please select a department first..." : "Type your question...";
+  }
+  const sendBtn = document.getElementById("sendBtn");
+  if (sendBtn) {
+    sendBtn.disabled = disabled;
+  }
+}
+
+function selectChatDepartment(deptName) {
+  activeChatDept = deptName;
+  sessionStorage.setItem("active_chat_dept", deptName);
+  setChatInputDisabled(false);
+  
+  chatHistory = [];
+  chatHistory.push({
+    id: 'msg_welcome_' + Date.now(),
+    sender: 'bot',
+    text: `Hello! You've connected to the ${deptName} department. How can I help you today?`,
+    meta: `Connected to ${deptName}`,
+    feedbackSubmitted: false,
+    isEscalation: false
+  });
+  sessionStorage.setItem("chat_history", JSON.stringify(chatHistory));
+  
+  renderChatHistory();
+  renderDeptSuggestions(deptName);
+}
+
+function renderDeptSuggestions(deptName) {
+  const chipsContainer = document.querySelector(".quick-chips");
+  if (!chipsContainer) return;
+  
+  const filtered = kb.filter(item => (item.department || "General") === deptName);
+  const suggestions = filtered.slice(0, 10);
+  
+  if (suggestions.length === 0) {
+    // Fallback default suggestions for this department if none found in KB
+    let fallbacks = [];
+    if (deptName === "Service & Maintenance") {
+      fallbacks = [
+        { label: "Book a service", q: "How do I book a car service appointment?" },
+        { label: "Warranty period", q: "What is the warranty period for a new Maruti car?" },
+        { label: "AC service", q: "How often should I get the car AC serviced?" }
+      ];
+    } else if (deptName === "Insurance & Claims") {
+      fallbacks = [
+        { label: "Check insurance renewal", q: "How do I check my car's insurance renewal date?" },
+        { label: "Maruti Suzuki Finance", q: "What is Maruti Suzuki Finance?" }
+      ];
+    } else if (deptName === "Spare Parts") {
+      fallbacks = [
+        { label: "Genuine spare parts", q: "Are genuine spare parts guaranteed at service centers?" },
+        { label: "Genuine Accessories", q: "What are Maruti Suzuki Genuine Accessories (MGA)?" }
+      ];
+    } else if (deptName === "Roadside Assistance") {
+      fallbacks = [
+        { label: "Get roadside assistance", q: "Can I get roadside assistance?" }
+      ];
+    } else {
+      fallbacks = [
+        { label: "Smart Hybrid tech", q: "What is Suzuki Smart Hybrid technology?" },
+        { label: "NEXA vs ARENA", q: "What is the difference between NEXA and ARENA showrooms?" }
+      ];
+    }
+    
+    chipsContainer.innerHTML = "";
+    fallbacks.forEach(chip => {
+      const btn = document.createElement("button");
+      btn.className = "chip";
+      btn.textContent = chip.label;
+      btn.dataset.q = chip.q;
+      btn.addEventListener("click", () => sendMessage(chip.q));
+      chipsContainer.appendChild(btn);
+    });
+    return;
+  }
+  
+  chipsContainer.innerHTML = "";
+  suggestions.forEach(item => {
+    const btn = document.createElement("button");
+    btn.className = "chip";
+    btn.textContent = item.question;
+    btn.dataset.q = item.question;
+    btn.addEventListener("click", () => sendMessage(item.question));
+    chipsContainer.appendChild(btn);
+  });
+}
+
 function renderChatHistory() {
   if (!chatWindow) return;
-  chatWindow.innerHTML = `
-    <div class="message bot">
-      <div class="avatar bot-avatar">AC</div>
-      <div class="bubble">Hello! I'm your virtual support assistant. How can I help you today?</div>
-    </div>
-  `;
+  
+  if (!activeChatDept && chatHistory.length === 0) {
+    setChatInputDisabled(true);
+    chatWindow.innerHTML = `
+      <div class="dept-selection-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100%; gap: 16px; padding: 20px; text-align: center; animation: fadein 0.2s ease;">
+        <div style="font-size: 32px;">💬</div>
+        <h3 style="font-size: 18px; font-weight: 700; color: var(--blue-900); margin-bottom: 4px;">Welcome to AutoCare Assistant</h3>
+        <p style="font-size: 13.5px; color: var(--grey-text); max-width: 320px; margin-bottom: 8px;">Please select the department you want to ask questions to:</p>
+        <div style="display: grid; grid-template-columns: 1fr; gap: 8px; width: 100%; max-width: 320px;">
+          <button class="dept-select-card" data-dept="Service & Maintenance" style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--white); cursor: pointer; text-align: left; transition: all 0.15s ease;">
+            <span style="font-size: 18px;">🛠️</span>
+            <div style="flex: 1;">
+              <div style="font-size: 13.5px; font-weight: 600; color: var(--blue-900);">Service &amp; Maintenance</div>
+              <div style="font-size: 11px; color: var(--grey-text);">Bookings, warranty, periodic service</div>
+            </div>
+          </button>
+          <button class="dept-select-card" data-dept="Insurance & Claims" style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--white); cursor: pointer; text-align: left; transition: all 0.15s ease;">
+            <span style="font-size: 18px;">📄</span>
+            <div style="flex: 1;">
+              <div style="font-size: 13.5px; font-weight: 600; color: var(--blue-900);">Insurance &amp; Claims</div>
+              <div style="font-size: 11px; color: var(--grey-text);">Claim documentation, renewals</div>
+            </div>
+          </button>
+          <button class="dept-select-card" data-dept="Spare Parts" style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--white); cursor: pointer; text-align: left; transition: all 0.15s ease;">
+            <span style="font-size: 18px;">⚙️</span>
+            <div style="flex: 1;">
+              <div style="font-size: 13.5px; font-weight: 600; color: var(--blue-900);">Spare Parts</div>
+              <div style="font-size: 11px; color: var(--grey-text);">Order tracking, parts availability</div>
+            </div>
+          </button>
+          <button class="dept-select-card" data-dept="Roadside Assistance" style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--white); cursor: pointer; text-align: left; transition: all 0.15s ease;">
+            <span style="font-size: 18px;">🚨</span>
+            <div style="flex: 1;">
+              <div style="font-size: 13.5px; font-weight: 600; color: var(--blue-900);">Roadside Assistance</div>
+              <div style="font-size: 11px; color: var(--grey-text);">Breakdown support, towing</div>
+            </div>
+          </button>
+          <button class="dept-select-card" data-dept="General" style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--white); cursor: pointer; text-align: left; transition: all 0.15s ease;">
+            <span style="font-size: 18px;">💡</span>
+            <div style="flex: 1;">
+              <div style="font-size: 13.5px; font-weight: 600; color: var(--blue-900);">General Inquiry</div>
+              <div style="font-size: 11px; color: var(--grey-text);">Showrooms, smart hybrid tech</div>
+            </div>
+          </button>
+        </div>
+        <button onclick="document.querySelector('.nav-item[data-page=\\'departments\\']').click()" style="margin-top: 12px; background: transparent; border: none; color: #2563eb; text-decoration: underline; font-size: 12.5px; font-weight: 500; cursor: pointer; font-family: inherit;">
+          🔍 View all department queries &amp; details
+        </button>
+      </div>
+    `;
+    
+    chatWindow.querySelectorAll(".dept-select-card").forEach(card => {
+      card.addEventListener("click", () => {
+        selectChatDepartment(card.dataset.dept);
+      });
+    });
+
+    const chipsContainer = document.querySelector(".quick-chips");
+    if (chipsContainer) chipsContainer.innerHTML = "";
+    return;
+  }
+
+  setChatInputDisabled(false);
+  chatWindow.innerHTML = "";
   
   chatHistory.forEach((msg) => {
     if (msg.isEscalation) {
@@ -1380,7 +1575,7 @@ function renderFollowUpChips(matchedQuestion, answer, query) {
   const otherQuestions = kb.filter(k => k.question !== matchedQuestion);
   const randomKB = otherQuestions[Math.floor(Math.random() * otherQuestions.length)];
   const relatedQuestion = randomKB ? randomKB.question : "How do I book a car service appointment?";
-  const relatedLabel = randomKB ? (relatedQuestion.length > 25 ? relatedQuestion.substring(0, 22) + "..." : relatedQuestion) : "Book a service";
+  const relatedLabel = randomKB ? relatedQuestion : "Book a service";
 
   const lastBotMsg = chatHistory.filter(m => m.sender === 'bot').slice(-1)[0];
   const lastBotMsgId = lastBotMsg ? lastBotMsg.id : null;
@@ -1423,6 +1618,11 @@ function renderFollowUpChips(matchedQuestion, answer, query) {
 function resetDefaultChips() {
   const chipsContainer = document.querySelector(".quick-chips");
   if (!chipsContainer) return;
+  
+  if (activeChatDept) {
+    renderDeptSuggestions(activeChatDept);
+    return;
+  }
   
   const defaultChips = [
     { label: "Book a service", q: "How do I book a car service appointment?" },
@@ -1762,6 +1962,14 @@ function loadSavedChat(chatId) {
 
   chatHistory = JSON.parse(JSON.stringify(chat.history));
   sessionStorage.setItem("chat_history", JSON.stringify(chatHistory));
+  
+  activeChatDept = chat.dept || null;
+  if (activeChatDept) {
+    sessionStorage.setItem("active_chat_dept", activeChatDept);
+  } else {
+    sessionStorage.removeItem("active_chat_dept");
+  }
+
   consecutiveLowConfidenceCount = 0;
   sessionStorage.setItem("consecutive_low_confidence", 0);
 
@@ -1769,6 +1977,11 @@ function loadSavedChat(chatId) {
   if (chatBtn) chatBtn.click();
 
   renderChatHistory();
+  if (activeChatDept) {
+    renderDeptSuggestions(activeChatDept);
+  } else {
+    resetDefaultChips();
+  }
 }
 
 function deleteSavedChat(chatId) {
@@ -1788,7 +2001,8 @@ function initNewChatHandlers() {
   if (!modal) return;
 
   const handleNewChatClick = () => {
-    if (chatHistory.length === 0) {
+    // If chat is welcome-only or empty, just clear directly
+    if (chatHistory.length <= 1) {
       clearActiveChat();
       return;
     }
@@ -1811,31 +2025,47 @@ function initNewChatHandlers() {
     savedChats.unshift({
       id: "saved_" + Date.now(),
       title: fullTitle,
+      dept: activeChatDept,
       history: JSON.parse(JSON.stringify(chatHistory))
     });
     localStorage.setItem("saved_chats", JSON.stringify(savedChats));
     
     clearActiveChat();
+    
+    if (window.pendingStartDept) {
+      selectChatDepartment(window.pendingStartDept);
+      window.pendingStartDept = null;
+    }
     renderSavedChats();
   });
 
   deleteBtn.addEventListener("click", () => {
     modal.style.display = "none";
     clearActiveChat();
+    if (window.pendingStartDept) {
+      selectChatDepartment(window.pendingStartDept);
+      window.pendingStartDept = null;
+    }
   });
 
   cancelBtn.addEventListener("click", () => {
     modal.style.display = "none";
+    window.pendingStartDept = null;
   });
 
   modal.addEventListener("click", (e) => {
-    if (e.target === modal) modal.style.display = "none";
+    if (e.target === modal) {
+      modal.style.display = "none";
+      window.pendingStartDept = null;
+    }
   });
 }
 
 function clearActiveChat() {
   chatHistory = [];
+  activeChatDept = null;
   sessionStorage.removeItem("chat_history");
+  sessionStorage.removeItem("active_chat_dept");
   consecutiveLowConfidenceCount = 0;
   sessionStorage.setItem("consecutive_low_confidence", 0);
   renderChatHistory();
