@@ -587,7 +587,7 @@
       <div class="stat-grid">
         <div class="stat-card"><div class="label">Queries today</div><div class="value">184</div><div class="delta">↑ 12% vs yesterday</div></div>
         <div class="stat-card"><div class="label">Auto-resolved</div><div class="value">151</div><div class="delta">82% resolution rate</div></div>
-        <div class="stat-card"><div class="label">Escalated</div><div class="value">33</div><div class="delta">18% of total</div></div>
+        <div class="stat-card" style="cursor: pointer;" onclick="document.querySelector('.nav-item[data-page=\'departments\']').click()" title="Click to view escalated department tickets"><div class="label">Escalated</div><div class="value">34</div><div class="delta">18% of total</div></div>
         <div class="stat-card"><div class="label">Knowledge base size</div><div class="value" id="kbSizeStat">12</div><div class="delta">Q&amp;A entries</div></div>
       </div>
       <div class="panel">
@@ -767,6 +767,18 @@
         </div>
         <div class="dept-openings" id="openings-roadside"></div>
       </div>
+      
+      <!-- General Inquiry -->
+      <div class="dept-group">
+        <div class="dept-row" onclick="toggleOpenings('general')">
+          <div>
+            <div class="name">General Inquiry</div>
+            <div class="meta">Showrooms, Suzuki Connect, hybrid tech</div>
+          </div>
+          <span class="dept-badge" id="badge-general">1 open</span>
+        </div>
+        <div class="dept-openings" id="openings-general"></div>
+      </div>
     </section>
 
   </main>
@@ -816,6 +828,9 @@ let escalatedTickets = {
   ],
   roadside: [
     { q: "Towing service request on highway NH-8", user: "Karan", status: "Dispatching Unit", statusClass: "progress" }
+  ],
+  general: [
+    { q: "NEXA model comparison Swift vs Baleno", user: "Shiva (Escalated)", status: "In Progress", statusClass: "progress" }
   ]
 };
 
@@ -951,12 +966,13 @@ window.toggleOpenings = function(deptId) {
 
 // ---------- Render Department Ticket Openings ----------
 function renderAllOpenings() {
-  const keys = ["service", "insurance", "parts", "roadside"];
+  const keys = ["service", "insurance", "parts", "roadside", "general"];
   const keyToDeptMap = {
     "service": "Service & Maintenance",
     "insurance": "Insurance & Claims",
     "parts": "Spare Parts",
-    "roadside": "Roadside Assistance"
+    "roadside": "Roadside Assistance",
+    "general": "General Inquiry"
   };
   keys.forEach(key => {
     const listEl = document.getElementById(`openings-${key}`);
@@ -1027,12 +1043,34 @@ function renderRecentConversations() {
   // Re-bind click handlers for recent conversations rows
   container.querySelectorAll(".activity-row").forEach(row => {
     row.addEventListener("click", () => {
-      const qSpan = row.querySelector(".q");
-      if (qSpan) {
-        const qText = qSpan.textContent.replace(/"/g, "").trim();
-        const chatBtn = document.querySelector('.nav-item[data-page="chat"]');
-        if (chatBtn) chatBtn.click();
-        sendMessage(qText);
+      const statusSpan = row.querySelector(".status");
+      const isEscalated = statusSpan && statusSpan.textContent.toLowerCase() === "escalated";
+      if (isEscalated) {
+        const deptBtn = document.querySelector('.nav-item[data-page="departments"]');
+        if (deptBtn) deptBtn.click();
+        
+        // Find which department this escalated conversation belongs to and toggle it open
+        const qSpan = row.querySelector(".q");
+        if (qSpan) {
+          const qText = qSpan.textContent.replace(/"/g, "").trim();
+          for (const [deptKey, tickets] of Object.entries(escalatedTickets)) {
+            if (tickets.some(t => t.q.toLowerCase() === qText.toLowerCase())) {
+              const deptOpenings = document.getElementById(`openings-${deptKey}`);
+              if (deptOpenings && !deptOpenings.classList.contains("active")) {
+                toggleOpenings(deptKey);
+              }
+              break;
+            }
+          }
+        }
+      } else {
+        const qSpan = row.querySelector(".q");
+        if (qSpan) {
+          const qText = qSpan.textContent.replace(/"/g, "").trim();
+          const chatBtn = document.querySelector('.nav-item[data-page="chat"]');
+          if (chatBtn) chatBtn.click();
+          sendMessage(qText);
+        }
       }
     });
   });
@@ -1677,6 +1715,7 @@ function renderEscalationUI(escalId) {
           <option value="Insurance & Claims">Insurance & Claims</option>
           <option value="Spare Parts">Spare Parts</option>
           <option value="Roadside Assistance">Roadside Assistance</option>
+          <option value="General Inquiry">General Inquiry</option>
         </select>
         <button id="escalBtn_${escalId}" onclick="escalateQuery('${escalId}')">Talk to a human</button>
       </div>
@@ -1717,7 +1756,8 @@ window.escalateQuery = function(escalId) {
     "Service & Maintenance": "service",
     "Insurance & Claims": "insurance",
     "Spare Parts": "parts",
-    "Roadside Assistance": "roadside"
+    "Roadside Assistance": "roadside",
+    "General Inquiry": "general"
   };
   const key = deptKeyMap[deptName];
   if (key) {
