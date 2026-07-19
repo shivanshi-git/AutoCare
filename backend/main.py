@@ -88,6 +88,19 @@ FALLBACK_ANSWER = (
 )
 
 
+def classify_department(question: str) -> str:
+    q = question.lower()
+    if any(k in q for k in ["warranty", "service", "maintenance", "book", "appointment", "oil", "coolant", "brake", "plug", "filter", "battery", "alignment"]) or re.search(r'\bac\b', q):
+        return "Service & Maintenance"
+    elif any(k in q for k in ["insurance", "claim", "renew"]):
+        return "Insurance & Claims"
+    elif any(k in q for k in ["parts", "accessory", "accessories", "spare"]):
+        return "Spare Parts"
+    elif any(k in q for k in ["roadside", "assistance", "breakdown", "towing"]):
+        return "Roadside Assistance"
+    return "General"
+
+
 def find_best_match(user_query: str):
     if not FAQ_QUESTIONS or FAQ_EMBEDDINGS is None:
         return None, 0.0
@@ -114,6 +127,7 @@ class ChatResponse(BaseModel):
 class QAPairRequest(BaseModel):
     question: str
     answer: str
+    department: str | None = None
 
 
 class QADeleteRequest(BaseModel):
@@ -186,7 +200,11 @@ def add_qa_pair(req: QAPairRequest, token: str = Depends(authenticate)):
                 detail="This question already exists in the FAQ database."
             )
 
-    new_pair = {"question": question, "answer": answer}
+    dept = req.department.strip() if req.department else ""
+    if not dept:
+        dept = classify_department(question)
+
+    new_pair = {"question": question, "answer": answer, "department": dept}
     FAQS.append(new_pair)
 
     # Persist the update to faqs.json
@@ -351,7 +369,13 @@ async def upload_pdf(file: UploadFile = File(...)):
         added_count = 0
         for pair in extracted_pairs:
             if not any(f["question"].lower() == pair["question"].lower() for f in FAQS):
-                FAQS.append(pair)
+                dept = classify_department(pair["question"])
+                pair_with_dept = {
+                    "question": pair["question"],
+                    "answer": pair["answer"],
+                    "department": dept
+                }
+                FAQS.append(pair_with_dept)
                 added_count += 1
 
         if added_count > 0:

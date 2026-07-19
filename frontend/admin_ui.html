@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AutoCare Knowledge Assistant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --blue-900: #0a2a66;
@@ -25,7 +28,7 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     background: var(--blue-50);
     color: var(--blue-900);
     height: 100vh;
@@ -36,82 +39,122 @@
 
   /* ---------- Sidebar ---------- */
   .sidebar {
-    width: 250px;
-    background: var(--white);
-    border-right: 1px solid var(--border);
+    width: 260px;
+    background: #ffffff;
+    border-right: 1px solid #f1f5f9;
     display: flex;
     flex-direction: column;
-    padding: 20px 14px;
+    padding: 24px 16px;
     flex-shrink: 0;
+    box-shadow: 4px 0 24px rgba(15, 23, 42, 0.015);
   }
 
   .sidebar-header {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 8px 8px 20px 8px;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 16px;
+    gap: 12px;
+    padding: 4px 8px 24px 8px;
+    border-bottom: 1px solid #f1f5f9;
+    margin-bottom: 20px;
   }
   .sidebar-logo {
-    width: 36px;
-    height: 36px;
-    border-radius: var(--radius-sm);
-    background: var(--blue-600);
-    color: var(--white);
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 700;
-    font-size: 13px;
+    font-size: 15px;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
     flex-shrink: 0;
   }
-  .sidebar-title { font-size: 14px; font-weight: 700; line-height: 1.3; }
+  .sidebar-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.25;
+  }
   .sidebar-title span {
     display: block;
-    font-weight: 400;
-    font-size: 11.5px;
-    color: var(--grey-text);
+    font-weight: 500;
+    font-size: 12px;
+    color: #64748b;
+    margin-top: 1px;
   }
 
   .nav-section-label {
-    font-size: 10.5px;
+    font-size: 11px;
     font-weight: 700;
-    letter-spacing: 0.06em;
-    color: var(--grey-light);
+    letter-spacing: 0.08em;
+    color: #94a3b8;
     text-transform: uppercase;
-    padding: 14px 10px 6px 10px;
+    padding: 18px 12px 8px 12px;
   }
 
   .nav-item {
+    position: relative;
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 9px 10px;
-    border-radius: var(--radius-sm);
-    font-size: 13.5px;
-    color: var(--blue-900);
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #475569;
     cursor: pointer;
-    background: none;
+    background: transparent;
     border: none;
     width: 100%;
     text-align: left;
     font-family: inherit;
-    transition: background 0.12s ease;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-bottom: 2px;
   }
-  .nav-item .icon { font-size: 15px; width: 18px; text-align: center; flex-shrink: 0; }
-  .nav-item:hover { background: var(--blue-50); }
+  .nav-item .icon {
+    font-size: 16px;
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    transition: color 0.2s ease;
+  }
+  .nav-item:hover {
+    background: #f8fafc;
+    color: #0f172a;
+  }
+  .nav-item:hover .icon {
+    color: #0f172a;
+  }
   .nav-item.active {
-    background: var(--blue-100);
-    color: var(--blue-700);
+    background: #eff6ff;
+    color: #1d4ed8;
     font-weight: 600;
+  }
+  .nav-item.active .icon {
+    color: #1d4ed8;
+  }
+  .nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 10px;
+    bottom: 10px;
+    width: 3px;
+    border-radius: 99px;
+    background: #2563eb;
   }
 
   .sidebar-footer {
     margin-top: auto;
-    padding: 10px;
-    font-size: 11px;
-    color: var(--grey-light);
+    padding: 10px 12px;
+    font-size: 11.5px;
+    color: #94a3b8;
   }
 
   /* ---------- Main ---------- */
@@ -431,6 +474,66 @@
   .ticket-status.progress { background: var(--blue-100); color: var(--blue-700); }
   .ticket-status.waiting { background: #fef3c7; color: #d97706; }
   .ticket-status.priority { background: #fdecea; color: #c0392b; }
+
+  /* Saved Chats Sidebar items */
+  .saved-chat-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 2px;
+  }
+  .saved-chat-item:hover {
+    background: #f8fafc;
+    color: #0f172a;
+  }
+  .saved-chat-item .chat-label {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+    margin-right: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .saved-chat-item .delete-chat-btn,
+  .saved-chat-item .edit-chat-btn {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 13px;
+    opacity: 0;
+    transition: all 0.2s ease;
+    padding: 2px 6px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .saved-chat-item:hover .delete-chat-btn,
+  .saved-chat-item:hover .edit-chat-btn {
+    opacity: 1;
+  }
+  .saved-chat-item .delete-chat-btn:hover {
+    background: #fee2e2;
+    color: #ef4444;
+  }
+  .saved-chat-item .edit-chat-btn:hover {
+    background: #eff6ff;
+    color: #2563eb;
+  }
+  @keyframes modal-fade {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
 </style>
 </head>
 <body>
@@ -442,17 +545,29 @@
       <div class="sidebar-title">AutoCare<span>Knowledge Assistant</span></div>
     </div>
 
-    <div class="nav-section-label">Main</div>
-    <button class="nav-item active" data-page="dashboard"><span class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: block; margin: auto;"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg></span> Dashboard</button>
-    <button class="nav-item" data-page="chat"><span class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: block; margin: auto;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></span> AI Chat</button>
-    <button class="nav-item" data-page="documents"><span class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: block; margin: auto;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></span> Documents</button>
-    <button class="nav-item" data-page="search"><span class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: block; margin: auto;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span> Search</button>
+    <div class="nav-section-label" style="padding-top: 0; padding-bottom: 4px;">Tools &amp; Management</div>
+    <div style="display: flex; flex-direction: column; gap: 2px; margin-bottom: 16px;">
+      <button class="nav-item active" data-page="dashboard"><span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg></span> Dashboard</button>
+      <button class="nav-item" data-page="chat"><span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></span> AI Chat</button>
+      <button class="nav-item" data-page="documents"><span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></span> Documents</button>
+      <button class="nav-item" data-page="search"><span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span> Search</button>
+      <button class="nav-item" data-page="projects"><span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg></span> Projects</button>
+      <button class="nav-item" data-page="departments"><span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></span> Departments</button>
+    </div>
 
-    <div class="nav-section-label">Organization</div>
-    <button class="nav-item" data-page="projects"><span class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: block; margin: auto;"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg></span> Projects</button>
-    <button class="nav-item" data-page="departments"><span class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: block; margin: auto;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></span> Departments</button>
+    <div style="border-top: 1px solid #f1f5f9; padding-top: 12px; display: flex; flex-direction: column; flex: 1; min-height: 0;">
+      <div class="nav-section-label" style="padding: 0 12px 6px 12px;">Recent Chats</div>
+      <div id="savedChatsList" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 2px; margin-bottom: 12px; padding: 0 4px;">
+        <div style="font-size: 12px; color: #94a3b8; padding: 12px; text-align: center;">No chat history yet.</div>
+      </div>
+      
+      <button id="sidebarNewChatBtn" class="btn-primary" style="margin: auto 8px 12px 8px; padding: 10px 12px; border-radius: 10px; font-size: 13.5px; font-weight: 600; cursor: pointer; border: none; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #ffffff; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); transition: all 0.2s ease; flex-shrink: 0;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        New Chat
+      </button>
+    </div>
 
-    <div class="sidebar-footer">v0.2.0 - Active API</div>
+    <div class="sidebar-footer" style="margin-top: 0;">v0.2.0 - Active API</div>
   </aside>
 
   <main class="main">
@@ -479,9 +594,14 @@
 
     <!-- AI CHAT -->
     <section class="page" id="page-chat">
-      <div class="page-header">
-        <h1>AI Chat</h1>
-        <p>Live demo — answers come from the knowledge base shown in Documents.</p>
+      <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <div>
+          <h1>AI Chat</h1>
+          <p>Live demo — answers come from the knowledge base shown in Documents.</p>
+        </div>
+        <button id="newChatBtn" class="btn-primary" style="padding: 10px 18px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; cursor: pointer; border: none; display: flex; align-items: center; gap: 6px;">
+          <span>➕</span> New Chat
+        </button>
       </div>
       <div class="chat-window" id="chatWindow">
         <div class="message bot">
@@ -510,11 +630,35 @@
         <h1>Documents</h1>
         <p>The knowledge base the AI Chat draws answers from. Add entries manually or upload a PDF.</p>
       </div>
-      <div class="upload-box" id="uploadBox" style="border: 2px dashed var(--blue-200); padding: 30px; text-align: center; border-radius: var(--radius-md); background: var(--blue-50); color: var(--blue-700); cursor: pointer; transition: background 0.15s ease, border-color 0.15s ease; margin-bottom: 15px; font-weight: 500;">📄 Drag &amp; drop a PDF here to extract Q&amp;A pairs automatically</div>
-      <div class="doc-toolbar">
-        <input type="text" id="kbQuestion" placeholder="New question">
-        <input type="text" id="kbAnswer" placeholder="Answer">
-        <button class="btn-primary" id="kbAddBtn">Add</button>
+      <div class="upload-box" id="uploadBox" style="border: 2px dashed var(--blue-200); padding: 25px; text-align: center; border-radius: var(--radius-md); background: var(--blue-50); color: var(--blue-700); cursor: pointer; transition: background 0.15s ease, border-color 0.15s ease; margin-bottom: 15px; font-weight: 500; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;">
+        <span>📄 Drag &amp; drop a PDF here to extract Q&amp;A pairs automatically</span>
+        <span style="font-size: 12px; color: var(--grey-text);">or</span>
+        <button class="btn-primary" style="padding: 8px 16px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; cursor: pointer; border: none; background: var(--blue-600); color: var(--white); display: inline-flex; align-items: center; gap: 6px; pointer-events: none;">
+          <span>📤</span> Upload PDF
+        </button>
+      </div>
+      
+      <!-- Department Filters -->
+      <div class="dept-filters" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;">
+        <button class="chip active dept-filter-btn" data-dept="all" style="font-weight: 600; padding: 8px 16px;">All Departments</button>
+        <button class="chip dept-filter-btn" data-dept="Service & Maintenance" style="font-weight: 500; padding: 8px 16px; background: #e8f5e9; color: #2e7d32; border-color: #c8e6c9;">🛠️ Service &amp; Maintenance</button>
+        <button class="chip dept-filter-btn" data-dept="Insurance & Claims" style="font-weight: 500; padding: 8px 16px; background: #e3f2fd; color: #1565c0; border-color: #bbdefb;">📄 Insurance &amp; Claims</button>
+        <button class="chip dept-filter-btn" data-dept="Spare Parts" style="font-weight: 500; padding: 8px 16px; background: #f3e5f5; color: #6a1b9a; border-color: #e1bee7;">⚙️ Spare Parts</button>
+        <button class="chip dept-filter-btn" data-dept="Roadside Assistance" style="font-weight: 500; padding: 8px 16px; background: #fff3e0; color: #e65100; border-color: #ffe0b2;">🚨 Roadside Assistance</button>
+        <button class="chip dept-filter-btn" data-dept="General" style="font-weight: 500; padding: 8px 16px; background: #f5f5f5; color: #424242; border-color: #e0e0e0;">💡 General</button>
+      </div>
+
+      <div class="doc-toolbar" style="display: flex; gap: 10px; margin-bottom: 16px;">
+        <input type="text" id="kbQuestion" placeholder="New question" style="flex: 2;">
+        <input type="text" id="kbAnswer" placeholder="Answer" style="flex: 2;">
+        <select id="kbDeptSelect" style="flex: 1; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border); font-size: 13px; background: var(--white); outline: none; height: 38px; color: var(--blue-900);">
+          <option value="General">General</option>
+          <option value="Service & Maintenance">Service &amp; Maintenance</option>
+          <option value="Insurance & Claims">Insurance &amp; Claims</option>
+          <option value="Spare Parts">Spare Parts</option>
+          <option value="Roadside Assistance">Roadside Assistance</option>
+        </select>
+        <button class="btn-primary" id="kbAddBtn" style="height: 38px;">Add</button>
       </div>
       <div id="kbList"></div>
     </section>
@@ -620,6 +764,19 @@
     </section>
 
   </main>
+</div>
+
+<!-- Confirmation Modal for New Chat -->
+<div id="newChatModal" class="modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 42, 102, 0.4); backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center;">
+  <div class="modal-content" style="background: var(--white); padding: 28px; border-radius: var(--radius-lg); width: 100%; max-width: 400px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); border: 1px solid var(--border); display: flex; flex-direction: column; gap: 16px; animation: modal-fade 0.2s ease;">
+    <h3 style="font-size: 17px; font-weight: 700; color: var(--blue-900);">Start a New Chat?</h3>
+    <p style="font-size: 13.5px; color: var(--grey-text); line-height: 1.5;">Would you like to save your current chat history before starting a new one?</p>
+    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+      <button id="modalSaveBtn" class="btn-primary" style="padding: 12px; border-radius: var(--radius-md); font-size: 13.5px; border: none; cursor: pointer; font-weight: 600; text-align: center; background: var(--blue-600); color: var(--white);">💾 Save &amp; Start New Chat</button>
+      <button id="modalDeleteBtn" style="padding: 12px; border-radius: var(--radius-md); font-size: 13.5px; border: 1px solid var(--border); background: #fdecea; color: #c0392b; cursor: pointer; font-weight: 600; text-align: center; outline: none;">🗑️ Clear Without Saving</button>
+      <button id="modalCancelBtn" style="padding: 12px; border-radius: var(--radius-md); font-size: 13.5px; border: 1px solid var(--border); background: var(--white); color: var(--grey-text); cursor: pointer; font-weight: 600; text-align: center; outline: none;">Cancel</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -838,24 +995,50 @@ function renderRecentConversations() {
 
 
 // ---------- Render Documents KB List ----------
+let selectedDeptFilter = "all";
+
 function renderKb() {
   const list = document.getElementById("kbList");
   if (!list) return;
   
-  if (kb.length === 0) {
-    list.innerHTML = '<div class="panel">No entries found in the knowledge base. Add some below!</div>';
+  // Filter by department
+  const filteredKb = selectedDeptFilter === "all" 
+    ? kb 
+    : kb.filter(item => (item.department || "General") === selectedDeptFilter);
+
+  if (filteredKb.length === 0) {
+    list.innerHTML = `<div class="panel">No entries found in the knowledge base for department "${selectedDeptFilter}".</div>`;
     return;
   }
 
-  list.innerHTML = kb.map((item, index) => {
+  list.innerHTML = filteredKb.map((item, index) => {
     const tags = getTagsForQuestion(item.question);
     const tagsHtml = tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join(" ");
+    
+    // Color coding department tag
+    const dept = item.department || "General";
+    let badgeStyle = "background: #f5f5f5; color: #424242; border: 1px solid #e0e0e0;";
+    if (dept === "Service & Maintenance") {
+      badgeStyle = "background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9;";
+    } else if (dept === "Insurance & Claims") {
+      badgeStyle = "background: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb;";
+    } else if (dept === "Spare Parts") {
+      badgeStyle = "background: #f3e5f5; color: #6a1b9a; border: 1px solid #e1bee7;";
+    } else if (dept === "Roadside Assistance") {
+      badgeStyle = "background: #fff3e0; color: #e65100; border: 1px solid #ffe0b2;";
+    }
+
+    const deptHtml = `<span class="tag" style="${badgeStyle}; font-weight: 600; text-transform: uppercase; font-size: 10px; margin-right: 6px;">${escapeHtml(dept)}</span>`;
+
     return `
       <div class="kb-item">
         <div>
           <div class="q">${escapeHtml(item.question)}</div>
           <div class="a">${escapeHtml(item.answer)}</div>
-          ${tagsHtml}
+          <div style="margin-top: 6px; display: flex; align-items: center; flex-wrap: wrap; gap: 4px;">
+            ${deptHtml}
+            ${tagsHtml}
+          </div>
         </div>
         <button class="delete-btn" data-question="${escapeHtml(item.question)}">Delete</button>
       </div>
@@ -877,8 +1060,10 @@ function renderKb() {
 document.getElementById("kbAddBtn")?.addEventListener("click", async () => {
   const qInput = document.getElementById("kbQuestion");
   const aInput = document.getElementById("kbAnswer");
+  const deptSelect = document.getElementById("kbDeptSelect");
   const q = qInput.value.trim();
   const a = aInput.value.trim();
+  const dept = deptSelect ? deptSelect.value : "General";
   
   if (!q || !a) {
     alert("Please fill in both the Question and the Answer fields.");
@@ -892,7 +1077,7 @@ document.getElementById("kbAddBtn")?.addEventListener("click", async () => {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${API_KEY}`
       },
-      body: JSON.stringify({ question: q, answer: a })
+      body: JSON.stringify({ question: q, answer: a, department: dept })
     });
     
     const data = await res.json();
@@ -1474,16 +1659,202 @@ async function handlePdfUpload(file) {
     await loadKb();
     
     setTimeout(() => {
-      uploadBox.innerHTML = `📄 Drag &amp; drop a PDF here to extract Q&amp;A pairs automatically`;
+      uploadBox.innerHTML = `
+        <span>📄 Drag &amp; drop a PDF here to extract Q&amp;A pairs automatically</span>
+        <span style="font-size: 12px; color: var(--grey-text);">or</span>
+        <button class="btn-primary" style="padding: 8px 16px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; cursor: pointer; border: none; background: var(--blue-600); color: var(--white); display: inline-flex; align-items: center; gap: 6px; pointer-events: none;">
+          <span>📤</span> Upload PDF
+        </button>
+      `;
     }, 4500);
     
   } catch (err) {
     console.error(err);
     uploadBox.innerHTML = `<span style="color: #c0392b;">⚠️ Error: ${escapeHtml(err.message)}</span>`;
     setTimeout(() => {
-      uploadBox.innerHTML = `📄 Drag &amp; drop a PDF here to extract Q&amp;A pairs automatically`;
+      uploadBox.innerHTML = `
+        <span>📄 Drag &amp; drop a PDF here to extract Q&amp;A pairs automatically</span>
+        <span style="font-size: 12px; color: var(--grey-text);">or</span>
+        <button class="btn-primary" style="padding: 8px 16px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; cursor: pointer; border: none; background: var(--blue-600); color: var(--white); display: inline-flex; align-items: center; gap: 6px; pointer-events: none;">
+          <span>📤</span> Upload PDF
+        </button>
+      `;
     }, 4500);
   }
+}
+
+// ---------- Saved Chats (New Chat, Save/Delete) & Department Filters ----------
+let savedChats = [];
+try {
+  const stored = localStorage.getItem("saved_chats");
+  if (stored) {
+    savedChats = JSON.parse(stored) || [];
+  }
+} catch (e) {
+  savedChats = [];
+}
+
+function renderSavedChats() {
+  const container = document.getElementById("savedChatsList");
+  if (!container) return;
+
+  if (savedChats.length === 0) {
+    container.innerHTML = `<div style="font-size: 12px; color: #94a3b8; padding: 12px; text-align: center;">No chat history yet.</div>`;
+    return;
+  }
+
+  container.innerHTML = savedChats.map(chat => `
+    <div class="saved-chat-item" data-id="${chat.id}">
+      <span class="chat-label" title="${escapeHtml(chat.title)}">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b; flex-shrink: 0;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        ${escapeHtml(chat.title)}
+      </span>
+      <div style="display: flex; gap: 4px;">
+        <button class="edit-chat-btn" data-id="${chat.id}" title="Rename Chat">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+        </button>
+        <button class="delete-chat-btn" data-id="${chat.id}" title="Delete Saved Chat">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+        </button>
+      </div>
+    </div>
+  `).join("");
+
+  // Bind click handlers
+  container.querySelectorAll(".saved-chat-item").forEach(item => {
+    item.addEventListener("click", (e) => {
+      if (e.target.closest(".delete-chat-btn") || e.target.closest(".edit-chat-btn")) return;
+      loadSavedChat(item.dataset.id);
+    });
+  });
+
+  // Bind rename handler
+  container.querySelectorAll(".edit-chat-btn").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const id = btn.dataset.id;
+      const chat = savedChats.find(c => c.id === id);
+      if (chat) {
+        const newTitle = prompt("Enter a new name for this conversation:", chat.title);
+        if (newTitle && newTitle.trim()) {
+          chat.title = newTitle.trim();
+          localStorage.setItem("saved_chats", JSON.stringify(savedChats));
+          renderSavedChats();
+        }
+      }
+    });
+  });
+
+  // Bind delete handler
+  container.querySelectorAll(".delete-chat-btn").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (confirm("Are you sure you want to delete this chat?")) {
+        deleteSavedChat(btn.dataset.id);
+      }
+    });
+  });
+}
+
+function loadSavedChat(chatId) {
+  const chat = savedChats.find(c => c.id === chatId);
+  if (!chat) return;
+
+  chatHistory = JSON.parse(JSON.stringify(chat.history));
+  sessionStorage.setItem("chat_history", JSON.stringify(chatHistory));
+  consecutiveLowConfidenceCount = 0;
+  sessionStorage.setItem("consecutive_low_confidence", 0);
+
+  const chatBtn = document.querySelector('.nav-item[data-page="chat"]');
+  if (chatBtn) chatBtn.click();
+
+  renderChatHistory();
+}
+
+function deleteSavedChat(chatId) {
+  savedChats = savedChats.filter(c => c.id !== chatId);
+  localStorage.setItem("saved_chats", JSON.stringify(savedChats));
+  renderSavedChats();
+}
+
+function initNewChatHandlers() {
+  const btn = document.getElementById("newChatBtn");
+  const sidebarBtn = document.getElementById("sidebarNewChatBtn");
+  const modal = document.getElementById("newChatModal");
+  const saveBtn = document.getElementById("modalSaveBtn");
+  const deleteBtn = document.getElementById("modalDeleteBtn");
+  const cancelBtn = document.getElementById("modalCancelBtn");
+
+  if (!modal) return;
+
+  const handleNewChatClick = () => {
+    if (chatHistory.length === 0) {
+      clearActiveChat();
+      return;
+    }
+    modal.style.display = "flex";
+  };
+
+  if (btn) btn.addEventListener("click", handleNewChatClick);
+  if (sidebarBtn) sidebarBtn.addEventListener("click", handleNewChatClick);
+
+  saveBtn.addEventListener("click", () => {
+    modal.style.display = "none";
+    const firstUserMsg = chatHistory.find(m => m.sender === "user");
+    let title = firstUserMsg ? firstUserMsg.text : "Support Chat";
+    if (title.length > 20) {
+      title = title.substring(0, 18) + "...";
+    }
+    const timestamp = new Date().toLocaleString([], { hour: '2-digit', minute: '2-digit', month: 'short', day: 'numeric' });
+    const fullTitle = `${title} (${timestamp})`;
+
+    savedChats.unshift({
+      id: "saved_" + Date.now(),
+      title: fullTitle,
+      history: JSON.parse(JSON.stringify(chatHistory))
+    });
+    localStorage.setItem("saved_chats", JSON.stringify(savedChats));
+    
+    clearActiveChat();
+    renderSavedChats();
+  });
+
+  deleteBtn.addEventListener("click", () => {
+    modal.style.display = "none";
+    clearActiveChat();
+  });
+
+  cancelBtn.addEventListener("click", () => {
+    modal.style.display = "none";
+  });
+
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) modal.style.display = "none";
+  });
+}
+
+function clearActiveChat() {
+  chatHistory = [];
+  sessionStorage.removeItem("chat_history");
+  consecutiveLowConfidenceCount = 0;
+  sessionStorage.setItem("consecutive_low_confidence", 0);
+  renderChatHistory();
+  resetDefaultChips();
+}
+
+function initDeptFilters() {
+  document.querySelectorAll(".dept-filter-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".dept-filter-btn").forEach(b => {
+        b.classList.remove("active");
+        b.style.fontWeight = "500";
+      });
+      btn.classList.add("active");
+      btn.style.fontWeight = "600";
+      selectedDeptFilter = btn.dataset.dept;
+      renderKb();
+    });
+  });
 }
 
 // ---------- Initial Boot ----------
@@ -1494,6 +1865,9 @@ async function init() {
   renderAllOpenings();
   renderRecentConversations();
   initPdfUpload();
+  renderSavedChats();
+  initNewChatHandlers();
+  initDeptFilters();
 
   // Bind click handlers for dashboard recent conversations
   document.querySelectorAll(".activity-row").forEach(row => {
