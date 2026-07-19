@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoCare Knowledge Assistant</title>
+<style>
+  :root {
+    --blue-900: #0a2a66;
+    --blue-700: #103e91;
+    --blue-600: #1554c7;
+    --blue-500: #2166e8;
+    --blue-200: #c7d8f7;
+    --blue-100: #e6edfb;
+    --blue-50: #f5f8fd;
+    --white: #ffffff;
+    --grey-text: #64748b;
+    --grey-light: #94a3b8;
+    --border: #e2e8f0;
+    --radius-lg: 16px;
+    --radius-md: 10px;
+    --radius-sm: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--blue-50);
+    color: var(--blue-900);
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .shell { display: flex; height: 100vh; }
+
+  /* ---------- Sidebar ---------- */
+  .sidebar {
+    width: 250px;
+    background: var(--white);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 20px 14px;
+    flex-shrink: 0;
+  }
+
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 8px 20px 8px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+  .sidebar-logo {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-sm);
+    background: var(--blue-600);
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+  .sidebar-title { font-size: 14px; font-weight: 700; line-height: 1.3; }
+  .sidebar-title span {
+    display: block;
+    font-weight: 400;
+    font-size: 11.5px;
+    color: var(--grey-text);
+  }
+
+  .nav-section-label {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--grey-light);
+    text-transform: uppercase;
+    padding: 14px 10px 6px 10px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 10px;
+    border-radius: var(--radius-sm);
+    font-size: 13.5px;
+    color: var(--blue-900);
+    cursor: pointer;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+    transition: background 0.12s ease;
+  }
+  .nav-item .icon { font-size: 15px; width: 18px; text-align: center; flex-shrink: 0; }
+  .nav-item:hover { background: var(--blue-50); }
+  .nav-item.active {
+    background: var(--blue-100);
+    color: var(--blue-700);
+    font-weight: 600;
+  }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding: 10px;
+    font-size: 11px;
+    color: var(--grey-light);
+  }
+
+  /* ---------- Main ---------- */
+  .main {
+    flex: 1;
+    overflow-y: auto;
+    padding: 32px 44px;
+  }
+
+  .page { display: none; animation: fadein 0.15s ease; }
+  .page.active { display: block; }
+  @keyframes fadein { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+  .page-header { margin-bottom: 24px; }
+  .page-header h1 { font-size: 21px; font-weight: 700; margin-bottom: 4px; }
+  .page-header p { font-size: 13.5px; color: var(--grey-text); }
+
+  /* ---------- Dashboard ---------- */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .stat-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 18px 20px;
+  }
+  .stat-card .label { font-size: 12px; color: var(--grey-text); margin-bottom: 8px; }
+  .stat-card .value { font-size: 26px; font-weight: 700; color: var(--blue-900); }
+  .stat-card .delta { font-size: 11.5px; color: var(--blue-600); margin-top: 4px; font-weight: 600; }
+
+  .panel {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px 22px;
+    margin-bottom: 18px;
+  }
+  .panel h3 { font-size: 14.5px; margin-bottom: 14px; }
+
+  .activity-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .activity-row:last-child { border-bottom: none; }
+  .activity-row .q { color: var(--blue-900); }
+  .activity-row .status {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 999px;
+  }
+  .status.resolved { background: var(--blue-100); color: var(--blue-700); }
+  .status.escalated { background: #fdecea; color: #c0392b; }
+
+  /* ---------- Chat page ---------- */
+  .chat-window {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    height: 52vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .message { display: flex; gap: 10px; max-width: 72%; }
+  .message.user { align-self: flex-end; flex-direction: row-reverse; }
+  .avatar {
+    width: 30px; height: 30px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10.5px; font-weight: 700; flex-shrink: 0;
+  }
+  .bot-avatar { background: var(--blue-600); color: var(--white); }
+  .user-avatar { background: var(--blue-100); color: var(--blue-900); }
+  .bubble { padding: 10px 14px; border-radius: 14px; font-size: 13.5px; line-height: 1.45; }
+  .message.bot .bubble { background: var(--blue-50); border: 1px solid var(--border); border-top-left-radius: 4px; }
+  .message.user .bubble { background: var(--blue-600); color: var(--white); border-top-right-radius: 4px; }
+  .bubble .meta { display: block; margin-top: 6px; font-size: 10px; opacity: 0.6; }
+
+  .chat-input-bar { display: flex; gap: 10px; margin-top: 14px; }
+  #chatInput {
+    flex: 1; padding: 11px 16px; border-radius: 999px;
+    border: 1px solid var(--border); outline: none; font-size: 13.5px;
+  }
+  #chatInput:focus { border-color: var(--blue-500); }
+  #sendBtn {
+    background: var(--blue-600); color: var(--white); border: none;
+    padding: 0 22px; border-radius: 999px; cursor: pointer;
+    font-weight: 600; font-size: 13.5px;
+  }
+  #sendBtn:hover { background: var(--blue-700); }
+
+  .quick-chips { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    background: var(--blue-100); color: var(--blue-700); border: 1px solid var(--border);
+    padding: 6px 13px; border-radius: 999px; font-size: 12px; cursor: pointer;
+  }
+  .chip:hover { background: var(--blue-500); color: var(--white); }
+
+  /* ---------- Documents / KB ---------- */
+  .doc-toolbar { display: flex; gap: 10px; margin-bottom: 16px; }
+  .doc-toolbar input[type="text"] {
+    flex: 1; padding: 10px 14px; border-radius: var(--radius-sm);
+    border: 1px solid var(--border); font-size: 13px;
+  }
+  .btn-primary {
+    background: var(--blue-600); color: var(--white); border: none;
+    padding: 0 18px; border-radius: var(--radius-sm); cursor: pointer;
+    font-weight: 600; font-size: 13px;
+  }
+  .btn-primary:hover { background: var(--blue-700); }
+
+  .kb-item {
+    background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-md);
+    padding: 14px 16px; display: flex; justify-content: space-between; align-items: flex-start;
+    gap: 12px; margin-bottom: 10px;
+  }
+  .kb-item .q { font-weight: 600; font-size: 13.5px; margin-bottom: 4px; }
+  .kb-item .a { color: var(--grey-text); font-size: 12.5px; }
+  .kb-item .tag {
+    display: inline-block; background: var(--blue-50); color: var(--blue-600);
+    font-size: 10.5px; padding: 2px 8px; border-radius: 999px; margin-top: 6px;
+  }
+  .delete-btn {
+    background: var(--white); border: 1px solid var(--border); color: var(--blue-600);
+    border-radius: var(--radius-sm); padding: 6px 10px; cursor: pointer; font-size: 11px; flex-shrink: 0;
+  }
+  .delete-btn:hover { background: #fdeaea; color: #c0392b; border-color: #f3c6c6; }
+
+  .upload-box {
+    background: var(--white); border: 2px dashed var(--blue-200); border-radius: var(--radius-lg);
+    padding: 26px; text-align: center; color: var(--blue-700); font-size: 13px; margin-bottom: 20px;
+  }
+
+  /* ---------- Search ---------- */
+  .search-bar {
+    display: flex; align-items: center; gap: 10px; background: var(--white);
+    border: 1px solid var(--border); border-radius: 999px; padding: 10px 18px; margin-bottom: 20px;
+  }
+  .search-bar input {
+    flex: 1; border: none; outline: none; font-size: 14px; background: transparent;
+  }
+
+  /* ---------- Projects / Departments ---------- */
+  .card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .info-card {
+    background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg);
+    padding: 18px;
+  }
+  .info-card .icon-badge {
+    width: 34px; height: 34px; border-radius: var(--radius-sm); background: var(--blue-100);
+    color: var(--blue-700); display: flex; align-items: center; justify-content: center;
+    font-size: 15px; margin-bottom: 12px;
+  }
+  .info-card h4 { font-size: 13.5px; margin-bottom: 4px; }
+  .info-card p { font-size: 12px; color: var(--grey-text); margin-bottom: 10px; }
+  .progress-track { background: var(--blue-50); border-radius: 999px; height: 6px; overflow: hidden; }
+  .progress-fill { background: var(--blue-600); height: 100%; }
+  .progress-label { font-size: 11px; color: var(--grey-text); margin-top: 6px; }
+
+  .dept-row {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-md);
+    padding: 14px 18px; margin-bottom: 10px;
+  }
+  .dept-row .name { font-weight: 600; font-size: 13.5px; }
+  .dept-row .meta { font-size: 12px; color: var(--grey-text); margin-top: 2px; }
+  .dept-badge {
+    font-size: 11px; font-weight: 600; background: var(--blue-100); color: var(--blue-700);
+    padding: 4px 10px; border-radius: 999px;
+  }
+
+  /* ---------- Typing Indicator ---------- */
+  .bubble .dot {
+    animation: dot-blink 1.4s infinite both;
+    font-size: 18px;
+    line-height: 1;
+    display: inline-block;
+    letter-spacing: 2px;
+  }
+  .bubble .dot:nth-child(2) { animation-delay: .2s; }
+  .bubble .dot:nth-child(3) { animation-delay: .4s; }
+  @keyframes dot-blink {
+    0% { opacity: .2; }
+    20% { opacity: 1; }
+    100% { opacity: .2; }
+  }
+
+  /* ---------- Thumbs Up/Down and Feedback ---------- */
+  .bubble-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+    justify-content: flex-start;
+  }
+  .feedback-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    opacity: 0.5;
+    transition: opacity 0.15s ease, transform 0.1s ease;
+  }
+  .feedback-btn:hover {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+  .feedback-btn.active {
+    opacity: 1;
+    pointer-events: none;
+  }
+  .feedback-btn.disabled {
+    opacity: 0.2;
+    pointer-events: none;
+  }
+
+  /* ---------- Escalation Box ---------- */
+  .escalation-box {
+    margin-top: 8px;
+    background: var(--blue-50);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-self: flex-start;
+    width: 100%;
+    max-width: 320px;
+  }
+  .escalation-box select {
+    padding: 8px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    outline: none;
+    font-size: 13px;
+    background: var(--white);
+    color: var(--blue-900);
+  }
+  .escalation-box button {
+    background: var(--blue-600);
+    color: var(--white);
+    border: none;
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+    align-self: flex-start;
+    transition: background 0.1s ease;
+  }
+  .escalation-box button:hover {
+    background: var(--blue-700);
+  }
+
+  /* ---------- Collapsible Department Openings ---------- */
+  .dept-group {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .dept-group .dept-row {
+    border: none;
+    border-radius: 0;
+    margin-bottom: 0;
+  }
+  .dept-row:hover {
+    background: var(--blue-50);
+  }
+  .dept-openings {
+    display: none;
+    background: #fafbfc;
+    border-top: 1px solid var(--border);
+    padding: 8px 18px;
+  }
+  .dept-openings.active {
+    display: block;
+  }
+  .opening-ticket {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .opening-ticket:last-child {
+    border-bottom: none;
+  }
+  .ticket-q {
+    font-weight: 600;
+    color: var(--blue-900);
+  }
+  .ticket-meta {
+    font-size: 11.5px;
+    color: var(--grey-text);
+  }
+  .ticket-status {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 999px;
+    margin-left: 6px;
+  }
+  .ticket-status.pending { background: #e2e8f0; color: #475569; }
+  .ticket-status.progress { background: var(--blue-100); color: var(--blue-700); }
+  .ticket-status.waiting { background: #fef3c7; color: #d97706; }
+  .ticket-status.priority { background: #fdecea; color: #c0392b; }
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">AC</div>
+      <div class="sidebar-title">AutoCare<span>Knowledge Assistant</span></div>
+    </div>
+
+    <div class="nav-section-label">Main</div>
+    <button class="nav-item active" data-page="dashboard"><span class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: block; margin: auto;"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg></span> Dashboard</button>
+    <button class="nav-item" data-page="chat"><span class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: block; margin: auto;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></span> AI Chat</button>
+    <button class="nav-item" data-page="documents"><span class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: block; margin: auto;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></span> Documents</button>
+    <button class="nav-item" data-page="search"><span class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: block; margin: auto;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span> Search</button>
+
+    <div class="nav-section-label">Organization</div>
+    <button class="nav-item" data-page="projects"><span class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: block; margin: auto;"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg></span> Projects</button>
+    <button class="nav-item" data-page="departments"><span class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: block; margin: auto;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></span> Departments</button>
+
+    <div class="sidebar-footer">v0.2.0 - Active API</div>
+  </aside>
+
+  <main class="main">
+
+    <!-- DASHBOARD -->
+    <section class="page active" id="page-dashboard">
+      <div class="page-header">
+        <h1>Dashboard</h1>
+        <p>Overview of chatbot performance today.</p>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-card"><div class="label">Queries today</div><div class="value">184</div><div class="delta">↑ 12% vs yesterday</div></div>
+        <div class="stat-card"><div class="label">Auto-resolved</div><div class="value">151</div><div class="delta">82% resolution rate</div></div>
+        <div class="stat-card"><div class="label">Escalated</div><div class="value">33</div><div class="delta">18% of total</div></div>
+        <div class="stat-card"><div class="label">Knowledge base size</div><div class="value" id="kbSizeStat">12</div><div class="delta">Q&amp;A entries</div></div>
+      </div>
+      <div class="panel">
+        <h3>Recent conversations</h3>
+        <div id="recentConvosList" style="max-height: 240px; overflow-y: auto; padding-right: 4px;">
+          <!-- Dynamic conversation rows -->
+        </div>
+      </div>
+    </section>
+
+    <!-- AI CHAT -->
+    <section class="page" id="page-chat">
+      <div class="page-header">
+        <h1>AI Chat</h1>
+        <p>Live demo — answers come from the knowledge base shown in Documents.</p>
+      </div>
+      <div class="chat-window" id="chatWindow">
+        <div class="message bot">
+          <div class="avatar bot-avatar">AC</div>
+          <div class="bubble">Hello! I'm your virtual support assistant. How can I help you today?</div>
+        </div>
+      </div>
+      <div class="chat-input-bar">
+        <input type="text" id="chatInput" placeholder="Type your question...">
+        <button id="sendBtn">Send</button>
+      </div>
+      <div class="quick-chips">
+        <button class="chip" data-q="How do I book a car service appointment?">Book a service</button>
+        <button class="chip" data-q="What is covered under the standard warranty?">Warranty</button>
+        <button class="chip" data-q="How do I request a roadside assistance service?">Roadside assistance</button>
+        <button class="chip" data-q="Where can I find my nearest authorized service center?">Find service center</button>
+        <button class="chip" data-q="How do I get a FASTag for my Maruti car?">FASTag</button>
+        <button class="chip" data-q="What is Suzuki Connect?">Suzuki Connect</button>
+        <button class="chip" data-q="What is Suzuki Smart Hybrid technology?">Smart Hybrid</button>
+      </div>
+    </section>
+
+    <!-- DOCUMENTS -->
+    <section class="page" id="page-documents">
+      <div class="page-header">
+        <h1>Documents</h1>
+        <p>The knowledge base the AI Chat draws answers from. Add entries manually or upload a PDF.</p>
+      </div>
+      <div class="upload-box" id="uploadBox" style="border: 2px dashed var(--blue-200); padding: 30px; text-align: center; border-radius: var(--radius-md); background: var(--blue-50); color: var(--blue-700); cursor: pointer; transition: background 0.15s ease, border-color 0.15s ease; margin-bottom: 15px; font-weight: 500;">📄 Drag &amp; drop a PDF here to extract Q&amp;A pairs automatically</div>
+      <div class="doc-toolbar">
+        <input type="text" id="kbQuestion" placeholder="New question">
+        <input type="text" id="kbAnswer" placeholder="Answer">
+        <button class="btn-primary" id="kbAddBtn">Add</button>
+      </div>
+      <div id="kbList"></div>
+    </section>
+
+    <!-- SEARCH -->
+    <section class="page" id="page-search">
+      <div class="page-header">
+        <h1>Search</h1>
+        <p>Search across the knowledge base.</p>
+      </div>
+      <div class="search-bar">
+        <span>🔍</span>
+        <input type="text" id="searchInput" placeholder="Search questions and answers...">
+      </div>
+      <div id="searchResults"></div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section class="page" id="page-projects">
+      <div class="page-header">
+        <h1>Projects</h1>
+        <p>Ongoing chatbot deployment work.</p>
+      </div>
+      <div class="card-grid">
+        <div class="info-card">
+          <div class="icon-badge"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display: block;"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg></div>
+          <h4>Website widget</h4>
+          <p>Embed the chat widget on the support site.</p>
+          <div class="progress-track"><div class="progress-fill" style="width:80%"></div></div>
+          <div class="progress-label">80% complete</div>
+        </div>
+        <div class="info-card">
+          <div class="icon-badge"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display: block;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></div>
+          <h4>WhatsApp integration</h4>
+          <p>Route WhatsApp support queries to the same knowledge base.</p>
+          <div class="progress-track"><div class="progress-fill" style="width:35%"></div></div>
+          <div class="progress-label">35% complete</div>
+        </div>
+        <div class="info-card">
+          <div class="icon-badge"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display: block;"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg></div>
+          <h4>Manual ingestion</h4>
+          <p>Bulk-upload service manuals as PDFs into the knowledge base.</p>
+          <div class="progress-track"><div class="progress-fill" style="width:55%"></div></div>
+          <div class="progress-label">55% complete</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DEPARTMENTS -->
+    <section class="page" id="page-departments">
+      <div class="page-header">
+        <h1>Departments</h1>
+        <p>Teams the chatbot can escalate unresolved queries to. Click on a department card to view its current open queries.</p>
+      </div>
+      
+      <!-- Service & Maintenance -->
+      <div class="dept-group">
+        <div class="dept-row" onclick="toggleOpenings('service')">
+          <div>
+            <div class="name">Service &amp; Maintenance</div>
+            <div class="meta">Bookings, warranty, periodic service</div>
+          </div>
+          <span class="dept-badge" id="badge-service">6 open</span>
+        </div>
+        <div class="dept-openings" id="openings-service"></div>
+      </div>
+      
+      <!-- Insurance & Claims -->
+      <div class="dept-group">
+        <div class="dept-row" onclick="toggleOpenings('insurance')">
+          <div>
+            <div class="name">Insurance &amp; Claims</div>
+            <div class="meta">Claim documentation, disputes</div>
+          </div>
+          <span class="dept-badge" id="badge-insurance">4 open</span>
+        </div>
+        <div class="dept-openings" id="openings-insurance"></div>
+      </div>
+      
+      <!-- Spare Parts -->
+      <div class="dept-group">
+        <div class="dept-row" onclick="toggleOpenings('parts')">
+          <div>
+            <div class="name">Spare Parts</div>
+            <div class="meta">Order tracking, availability</div>
+          </div>
+          <span class="dept-badge" id="badge-parts">2 open</span>
+        </div>
+        <div class="dept-openings" id="openings-parts"></div>
+      </div>
+      
+      <!-- Roadside Assistance -->
+      <div class="dept-group">
+        <div class="dept-row" onclick="toggleOpenings('roadside')">
+          <div>
+            <div class="name">Roadside Assistance</div>
+            <div class="meta">Breakdown, emergency support</div>
+          </div>
+          <span class="dept-badge" id="badge-roadside">1 open</span>
+        </div>
+        <div class="dept-openings" id="openings-roadside"></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+// ---------- Configuration ----------
+const API_BASE = "http://127.0.0.1:8000";
+const API_KEY = "admin-secret-key"; // Default API key used in development
+
+let kb = [];
+let consecutiveLowConfidenceCount = 0;
+let chatHistory = [];
+let escalatedCount = 33; // Default starting count from Dashboard mockup
+
+let escalatedTickets = {
+  service: [
+    { q: "How do I book a car service appointment?", user: "Shivam", status: "Pending Assignment", statusClass: "pending" },
+    { q: "Periodic maintenance schedule for Swift", user: "Rajesh", status: "In Progress", statusClass: "progress" },
+    { q: "Wiper blade replacement under warranty", user: "Amit", status: "Waiting on Customer", statusClass: "waiting" },
+    { q: "AC cooling issue after first service", user: "Priyank", status: "In Progress", statusClass: "progress" },
+    { q: "Wheel alignment charges inquiry", user: "Megha", status: "In Progress", statusClass: "progress" },
+    { q: "Engine diagnostic light on dashboard", user: "Vikram", status: "High Priority", statusClass: "priority" }
+  ],
+  insurance: [
+    { q: "My insurance claim was rejected, why?", user: "Anil", status: "Under Review", statusClass: "progress" },
+    { q: "Third-party liability claim documentation", user: "Suman", status: "Pending Approval", statusClass: "waiting" },
+    { q: "Cashless garage options in Mumbai", user: "Rohit", status: "Resolved", statusClass: "pending" },
+    { q: "Zero depreciation coverage details", user: "Nitin", status: "In Progress", statusClass: "progress" }
+  ],
+  parts: [
+    { q: "Where's my spare part order, it's late", user: "Suresh", status: "Delayed in Transit", statusClass: "waiting" },
+    { q: "Brake pad availability for Baleno 2022", user: "Harish", status: "Out of Stock", statusClass: "priority" }
+  ],
+  roadside: [
+    { q: "Towing service request on highway NH-8", user: "Karan", status: "Dispatching Unit", statusClass: "progress" }
+  ]
+};
+
+// Load escalated tickets from sessionStorage if they exist
+if (sessionStorage.getItem("escalated_tickets")) {
+  try {
+    escalatedTickets = JSON.parse(sessionStorage.getItem("escalated_tickets"));
+  } catch (e) {}
+}
+
+// Load persisted state from sessionStorage
+if (sessionStorage.getItem("escalated_count")) {
+  escalatedCount = parseInt(sessionStorage.getItem("escalated_count")) || 33;
+}
+if (sessionStorage.getItem("chat_history")) {
+  try {
+    chatHistory = JSON.parse(sessionStorage.getItem("chat_history")) || [];
+  } catch (e) {
+    chatHistory = [];
+  }
+}
+if (sessionStorage.getItem("consecutive_low_confidence")) {
+  consecutiveLowConfidenceCount = parseInt(sessionStorage.getItem("consecutive_low_confidence")) || 0;
+}
+
+let recentConversations = [
+  { q: "How do I book a car service appointment?", status: "Resolved", statusClass: "resolved" },
+  { q: "My insurance claim was rejected, why?", status: "Escalated", statusClass: "escalated" },
+  { q: "What is covered under the standard warranty?", status: "Resolved", statusClass: "resolved" },
+  { q: "Where's my spare part order, it's late", status: "Escalated", statusClass: "escalated" },
+  { q: "Nearest service center in my city?", status: "Resolved", statusClass: "resolved" }
+];
+
+if (sessionStorage.getItem("recent_conversations")) {
+  try {
+    recentConversations = JSON.parse(sessionStorage.getItem("recent_conversations"));
+  } catch (e) {}
+}
+
+
+// ---------- Navigation Logic ----------
+document.querySelectorAll(".nav-item").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".nav-item").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    btn.classList.add("active");
+    
+    const pageId = "page-" + btn.dataset.page;
+    const pageEl = document.getElementById(pageId);
+    if (pageEl) {
+      pageEl.classList.add("active");
+    }
+    
+    // Refresh data depending on page target
+    if (btn.dataset.page === "documents") {
+      loadKb();
+    }
+    if (btn.dataset.page === "search") {
+      renderSearch("");
+    }
+    if (btn.dataset.page === "dashboard") {
+      loadKb(); // To update metrics
+    }
+  });
+});
+
+// ---------- Load KB Data from Backend ----------
+async function loadKb() {
+  try {
+    const res = await fetch(`${API_BASE}/api/qa`);
+    if (!res.ok) throw new Error("Failed to fetch QA data");
+    const data = await res.json();
+    kb = data.faqs || [];
+    renderKb();
+    updateDashboardStats();
+    renderSearch(document.getElementById("searchInput")?.value || "");
+  } catch (err) {
+    console.error("Error loading FAQs from backend:", err);
+    // Render offline message in document manager if fetch fails
+    const list = document.getElementById("kbList");
+    if (list) {
+      list.innerHTML = `<div class="panel" style="color: #c0392b;">Could not connect to backend server. Make sure it is running on ${API_BASE}</div>`;
+    }
+  }
+}
+
+// Helper to generate keywords tags based on question text
+function getTagsForQuestion(q) {
+  const tags = [];
+  const qLower = q.toLowerCase();
+  if (qLower.includes("warranty")) tags.push("warranty");
+  if (qLower.includes("service") || qLower.includes("maintenance")) tags.push("service");
+  if (qLower.includes("book") || qLower.includes("appointment")) tags.push("booking");
+  if (qLower.includes("hours") || qLower.includes("timings") || qLower.includes("working")) tags.push("timings");
+  if (qLower.includes("roadside") || qLower.includes("assistance") || qLower.includes("breakdown")) tags.push("roadside assistance");
+  if (qLower.includes("insurance") || qLower.includes("claim")) tags.push("insurance");
+  if (qLower.includes("parts") || qLower.includes("order")) tags.push("spare parts");
+  if (qLower.includes("hybrid") || qLower.includes("smart hybrid")) tags.push("hybrid");
+  if (qLower.includes("cng")) tags.push("cng");
+  if (qLower.includes("nexa") || qLower.includes("arena")) tags.push("showroom");
+  if (tags.length === 0) tags.push("general");
+  return tags;
+}
+
+// ---------- Update Dashboard Statistics ----------
+function updateDashboardStats() {
+  const sizeStat = document.getElementById("kbSizeStat");
+  if (sizeStat) {
+    sizeStat.textContent = kb.length;
+  }
+  
+  const statCards = document.querySelectorAll(".stat-card");
+  statCards.forEach(card => {
+    const label = card.querySelector(".label");
+    if (label && label.textContent.toLowerCase() === "escalated") {
+      const valEl = card.querySelector(".value");
+      if (valEl) {
+        valEl.textContent = escalatedCount;
+      }
+    }
+  });
+}
+
+// ---------- Toggle Collapsible Department Openings ----------
+window.toggleOpenings = function(deptId) {
+  const openings = document.getElementById(`openings-${deptId}`);
+  if (openings) {
+    openings.classList.toggle("active");
+  }
+};
+
+// ---------- Render Department Ticket Openings ----------
+function renderAllOpenings() {
+  const keys = ["service", "insurance", "parts", "roadside"];
+  keys.forEach(key => {
+    const listEl = document.getElementById(`openings-${key}`);
+    const badgeEl = document.getElementById(`badge-${key}`);
+    if (listEl && escalatedTickets[key]) {
+      if (badgeEl) {
+        badgeEl.textContent = `${escalatedTickets[key].length} open`;
+      }
+      listEl.innerHTML = escalatedTickets[key].map(t => `
+        <div class="opening-ticket">
+          <span class="ticket-q">"${escapeHtml(t.q)}"</span>
+          <span class="ticket-meta">User: ${escapeHtml(t.user)} | Status: <span class="ticket-status ${t.statusClass}">${escapeHtml(t.status)}</span></span>
+        </div>
+      `).join("");
+    }
+  });
+}
+
+// ---------- Render Dashboard Recent Conversations ----------
+function renderRecentConversations() {
+  const container = document.getElementById("recentConvosList");
+  if (!container) return;
+  
+  if (recentConversations.length === 0) {
+    container.innerHTML = `<div style="padding: 12px; color: var(--grey-text); font-size: 13px;">No conversations yet. Start chatting!</div>`;
+    return;
+  }
+  
+  container.innerHTML = recentConversations.map(c => `
+    <div class="activity-row" style="cursor: pointer;">
+      <span class="q">"${escapeHtml(c.q)}"</span>
+      <span class="status ${c.statusClass}">${escapeHtml(c.status)}</span>
+    </div>
+  `).join("");
+  
+  // Re-bind click handlers for recent conversations rows
+  container.querySelectorAll(".activity-row").forEach(row => {
+    row.addEventListener("click", () => {
+      const qSpan = row.querySelector(".q");
+      if (qSpan) {
+        const qText = qSpan.textContent.replace(/"/g, "").trim();
+        const chatBtn = document.querySelector('.nav-item[data-page="chat"]');
+        if (chatBtn) chatBtn.click();
+        sendMessage(qText);
+      }
+    });
+  });
+}
+
+
+
+// ---------- Render Documents KB List ----------
+function renderKb() {
+  const list = document.getElementById("kbList");
+  if (!list) return;
+  
+  if (kb.length === 0) {
+    list.innerHTML = '<div class="panel">No entries found in the knowledge base. Add some below!</div>';
+    return;
+  }
+
+  list.innerHTML = kb.map((item, index) => {
+    const tags = getTagsForQuestion(item.question);
+    const tagsHtml = tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join(" ");
+    return `
+      <div class="kb-item">
+        <div>
+          <div class="q">${escapeHtml(item.question)}</div>
+          <div class="a">${escapeHtml(item.answer)}</div>
+          ${tagsHtml}
+        </div>
+        <button class="delete-btn" data-question="${escapeHtml(item.question)}">Delete</button>
+      </div>
+    `;
+  }).join("");
+
+  // Add click handlers for delete buttons
+  list.querySelectorAll(".delete-btn").forEach(b => {
+    b.addEventListener("click", async () => {
+      const q = b.dataset.question;
+      if (confirm(`Are you sure you want to delete this FAQ entry?\n\n"${q}"`)) {
+        await deleteKbEntry(q);
+      }
+    });
+  });
+}
+
+// ---------- Add KB Entry to Backend ----------
+document.getElementById("kbAddBtn")?.addEventListener("click", async () => {
+  const qInput = document.getElementById("kbQuestion");
+  const aInput = document.getElementById("kbAnswer");
+  const q = qInput.value.trim();
+  const a = aInput.value.trim();
+  
+  if (!q || !a) {
+    alert("Please fill in both the Question and the Answer fields.");
+    return;
+  }
+  
+  try {
+    const res = await fetch(`${API_BASE}/api/qa`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${API_KEY}`
+      },
+      body: JSON.stringify({ question: q, answer: a })
+    });
+    
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.detail || "Failed to add FAQ pair");
+    }
+    
+    // Clear inputs and reload
+    qInput.value = "";
+    aInput.value = "";
+    await loadKb();
+  } catch (err) {
+    console.error("Error adding QA entry:", err);
+    alert(`Error: ${err.message}`);
+  }
+});
+
+// ---------- Delete KB Entry from Backend ----------
+async function deleteKbEntry(question) {
+  try {
+    const res = await fetch(`${API_BASE}/api/qa`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${API_KEY}`
+      },
+      body: JSON.stringify({ question: question })
+    });
+    
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.detail || "Failed to delete FAQ pair");
+    }
+    
+    await loadKb();
+  } catch (err) {
+    console.error("Error deleting QA entry:", err);
+    alert(`Error: ${err.message}`);
+  }
+}
+
+// ---------- AI Chat Client & History Loader ----------
+const chatWindow = document.getElementById("chatWindow");
+const chatInput = document.getElementById("chatInput");
+
+function renderChatHistory() {
+  if (!chatWindow) return;
+  chatWindow.innerHTML = `
+    <div class="message bot">
+      <div class="avatar bot-avatar">AC</div>
+      <div class="bubble">Hello! I'm your virtual support assistant. How can I help you today?</div>
+    </div>
+  `;
+  
+  chatHistory.forEach((msg) => {
+    if (msg.isEscalation) {
+      if (msg.resolved) {
+        const escalMsg = document.createElement("div");
+        escalMsg.className = "message bot";
+        escalMsg.dataset.msgId = msg.id;
+        escalMsg.innerHTML = `
+          <div class="avatar bot-avatar">AC</div>
+          <div class="bubble">
+            I'm sorry I couldn't resolve your queries. Would you like to escalate this issue to a human support advisor?
+            <div class="escalation-box">
+              <span style="font-size: 13.5px; font-weight: 600; color: var(--blue-700);">Escalated to ${escapeHtml(msg.dept)}. An advisor will reach out shortly.</span>
+            </div>
+          </div>
+        `;
+        chatWindow.appendChild(escalMsg);
+      } else {
+        renderEscalationUI(msg.id);
+      }
+    } else {
+      addMessageUI(msg.text, msg.sender, msg.meta, msg.id, msg.feedbackSubmitted, true);
+    }
+  });
+  chatWindow.scrollTop = chatWindow.scrollHeight;
+}
+
+function addMessage(text, sender, meta, msgId, feedbackSubmitted, isHistoryLoad) {
+  const id = msgId || 'msg_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+  
+  if (!isHistoryLoad) {
+    chatHistory.push({
+      id: id,
+      sender: sender,
+      text: text,
+      meta: meta,
+      feedbackSubmitted: feedbackSubmitted || false,
+      isEscalation: false
+    });
+    sessionStorage.setItem("chat_history", JSON.stringify(chatHistory));
+  }
+  
+  addMessageUI(text, sender, meta, id, feedbackSubmitted, isHistoryLoad);
+}
+
+function addMessageUI(text, sender, meta, id, feedbackSubmitted, isHistoryLoad) {
+  if (!chatWindow) return;
+  
+  const msg = document.createElement("div");
+  msg.className = "message " + sender;
+  msg.dataset.msgId = id;
+  
+  const avatarText = sender === 'user' ? 'You' : 'AC';
+  const avatarClass = sender === 'user' ? 'user-avatar' : 'bot-avatar';
+  
+  let feedbackHtml = "";
+  if (sender === 'bot') {
+    if (feedbackSubmitted) {
+      feedbackHtml = `<div class="bubble-actions"><span style="font-size: 11px; opacity: 0.6;">Feedback submitted</span></div>`;
+    } else {
+      feedbackHtml = `
+        <div class="bubble-actions">
+          <button class="feedback-btn thumbs-up" onclick="handleFeedback('${id}', 'up')">👍</button>
+          <button class="feedback-btn thumbs-down" onclick="handleFeedback('${id}', 'down')">👎</button>
+        </div>
+      `;
+    }
+  }
+  
+  msg.innerHTML = `
+    <div class="avatar ${avatarClass}">${avatarText}</div>
+    <div class="bubble">
+      ${escapeHtml(text)}
+      ${meta ? `<span class="meta">${escapeHtml(meta)}</span>` : ""}
+      ${feedbackHtml}
+    </div>
+  `;
+  chatWindow.appendChild(msg);
+  chatWindow.scrollTop = chatWindow.scrollHeight;
+}
+
+// Global feedback click handler
+window.handleFeedback = async function(msgId, rating) {
+  const msgIndex = chatHistory.findIndex(m => m.id === msgId);
+  if (msgIndex === -1) return;
+  
+  const msg = chatHistory[msgIndex];
+  msg.feedbackSubmitted = true;
+  sessionStorage.setItem("chat_history", JSON.stringify(chatHistory));
+  
+  // Disable buttons in UI
+  const msgEl = document.querySelector(`[data-msg-id="${msgId}"]`);
+  if (msgEl) {
+    const actionsEl = msgEl.querySelector(".bubble-actions");
+    if (actionsEl) {
+      actionsEl.innerHTML = `<span style="font-size: 11px; opacity: 0.6;">Thank you for your feedback!</span>`;
+    }
+  }
+  
+  // Submit feedback rating to backend gaps log
+  try {
+    await fetch(`${API_BASE}/api/feedback`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        query: msg.queryText || "Feedback button click",
+        matched_question: msg.meta ? msg.meta.replace(/Matched:\s*"/, "").replace(/"\s*\(confidence:.*/, "") : null,
+        answer: msg.text,
+        rating: rating
+      })
+    });
+  } catch (err) {
+    console.error("Failed to submit feedback rating:", err);
+  }
+
+  // Directly show escalation if user downvotes
+  if (rating === "down") {
+    showEscalationUI();
+  }
+};
+
+async function sendMessage(text) {
+  const query = text.trim();
+  if (!query) return;
+  
+  addMessage(query, "user");
+  if (chatInput) {
+    chatInput.value = "";
+  }
+  
+  // Temporarily disable elements while loading
+  const sendBtn = document.getElementById("sendBtn");
+  if (sendBtn) sendBtn.disabled = true;
+  if (chatInput) chatInput.disabled = true;
+
+  // Render typing indicator dots
+  const typingId = 'typing_' + Date.now();
+  const typingMsg = document.createElement("div");
+  typingMsg.className = "message bot typing-indicator-msg";
+  typingMsg.id = typingId;
+  typingMsg.innerHTML = `
+    <div class="avatar bot-avatar">AC</div>
+    <div class="bubble">
+      <span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>
+    </div>
+  `;
+  chatWindow.appendChild(typingMsg);
+  chatWindow.scrollTop = chatWindow.scrollHeight;
+  
+  const startTime = Date.now();
+
+  try {
+    const res = await fetch(`${API_BASE}/chat`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query: query })
+    });
+    
+    if (!res.ok) throw new Error("Network response not ok");
+    const data = await res.json();
+    
+    // Check confidence threshold (0.45)
+    let isLowConfidence = false;
+    if (data.confidence < 0.45 || !data.matched_question) {
+      isLowConfidence = true;
+      consecutiveLowConfidenceCount++;
+    } else {
+      consecutiveLowConfidenceCount = 0;
+    }
+    sessionStorage.setItem("consecutive_low_confidence", consecutiveLowConfidenceCount);
+
+    let metaInfo = "";
+    if (data.matched_question) {
+      metaInfo = `Matched: "${data.matched_question}" (confidence: ${(data.confidence * 100).toFixed(0)}%)`;
+    } else {
+      metaInfo = `Confidence: ${(data.confidence * 100).toFixed(0)}%`;
+    }
+    
+    // Enforce 500ms delay for natural dialogue reading
+    const elapsed = Date.now() - startTime;
+    const remainingDelay = Math.max(500 - elapsed, 0);
+    
+    setTimeout(() => {
+      document.getElementById(typingId)?.remove();
+      
+      const botMsgId = 'msg_' + Date.now();
+      
+      // Save bot response to history
+      chatHistory.push({
+        id: botMsgId,
+        sender: 'bot',
+        text: data.answer,
+        meta: metaInfo,
+        queryText: query,
+        feedbackSubmitted: false,
+        isEscalation: false
+      });
+      sessionStorage.setItem("chat_history", JSON.stringify(chatHistory));
+      
+      addMessageUI(data.answer, "bot", metaInfo, botMsgId, false, true);
+      
+      // Render follow-up chips under the message
+      renderFollowUpChips(data.matched_question, data.answer, query);
+      
+      // Append query to dashboard recent conversations list in real-time
+      recentConversations.unshift({
+        q: query,
+        status: isLowConfidence ? "Escalated" : "Resolved",
+        statusClass: isLowConfidence ? "escalated" : "resolved"
+      });
+      if (recentConversations.length > 50) recentConversations.pop();
+      sessionStorage.setItem("recent_conversations", JSON.stringify(recentConversations));
+      renderRecentConversations();
+      
+      // Escalate if confidence is low
+      if (isLowConfidence) {
+        showEscalationUI();
+      }
+      
+      if (sendBtn) sendBtn.disabled = false;
+      if (chatInput) {
+        chatInput.disabled = false;
+        chatInput.focus();
+      }
+    }, remainingDelay);
+
+  } catch (err) {
+    console.error("API call failed:", err);
+    setTimeout(() => {
+      document.getElementById(typingId)?.remove();
+      addMessage(`Could not connect to the backend server. Make sure it is running on ${API_BASE}`, "bot");
+      if (sendBtn) sendBtn.disabled = false;
+      if (chatInput) {
+        chatInput.disabled = false;
+        chatInput.focus();
+      }
+    }, 500);
+  }
+}
+
+// ---------- Render Follow-up Chips ----------
+function renderFollowUpChips(matchedQuestion, answer, query) {
+  const chipsContainer = document.querySelector(".quick-chips");
+  if (!chipsContainer) return;
+  
+  // Retrieve a random question from KB for related links
+  const otherQuestions = kb.filter(k => k.question !== matchedQuestion);
+  const randomKB = otherQuestions[Math.floor(Math.random() * otherQuestions.length)];
+  const relatedQuestion = randomKB ? randomKB.question : "How do I book a car service appointment?";
+  const relatedLabel = randomKB ? (relatedQuestion.length > 25 ? relatedQuestion.substring(0, 22) + "..." : relatedQuestion) : "Book a service";
+
+  const lastBotMsg = chatHistory.filter(m => m.sender === 'bot').slice(-1)[0];
+  const lastBotMsgId = lastBotMsg ? lastBotMsg.id : null;
+
+  chipsContainer.innerHTML = '';
+  
+  const yesBtn = document.createElement("button");
+  yesBtn.className = "chip";
+  yesBtn.textContent = "👍 Yes, helpful";
+  yesBtn.addEventListener("click", () => {
+    if (lastBotMsgId) {
+      window.handleFeedback(lastBotMsgId, "up");
+    }
+    resetDefaultChips();
+  });
+  
+  const noBtn = document.createElement("button");
+  noBtn.className = "chip";
+  noBtn.textContent = "👎 No, unhelpful";
+  noBtn.addEventListener("click", () => {
+    if (lastBotMsgId) {
+      window.handleFeedback(lastBotMsgId, "down");
+    }
+    resetDefaultChips();
+  });
+  
+  const relBtn = document.createElement("button");
+  relBtn.className = "chip";
+  relBtn.textContent = `🔍 Ask: ${relatedLabel}`;
+  relBtn.dataset.q = relatedQuestion;
+  relBtn.addEventListener("click", () => {
+    sendMessage(relatedQuestion);
+  });
+  
+  chipsContainer.appendChild(yesBtn);
+  chipsContainer.appendChild(noBtn);
+  chipsContainer.appendChild(relBtn);
+}
+
+function resetDefaultChips() {
+  const chipsContainer = document.querySelector(".quick-chips");
+  if (!chipsContainer) return;
+  
+  const defaultChips = [
+    { label: "Book a service", q: "How do I book a car service appointment?" },
+    { label: "Warranty", q: "What is covered under the standard warranty?" },
+    { label: "Roadside assistance", q: "How do I request a roadside assistance service?" },
+    { label: "Find service center", q: "Where can I find my nearest authorized service center?" },
+    { label: "FASTag", q: "How do I get a FASTag for my Maruti car?" },
+    { label: "Suzuki Connect", q: "What is Suzuki Connect?" },
+    { label: "Smart Hybrid", q: "What is Suzuki Smart Hybrid technology?" }
+  ];
+  
+  chipsContainer.innerHTML = '';
+  defaultChips.forEach(chip => {
+    const btn = document.createElement("button");
+    btn.className = "chip";
+    btn.textContent = chip.label;
+    btn.dataset.q = chip.q;
+    btn.addEventListener("click", () => sendMessage(chip.q));
+    chipsContainer.appendChild(btn);
+  });
+}
+
+// ---------- Escalation Path ----------
+function showEscalationUI() {
+  const escalId = 'escal_' + Date.now();
+  
+  chatHistory.push({
+    id: escalId,
+    isEscalation: true,
+    resolved: false
+  });
+  sessionStorage.setItem("chat_history", JSON.stringify(chatHistory));
+  
+  renderEscalationUI(escalId);
+}
+
+function renderEscalationUI(escalId) {
+  if (!chatWindow) return;
+  
+  const msg = document.createElement("div");
+  msg.className = "message bot escalation-msg-block";
+  msg.dataset.msgId = escalId;
+  
+  msg.innerHTML = `
+    <div class="avatar bot-avatar">AC</div>
+    <div class="bubble">
+      I'm sorry I couldn't resolve your queries. Would you like to escalate this issue to a human support advisor?
+      <div class="escalation-box">
+        <label for="escalSelect_${escalId}" style="font-size: 11.5px; font-weight: 600; color: var(--blue-900);">Select Department:</label>
+        <select id="escalSelect_${escalId}">
+          <option value="Service & Maintenance">Service & Maintenance</option>
+          <option value="Insurance & Claims">Insurance & Claims</option>
+          <option value="Spare Parts">Spare Parts</option>
+          <option value="Roadside Assistance">Roadside Assistance</option>
+        </select>
+        <button id="escalBtn_${escalId}" onclick="escalateQuery('${escalId}')">Talk to a human</button>
+      </div>
+    </div>
+  `;
+  
+  chatWindow.appendChild(msg);
+  chatWindow.scrollTop = chatWindow.scrollHeight;
+}
+
+window.escalateQuery = function(escalId) {
+  const select = document.getElementById(`escalSelect_${escalId}`);
+  if (!select) return;
+  
+  const deptName = select.value;
+  
+  const escalIndex = chatHistory.findIndex(m => m.id === escalId);
+  if (escalIndex !== -1) {
+    chatHistory[escalIndex].resolved = true;
+    chatHistory[escalIndex].dept = deptName;
+    sessionStorage.setItem("chat_history", JSON.stringify(chatHistory));
+  }
+  
+  const msgEl = document.querySelector(`[data-msg-id="${escalId}"]`);
+  if (msgEl) {
+    const box = msgEl.querySelector(".escalation-box");
+    if (box) {
+      box.innerHTML = `<span style="font-size: 13.5px; font-weight: 600; color: var(--blue-700);">Escalated to ${escapeHtml(deptName)}. An advisor will reach out shortly.</span>`;
+    }
+  }
+  
+  // Find user's original query text to append to the openings board
+  const lastUserMsg = chatHistory.filter(m => m.sender === 'user').slice(-1)[0];
+  const queryText = lastUserMsg ? lastUserMsg.text : "Support Ticket Inquiry";
+
+  // Append new ticket to the live escalatedTickets dictionary
+  const deptKeyMap = {
+    "Service & Maintenance": "service",
+    "Insurance & Claims": "insurance",
+    "Spare Parts": "parts",
+    "Roadside Assistance": "roadside"
+  };
+  const key = deptKeyMap[deptName];
+  if (key) {
+    escalatedTickets[key].push({
+      q: queryText,
+      user: "Self (Escalated)",
+      status: "New Case",
+      statusClass: "priority"
+    });
+    sessionStorage.setItem("escalated_tickets", JSON.stringify(escalatedTickets));
+    renderAllOpenings();
+  }
+
+  // Track metrics in dashboard
+  escalatedCount++;
+  sessionStorage.setItem("escalated_count", escalatedCount);
+  updateDashboardStats();
+  
+  // Reset tracker
+  consecutiveLowConfidenceCount = 0;
+  sessionStorage.setItem("consecutive_low_confidence", 0);
+};
+
+document.getElementById("sendBtn")?.addEventListener("click", () => sendMessage(chatInput.value));
+chatInput?.addEventListener("keydown", e => { 
+  if (e.key === "Enter") sendMessage(chatInput.value); 
+});
+
+// ---------- Search Logic (Local Filter) ----------
+function renderSearch(query) {
+  const results = document.getElementById("searchResults");
+  if (!results) return;
+  
+  const qn = query.toLowerCase().trim();
+  const filtered = qn 
+    ? kb.filter(i => i.question.toLowerCase().includes(qn) || i.answer.toLowerCase().includes(qn)) 
+    : kb;
+    
+  if (filtered.length === 0) {
+    results.innerHTML = `<div class="panel">No results found matching "${query}".</div>`;
+    return;
+  }
+  
+  results.innerHTML = filtered.map(item => `
+    <div class="kb-item">
+      <div>
+        <div class="q">${escapeHtml(item.question)}</div>
+        <div class="a">${escapeHtml(item.answer)}</div>
+      </div>
+    </div>
+  `).join("");
+}
+
+document.getElementById("searchInput")?.addEventListener("input", e => {
+  renderSearch(e.target.value);
+});
+
+// ---------- Utilities ----------
+function escapeHtml(str) {
+  const d = document.createElement("div");
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+// ---------- PDF Drag & Drop Ingestion ----------
+function initPdfUpload() {
+  const uploadBox = document.getElementById("uploadBox");
+  if (!uploadBox) return;
+
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    uploadBox.addEventListener(eventName, e => {
+      e.preventDefault();
+      e.stopPropagation();
+    }, false);
+  });
+
+  ['dragenter', 'dragover'].forEach(eventName => {
+    uploadBox.addEventListener(eventName, () => {
+      uploadBox.style.background = "var(--blue-100)";
+      uploadBox.style.borderColor = "var(--blue-500)";
+    }, false);
+  });
+
+  ['dragleave', 'drop'].forEach(eventName => {
+    uploadBox.addEventListener(eventName, () => {
+      uploadBox.style.background = "var(--blue-50)";
+      uploadBox.style.borderColor = "var(--blue-200)";
+    }, false);
+  });
+
+  uploadBox.addEventListener('drop', e => {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+    if (files.length > 0) {
+      handlePdfUpload(files[0]);
+    }
+  });
+
+  uploadBox.addEventListener('click', () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".pdf";
+    input.onchange = e => {
+      if (e.target.files.length > 0) {
+        handlePdfUpload(e.target.files[0]);
+      }
+    };
+    input.click();
+  });
+}
+
+async function handlePdfUpload(file) {
+  const uploadBox = document.getElementById("uploadBox");
+  if (!uploadBox) return;
+
+  if (!file.name.toLowerCase().endsWith(".pdf")) {
+    alert("Only PDF files are supported.");
+    return;
+  }
+  
+  uploadBox.innerHTML = `<span>⏳ Uploading and extracting Q&As from <strong>${escapeHtml(file.name)}</strong>...</span>`;
+  
+  const formData = new FormData();
+  formData.append("file", file);
+  
+  try {
+    const res = await fetch(`${API_BASE}/api/upload-pdf`, {
+      method: "POST",
+      body: formData
+    });
+    
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.detail || "Failed to process PDF file.");
+    }
+    
+    uploadBox.innerHTML = `<span style="color: #27ae60; font-weight: bold;">✔</span> Successfully extracted <strong>${data.extracted}</strong> pairs (added <strong>${data.added}</strong> new entries) from ${escapeHtml(file.name)}!`;
+    
+    await loadKb();
+    
+    setTimeout(() => {
+      uploadBox.innerHTML = `📄 Drag &amp; drop a PDF here to extract Q&amp;A pairs automatically`;
+    }, 4500);
+    
+  } catch (err) {
+    console.error(err);
+    uploadBox.innerHTML = `<span style="color: #c0392b;">⚠️ Error: ${escapeHtml(err.message)}</span>`;
+    setTimeout(() => {
+      uploadBox.innerHTML = `📄 Drag &amp; drop a PDF here to extract Q&amp;A pairs automatically`;
+    }, 4500);
+  }
+}
+
+// ---------- Initial Boot ----------
+async function init() {
+  await loadKb();
+  renderChatHistory();
+  resetDefaultChips();
+  renderAllOpenings();
+  renderRecentConversations();
+  initPdfUpload();
+
+  // Bind click handlers for dashboard recent conversations
+  document.querySelectorAll(".activity-row").forEach(row => {
+    row.style.cursor = "pointer";
+    row.addEventListener("click", () => {
+      const qSpan = row.querySelector(".q");
+      if (qSpan) {
+        const qText = qSpan.textContent.replace(/"/g, "").trim();
+        
+        // Find chat button in sidebar nav and click it
+        const chatBtn = document.querySelector('.nav-item[data-page="chat"]');
+        if (chatBtn) {
+          chatBtn.click();
+        }
+        
+        // Execute query
+        sendMessage(qText);
+      }
+    });
+  });
+}
+
+init();
+</script>
+</body>
+</html>

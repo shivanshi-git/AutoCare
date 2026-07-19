@@ -1,0 +1,59 @@
+# =============================================================================
+# Maruti Suzuki Knowledge Assistant — .gitignore
+# =============================================================================
+
+# --- Environment & Secrets ---
+.env
+*.pem
+*.key
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+*.whl
+.venv/
+venv/
+env/
+
+# --- Testing ---
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+
+# --- IDE ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Docker ---
+docker-compose.override.yml
+
+# --- Storage (local dev data) ---
+storage/
+*.faiss
+*.pkl
+*.db
+
+# --- Node (if any tooling added later) ---
+node_modules/
+
+# --- Logs ---
+*.log
+logs/
+
+# --- Alembic ---
+alembic/versions/*.pyc
