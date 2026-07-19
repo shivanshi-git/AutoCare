@@ -1,7 +1,7 @@
 """
 Maruti FAQ Chatbot - Backend (FastAPI)
 ----------------------------------------
-Semantic FAQ matching using SentenceTransformers (all-MiniLM-L6-v2) for robust paraphrase handling.
+Semantic FAQ matching using FastEmbed (all-MiniLM-L6-v2 ONNX) for ultra-lightweight, memory-efficient paraphrase handling.
 """
 
 import json
@@ -16,7 +16,8 @@ from fastapi import FastAPI, HTTPException, status, Depends, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
-from sentence_transformers import SentenceTransformer, util
+from fastembed import TextEmbedding
+import numpy as np
 import pypdf
 
 # Load environment configuration from root .env
@@ -70,8 +71,27 @@ app.add_middleware(
 # ---------------------------------------------------------------------------
 # Load Model & FAQ data at startup
 # ---------------------------------------------------------------------------
-# Load semantic embedding model
-model = SentenceTransformer('all-MiniLM-L6-v2')
+# Load lightweight ONNX-based semantic embedding model (FastEmbed - ~100MB RAM vs PyTorch 500MB+)
+embedding_model = TextEmbedding("sentence-transformers/all-MiniLM-L6-v2")
+
+
+def encode_texts(texts: list[str]) -> np.ndarray:
+    if not texts:
+        return np.empty((0, 384), dtype=np.float32)
+    return np.array(list(embedding_model.embed(texts)), dtype=np.float32)
+
+
+def encode_query(query: str) -> np.ndarray:
+    return list(embedding_model.embed([query]))[0]
+
+
+def cos_sim_vector(query_vec: np.ndarray, doc_matrix: np.ndarray) -> np.ndarray:
+    if doc_matrix.size == 0:
+        return np.array([], dtype=np.float32)
+    dot = np.dot(doc_matrix, query_vec)
+    norms = np.linalg.norm(doc_matrix, axis=1) * np.linalg.norm(query_vec)
+    return dot / (norms + 1e-9)
+
 
 FAQ_PATH = Path(__file__).parent / "faqs.json"
 with open(FAQ_PATH, "r", encoding="utf-8") as f:
@@ -79,7 +99,7 @@ with open(FAQ_PATH, "r", encoding="utf-8") as f:
 
 # Pre-compute embeddings for all FAQ questions
 FAQ_QUESTIONS = [faq["question"] for faq in FAQS]
-FAQ_EMBEDDINGS = model.encode(FAQ_QUESTIONS, convert_to_tensor=True)
+FAQ_EMBEDDINGS = encode_texts(FAQ_QUESTIONS)
 
 CONFIDENCE_THRESHOLD = 0.45  # below this -> fallback response
 FALLBACK_ANSWER = (
@@ -102,12 +122,12 @@ def classify_department(question: str) -> str:
 
 
 def find_best_match(user_query: str):
-    if not FAQ_QUESTIONS or FAQ_EMBEDDINGS is None:
+    if not FAQ_QUESTIONS or FAQ_EMBEDDINGS is None or len(FAQ_EMBEDDINGS) == 0:
         return None, 0.0
-    query_embedding = model.encode(user_query, convert_to_tensor=True)
-    similarities = util.cos_sim(query_embedding, FAQ_EMBEDDINGS)[0]
-    best_idx = similarities.argmax().item()
-    best_score = similarities[best_idx].item()
+    query_embedding = encode_query(user_query)
+    similarities = cos_sim_vector(query_embedding, FAQ_EMBEDDINGS)
+    best_idx = int(np.argmax(similarities))
+    best_score = float(similarities[best_idx])
     return FAQS[best_idx], best_score
 
 
@@ -220,7 +240,7 @@ def add_qa_pair(req: QAPairRequest, token: str = Depends(authenticate)):
 
     # Re-calculate embeddings dynamically so they are instantly searchable
     FAQ_QUESTIONS = [faq["question"] for faq in FAQS]
-    FAQ_EMBEDDINGS = model.encode(FAQ_QUESTIONS, convert_to_tensor=True)
+    FAQ_EMBEDDINGS = encode_texts(FAQ_QUESTIONS)
 
     return {"status": "success", "message": "FAQ pair added and embedded successfully."}
 
@@ -273,7 +293,7 @@ def delete_qa_pair(req: QADeleteRequest, token: str = Depends(authenticate)):
     # Re-calculate embeddings dynamically so they are instantly searchable
     FAQ_QUESTIONS = [faq["question"] for faq in FAQS]
     if FAQ_QUESTIONS:
-        FAQ_EMBEDDINGS = model.encode(FAQ_QUESTIONS, convert_to_tensor=True)
+        FAQ_EMBEDDINGS = encode_texts(FAQ_QUESTIONS)
     else:
         FAQ_EMBEDDINGS = None
 
@@ -394,7 +414,7 @@ async def upload_pdf(file: UploadFile = File(...)):
 
             # Re-index embeddings dynamically
             FAQ_QUESTIONS = [faq["question"] for faq in FAQS]
-            FAQ_EMBEDDINGS = model.encode(FAQ_QUESTIONS, convert_to_tensor=True)
+            FAQ_EMBEDDINGS = encode_texts(FAQ_QUESTIONS)
 
         return {
             "success": True,
