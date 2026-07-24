@@ -484,6 +484,7 @@ def update_escalation_status(req: EscalationStatusRequest, token: str = Depends(
     if not ESCALATIONS_PATH.exists():
         raise HTTPException(status_code=404, detail="No tickets found")
     try:
+        # --- DB LAYER (swap here for Supabase) ---
         with open(ESCALATIONS_PATH, "r", encoding="utf-8") as f:
             tickets = json.load(f)
 
@@ -499,6 +500,7 @@ def update_escalation_status(req: EscalationStatusRequest, token: str = Depends(
 
         with open(ESCALATIONS_PATH, "w", encoding="utf-8") as f:
             json.dump(tickets, f, indent=2, ensure_ascii=False)
+        # --- END DB LAYER ---
 
         return {"status": "success"}
     except HTTPException as he:
@@ -507,6 +509,36 @@ def update_escalation_status(req: EscalationStatusRequest, token: str = Depends(
          raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to update ticket: {str(e)}"
+        )
+
+
+@app.delete("/api/escalation/{ticket_id}", status_code=status.HTTP_200_OK)
+def delete_escalation(ticket_id: str, token: str = Depends(authenticate)):
+    """Permanently delete a support ticket by ID (admin protected)."""
+    if not ESCALATIONS_PATH.exists():
+        raise HTTPException(status_code=404, detail="No tickets found")
+    try:
+        # --- DB LAYER (swap here for Supabase) ---
+        with open(ESCALATIONS_PATH, "r", encoding="utf-8") as f:
+            tickets = json.load(f)
+
+        original_len = len(tickets)
+        tickets = [t for t in tickets if t["id"] != ticket_id]
+
+        if len(tickets) == original_len:
+            raise HTTPException(status_code=404, detail="Ticket not found")
+
+        with open(ESCALATIONS_PATH, "w", encoding="utf-8") as f:
+            json.dump(tickets, f, indent=2, ensure_ascii=False)
+        # --- END DB LAYER ---
+
+        return {"status": "success", "message": f"Ticket {ticket_id} permanently deleted."}
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to delete ticket: {str(e)}"
         )
 
 

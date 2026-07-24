@@ -514,9 +514,192 @@
   .badge-unanswered { background: var(--warning-light); color: var(--warning); padding: 2px 6px; border-radius: 4px; font-weight: 600; font-size: 10px; text-transform: uppercase; }
   .badge-negative { background: var(--danger-light); color: var(--danger); padding: 2px 6px; border-radius: 4px; font-weight: 600; font-size: 10px; text-transform: uppercase; }
 
+  /* ---------- Toast Notifications ---------- */
+  #toastContainer {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+  }
+
+  .toast {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    border-radius: var(--radius-md);
+    font-size: 13.5px;
+    font-weight: 600;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    min-width: 280px;
+    max-width: 380px;
+    pointer-events: all;
+    animation: toast-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    border: 1px solid transparent;
+  }
+
+  @keyframes toast-in {
+    from { opacity: 0; transform: translateX(40px) scale(0.95); }
+    to   { opacity: 1; transform: translateX(0) scale(1); }
+  }
+
+  @keyframes toast-out {
+    from { opacity: 1; transform: translateX(0) scale(1); }
+    to   { opacity: 0; transform: translateX(40px) scale(0.95); }
+  }
+
+  .toast.success { background: var(--success-light); color: #166534; border-color: #bbf7d0; }
+  .toast.warning { background: var(--warning-light); color: #92400e; border-color: #fde68a; }
+  .toast.error   { background: var(--danger-light);  color: #991b1b; border-color: #fecaca; }
+  .toast-icon { font-size: 18px; flex-shrink: 0; }
+  .toast-msg  { flex: 1; line-height: 1.4; }
+
+  /* ---------- Modal Overlay ---------- */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 20, 50, 0.45);
+    backdrop-filter: blur(4px);
+    z-index: 10000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal-card {
+    background: #fff;
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    width: 100%;
+    max-width: 460px;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.2);
+    animation: card-appear 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .modal-title { font-size: 17px; font-weight: 700; color: var(--blue-900); margin-bottom: 8px; }
+  .modal-subtitle { font-size: 13px; color: var(--grey-text); margin-bottom: 20px; line-height: 1.5; }
+
+  .modal-query-preview {
+    background: var(--blue-50);
+    border: 1px solid var(--blue-200);
+    border-left: 3px solid var(--blue-500);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    font-size: 13px;
+    font-style: italic;
+    color: var(--blue-700);
+    margin-bottom: 24px;
+  }
+
+  .modal-actions { display: flex; flex-direction: column; gap: 10px; }
+
+  .modal-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    border-radius: var(--radius-md);
+    border: 1.5px solid var(--border);
+    background: #fff;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--blue-900);
+    transition: all 0.15s ease;
+    text-align: left;
+  }
+  .modal-btn:hover { border-color: var(--blue-400); background: var(--blue-50); }
+  .modal-btn.danger { color: var(--danger); border-color: #fecaca; }
+  .modal-btn.danger:hover { background: var(--danger-light); border-color: var(--danger); }
+  .modal-btn.success-btn { color: #166534; border-color: #bbf7d0; }
+  .modal-btn.success-btn:hover { background: var(--success-light); border-color: var(--success); }
+  .modal-btn-icon { font-size: 20px; flex-shrink: 0; }
+  .modal-btn-label { font-weight: 700; font-size: 13.5px; display: block; }
+  .modal-btn-desc { font-weight: 400; font-size: 12px; color: var(--grey-text); display: block; margin-top: 2px; }
+
+  .modal-cancel {
+    margin-top: 8px;
+    text-align: center;
+    font-size: 12.5px;
+    color: var(--grey-text);
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-weight: 600;
+    text-decoration: underline;
+    width: 100%;
+    padding: 4px;
+  }
+  .modal-cancel:hover { color: var(--blue-700); }
+
+
+
 </style>
 </head>
 <body>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer"></div>
+
+  <!-- Resolve Gap Modal -->
+  <div class="modal-overlay" id="resolveGapModal">
+    <div class="modal-card">
+      <div class="modal-title">Resolve Knowledge Gap</div>
+      <div class="modal-subtitle">What would you like to do with this logged query?</div>
+      <div class="modal-query-preview" id="resolveGapQuery"></div>
+      <div class="modal-actions">
+        <button class="modal-btn success-btn" id="resolveGapAddKb">
+          <span class="modal-btn-icon">📥</span>
+          <span>
+            <span class="modal-btn-label">Add to Knowledge Base</span>
+            <span class="modal-btn-desc">Pre-fill the KB form with this query and remove it from the gap log</span>
+          </span>
+        </button>
+        <button class="modal-btn danger" id="resolveGapRemove">
+          <span class="modal-btn-icon">🗑</span>
+          <span>
+            <span class="modal-btn-label">Just Remove from Log</span>
+            <span class="modal-btn-desc">Delete this entry without adding it to the KB</span>
+          </span>
+        </button>
+      </div>
+      <button class="modal-cancel" id="resolveGapCancel">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Resolve Ticket Modal -->
+  <div class="modal-overlay" id="resolveTicketModal">
+    <div class="modal-card">
+      <div class="modal-title">Resolve Support Ticket</div>
+      <div class="modal-subtitle">This ticket will be marked as <strong>Resolved</strong>. Do you also want to remove it from the list?</div>
+      <div class="modal-query-preview" id="resolveTicketQuery"></div>
+      <div class="modal-actions">
+        <button class="modal-btn success-btn" id="resolveTicketKeep">
+          <span class="modal-btn-icon">✅</span>
+          <span>
+            <span class="modal-btn-label">Mark Resolved &amp; Keep</span>
+            <span class="modal-btn-desc">Update status to Resolved and keep in the list</span>
+          </span>
+        </button>
+        <button class="modal-btn danger" id="resolveTicketRemove">
+          <span class="modal-btn-icon">🗑</span>
+          <span>
+            <span class="modal-btn-label">Mark Resolved &amp; Remove</span>
+            <span class="modal-btn-desc">Update status and permanently delete this ticket</span>
+          </span>
+        </button>
+      </div>
+      <button class="modal-cancel" id="resolveTicketCancel">Cancel</button>
+    </div>
+  </div>
 
   <!-- AUTHENTICATION GATE -->
   <div class="login-container" id="loginContainer">
@@ -985,18 +1168,36 @@
       }).join("");
     }
 
+    // ---------- Toast Notification System ----------
+    function showToast(message, type = "success", durationMs = 4000) {
+      const container = document.getElementById("toastContainer");
+      const icons = { success: "✅", warning: "⚠️", error: "❌" };
+      const toast = document.createElement("div");
+      toast.className = `toast ${type}`;
+      toast.innerHTML = `<span class="toast-icon">${icons[type] || "ℹ️"}</span><span class="toast-msg">${message}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.animation = "toast-out 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards";
+        setTimeout(() => toast.remove(), 320);
+      }, durationMs);
+    }
+
     // Add FAQ Submit Handler
     document.getElementById("addFaqForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const qInput = document.getElementById("faqQuestion");
       const aInput = document.getElementById("faqAnswer");
       const deptSelect = document.getElementById("faqDeptSelect");
+      const submitBtn = e.target.querySelector("button[type='submit']");
 
       const question = qInput.value.trim();
       const answer = aInput.value.trim();
       const department = deptSelect.value;
 
       if (!question || !answer) return;
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Adding...";
 
       try {
         const res = await fetch(`${API_BASE}/api/qa`, {
@@ -1007,17 +1208,24 @@
           },
           body: JSON.stringify({ question, answer, department })
         });
-        
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.detail || "Failed to add FAQ pair");
 
-        qInput.value = "";
-        aInput.value = "";
-        
-        // Reload all data
-        await loadAdminData();
+        const data = await res.json();
+
+        if (res.status === 400 && data.detail && data.detail.toLowerCase().includes("already exists")) {
+          showToast("This question is already in the Knowledge Base.", "warning");
+        } else if (!res.ok) {
+          throw new Error(data.detail || "Failed to add FAQ pair");
+        } else {
+          showToast("FAQ entry added to the Knowledge Base successfully!", "success");
+          qInput.value = "";
+          aInput.value = "";
+          await loadAdminData();
+        }
       } catch (err) {
-        alert("Error adding QA entry: " + err.message);
+        showToast("Error: " + err.message, "error");
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Add Entry to KB";
       }
     });
 
@@ -1039,11 +1247,13 @@
         const data = await res.json();
         if (!res.ok) throw new Error(data.detail || "Failed to delete FAQ");
 
+        showToast("FAQ entry deleted.", "success", 3000);
         await loadAdminData();
       } catch (err) {
-        alert("Error deleting QA entry: " + err.message);
+        showToast("Error deleting FAQ: " + err.message, "error");
       }
     };
+
 
     // Filter event listeners
     document.getElementById("searchFaqInput").addEventListener("input", renderFaqs);
@@ -1073,6 +1283,9 @@
       }
 
       listContainer.innerHTML = filtered.map(t => {
+        const statusColor = t.status === 'Resolved' ? '#166534' : t.status === 'In Progress' ? '#92400e' : '#1e40af';
+        const statusBg = t.status === 'Resolved' ? '#dcfce7' : t.status === 'In Progress' ? '#fef3c7' : '#dbeafe';
+        const statusBorder = t.status === 'Resolved' ? '#bbf7d0' : t.status === 'In Progress' ? '#fde68a' : '#bfdbfe';
         return `
           <div class="gap-card" style="border-left-color: var(--blue-600); align-items: flex-start; flex-direction: column; gap: 12px; border-left-width: 4px;">
             <div style="display: flex; justify-content: space-between; width: 100%; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 8px;">
@@ -1081,7 +1294,7 @@
             </div>
             <div style="width: 100%;">
               <div style="font-size: 13.5px; font-weight: 600; color: #1e293b; margin-bottom: 4px;">User Query:</div>
-              <div style="background: var(--blue-50); padding: 10px; border-radius: var(--radius-sm); font-size: 13px; font-style: italic; color: #475569; border-left: 3px solid var(--blue-200); margin-bottom: 12px;">"${escapeHtml(t.query)}"</div>
+              <div style="background: var(--blue-50); padding: 10px; border-radius: var(--radius-sm); font-size: 13px; font-style: italic; color: #475569; border-left: 3px solid var(--blue-200); margin-bottom: 12px;">&quot;${escapeHtml(t.query)}&quot;</div>
               
               <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; font-size: 12.5px; margin-bottom: 12px; background: #fafbfc; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
                 <div><strong>Customer:</strong> ${escapeHtml(t.name)}</div>
@@ -1093,18 +1306,21 @@
                 <div style="font-size: 12px; color: var(--grey-text);">Department: <span class="tag" style="background: var(--blue-100); color: var(--blue-700); border: 1px solid var(--blue-200); margin-top: 0;">${escapeHtml(t.department)}</span></div>
                 
                 <div style="display: flex; align-items: center; gap: 8px;">
-                  <span style="font-size: 12px; font-weight: 600; color: var(--grey-text);">Status:</span>
-                  <select onchange="handleUpdateTicketStatus('${t.id}', this.value)" style="padding: 4px 8px; font-size: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); outline: none; background: white; font-weight: 600;">
-                    <option value="New" ${t.status === 'New' ? 'selected' : ''}>New</option>
-                    <option value="In Progress" ${t.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
-                    <option value="Resolved" ${t.status === 'Resolved' ? 'selected' : ''}>Resolved</option>
-                  </select>
+                  <span style="font-size: 12px; color: ${statusColor}; background: ${statusBg}; border: 1px solid ${statusBorder}; border-radius: 99px; padding: 3px 10px; font-weight: 700;">${escapeHtml(t.status)}</span>
+                  ${t.status !== 'Resolved' ? `
+                  <select onchange="handleTicketStatusChange('${t.id}', this.value, this)" style="padding: 4px 8px; font-size: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); outline: none; background: white; font-weight: 600;">
+                    <option value="" disabled selected>Change status…</option>
+                    <option value="New">New</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Resolved">Resolve…</option>
+                  </select>` : `<button onclick="handleDeleteTicket('${t.id}')" style="padding: 4px 10px; font-size: 12px; border-radius: var(--radius-sm); border: 1px solid #fecaca; color: var(--danger); background: transparent; cursor: pointer; font-weight: 600; font-family: inherit;">Remove</button>`}
                 </div>
               </div>
             </div>
           </div>
         `;
       }).join("");
+
     }
 
     // 3. Knowledge Gaps (Logs)
@@ -1158,37 +1374,157 @@
       }).join("");
     }
 
-    // Gap resolution button handler
+    // ---------- Knowledge Gaps Resolve Modal ----------
+    let _pendingGapIndex = null;
+
     window.handleResolveGap = function(index) {
       const log = gapLogs[index];
       if (!log) return;
+      _pendingGapIndex = index;
+      document.getElementById("resolveGapQuery").textContent = `"${log.query}"`;
+      document.getElementById("resolveGapModal").classList.add("open");
+    };
 
-      // Populate Q&A inputs
+    async function removeGapFromLog(log) {
+      try {
+        await fetch(`${API_BASE}/api/unanswered/remove`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${adminToken}` },
+          body: JSON.stringify({ query: log.query, timestamp: log.timestamp })
+        });
+      } catch(e) {
+        console.warn("Could not remove gap from log:", e);
+      }
+    }
+
+    function closeGapModal() {
+      document.getElementById("resolveGapModal").classList.remove("open");
+      _pendingGapIndex = null;
+    }
+
+    document.getElementById("resolveGapCancel").addEventListener("click", closeGapModal);
+    document.getElementById("resolveGapModal").addEventListener("click", (e) => {
+      if (e.target === e.currentTarget) closeGapModal();
+    });
+
+    document.getElementById("resolveGapRemove").addEventListener("click", async () => {
+      const log = gapLogs[_pendingGapIndex];
+      closeGapModal();
+      if (!log) return;
+      await removeGapFromLog(log);
+      showToast("Gap entry removed from log.", "success", 3000);
+      await fetchGapLogs();
+      renderGapLogs();
+      renderDashboard();
+    });
+
+    document.getElementById("resolveGapAddKb").addEventListener("click", async () => {
+      const log = gapLogs[_pendingGapIndex];
+      closeGapModal();
+      if (!log) return;
+
+      // Pre-fill KB form
       document.getElementById("faqQuestion").value = log.query;
       document.getElementById("faqAnswer").value = log.type === "negative_feedback" ? `Corrected answer: ${log.answer}` : "";
-      
-      // Auto-classify department if we can
+
+      // Auto-classify department
       const queryLower = log.query.toLowerCase();
       let department = "General";
-      if (queryLower.includes("warranty") || queryLower.includes("service") || queryLower.includes("maintenance")) {
-        department = "Service & Maintenance";
-      } else if (queryLower.includes("insurance") || queryLower.includes("claim")) {
-        department = "Insurance & Claims";
-      } else if (queryLower.includes("parts") || queryLower.includes("accessory")) {
-        department = "Spare Parts";
-      } else if (queryLower.includes("roadside") || queryLower.includes("assistance") || queryLower.includes("breakdown")) {
-        department = "Roadside Assistance";
-      }
+      if (queryLower.includes("warranty") || queryLower.includes("service") || queryLower.includes("maintenance")) department = "Service & Maintenance";
+      else if (queryLower.includes("insurance") || queryLower.includes("claim")) department = "Insurance & Claims";
+      else if (queryLower.includes("parts") || queryLower.includes("accessory")) department = "Spare Parts";
+      else if (queryLower.includes("roadside") || queryLower.includes("assistance") || queryLower.includes("breakdown")) department = "Roadside Assistance";
       document.getElementById("faqDeptSelect").value = department;
 
-      // Switch tab to KB Management
+      // Remove from log then navigate
+      await removeGapFromLog(log);
+      await fetchGapLogs();
+      renderGapLogs();
+      renderDashboard();
+
       document.querySelector('.nav-item[data-page="kb"]').click();
-      
-      // Focus on answer textbox
       document.getElementById("faqAnswer").focus();
+      showToast('Form pre-filled. Fill in the answer and click "Add Entry to KB".', "warning", 7000);
+    });
+
+    // ---------- Support Tickets Resolve Modal ----------
+    let _pendingTicketId = null;
+    let _pendingTicketSelectEl = null;
+
+    window.handleTicketStatusChange = function(ticketId, newStatus, selectEl) {
+      if (newStatus === "Resolved") {
+        const ticket = tickets.find(t => t.id === ticketId);
+        document.getElementById("resolveTicketQuery").textContent =
+          ticket ? `"${ticket.query}"` : `Ticket ID: ${ticketId}`;
+        _pendingTicketId = ticketId;
+        _pendingTicketSelectEl = selectEl;
+        document.getElementById("resolveTicketModal").classList.add("open");
+      } else {
+        handleUpdateTicketStatus(ticketId, newStatus);
+      }
+    };
+
+    function closeTicketModal(revertSelect) {
+      document.getElementById("resolveTicketModal").classList.remove("open");
+      if (revertSelect && _pendingTicketSelectEl) {
+        _pendingTicketSelectEl.value = "";
+      }
+      _pendingTicketId = null;
+      _pendingTicketSelectEl = null;
+    }
+
+    document.getElementById("resolveTicketCancel").addEventListener("click", () => closeTicketModal(true));
+    document.getElementById("resolveTicketModal").addEventListener("click", (e) => {
+      if (e.target === e.currentTarget) closeTicketModal(true);
+    });
+
+    document.getElementById("resolveTicketKeep").addEventListener("click", async () => {
+      const id = _pendingTicketId;
+      closeTicketModal(false);
+      await handleUpdateTicketStatus(id, "Resolved");
+      showToast("Ticket marked as Resolved.", "success", 3000);
+    });
+
+    document.getElementById("resolveTicketRemove").addEventListener("click", async () => {
+      const id = _pendingTicketId;
+      closeTicketModal(false);
+      try {
+        await fetch(`${API_BASE}/api/escalation`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${adminToken}` },
+          body: JSON.stringify({ ticket_id: id, status: "Resolved" })
+        });
+        const res = await fetch(`${API_BASE}/api/escalation/${id}`, {
+          method: "DELETE",
+          headers: { "Authorization": `Bearer ${adminToken}` }
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "Failed to delete ticket");
+        showToast("Ticket resolved and permanently removed.", "success", 3000);
+        await loadAdminData();
+      } catch (err) {
+        showToast("Error: " + err.message, "error");
+      }
+    });
+
+    window.handleDeleteTicket = async function(ticketId) {
+      if (!confirm("Permanently delete this resolved ticket?")) return;
+      try {
+        const res = await fetch(`${API_BASE}/api/escalation/${ticketId}`, {
+          method: "DELETE",
+          headers: { "Authorization": `Bearer ${adminToken}` }
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "Failed to delete ticket");
+        showToast("Ticket removed.", "success", 3000);
+        await loadAdminData();
+      } catch (err) {
+        showToast("Error: " + err.message, "error");
+      }
     };
 
     // 4. PDF Auto-Ingestion
+
     function initPdfUpload() {
       const box = document.getElementById("pdfUploadBox");
       if (!box) return;
