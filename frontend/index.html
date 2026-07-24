@@ -573,7 +573,12 @@
       </button>
     </div>
 
-    <div class="sidebar-footer" style="margin-top: 0;">v0.2.0 - Active API</div>
+    <div class="sidebar-footer" style="margin-top: auto; display: flex; flex-direction: column; gap: 8px;">
+      <a href="admin.html" target="_blank" style="color: var(--blue-600); font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 4px; font-size: 13px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 2px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> Admin Portal
+      </a>
+      <div style="font-size: 11px; color: #94a3b8;">v0.2.0 - Active API</div>
+    </div>
   </aside>
 
   <main class="main">
@@ -606,7 +611,7 @@
           <p>Live demo — answers come from the knowledge base shown in Documents.</p>
         </div>
         <button id="newChatBtn" class="btn-primary" style="padding: 10px 18px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; cursor: pointer; border: none; display: flex; align-items: center; gap: 6px;">
-          <span>➕</span> New Chat
+          New Chat
         </button>
       </div>
       <div class="chat-window" id="chatWindow">
@@ -634,38 +639,18 @@
     <section class="page" id="page-documents">
       <div class="page-header">
         <h1>Documents</h1>
-        <p>The knowledge base the AI Chat draws answers from. Add entries manually or upload a PDF.</p>
-      </div>
-      <div class="upload-box" id="uploadBox" style="border: 2px dashed var(--blue-200); padding: 25px; text-align: center; border-radius: var(--radius-md); background: var(--blue-50); color: var(--blue-700); cursor: pointer; transition: background 0.15s ease, border-color 0.15s ease; margin-bottom: 15px; font-weight: 500; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;">
-        <span>📄 Drag &amp; drop a PDF here to extract Q&amp;A pairs automatically</span>
-        <span style="font-size: 12px; color: var(--grey-text);">or</span>
-        <button class="btn-primary" style="padding: 8px 16px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; cursor: pointer; border: none; background: var(--blue-600); color: var(--white); display: inline-flex; align-items: center; gap: 6px; pointer-events: none;">
-          <span>📤</span> Upload PDF
-        </button>
+        <p>The FAQ knowledge base the AI Chat draws answers from.</p>
       </div>
       
-      <!-- Department Filters -->
       <div class="dept-filters" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;">
         <button class="chip active dept-filter-btn" data-dept="all" style="font-weight: 600; padding: 8px 16px;">All Departments</button>
-        <button class="chip dept-filter-btn" data-dept="Service & Maintenance" style="font-weight: 500; padding: 8px 16px; background: #e8f5e9; color: #2e7d32; border-color: #c8e6c9;">🛠️ Service &amp; Maintenance</button>
-        <button class="chip dept-filter-btn" data-dept="Insurance & Claims" style="font-weight: 500; padding: 8px 16px; background: #e3f2fd; color: #1565c0; border-color: #bbdefb;">📄 Insurance &amp; Claims</button>
-        <button class="chip dept-filter-btn" data-dept="Spare Parts" style="font-weight: 500; padding: 8px 16px; background: #f3e5f5; color: #6a1b9a; border-color: #e1bee7;">⚙️ Spare Parts</button>
-        <button class="chip dept-filter-btn" data-dept="Roadside Assistance" style="font-weight: 500; padding: 8px 16px; background: #fff3e0; color: #e65100; border-color: #ffe0b2;">🚨 Roadside Assistance</button>
-        <button class="chip dept-filter-btn" data-dept="General" style="font-weight: 500; padding: 8px 16px; background: #f5f5f5; color: #424242; border-color: #e0e0e0;">💡 General</button>
+        <button class="chip dept-filter-btn" data-dept="Service & Maintenance" style="font-weight: 500; padding: 8px 16px; background: #e8f5e9; color: #2e7d32; border-color: #c8e6c9;">Service &amp; Maintenance</button>
+        <button class="chip dept-filter-btn" data-dept="Insurance & Claims" style="font-weight: 500; padding: 8px 16px; background: #e3f2fd; color: #1565c0; border-color: #bbdefb;">Insurance &amp; Claims</button>
+        <button class="chip dept-filter-btn" data-dept="Spare Parts" style="font-weight: 500; padding: 8px 16px; background: #f3e5f5; color: #6a1b9a; border-color: #e1bee7;">Spare Parts</button>
+        <button class="chip dept-filter-btn" data-dept="Roadside Assistance" style="font-weight: 500; padding: 8px 16px; background: #fff3e0; color: #e65100; border-color: #ffe0b2;">Roadside Assistance</button>
+        <button class="chip dept-filter-btn" data-dept="General" style="font-weight: 500; padding: 8px 16px; background: #f5f5f5; color: #424242; border-color: #e0e0e0;">General</button>
       </div>
 
-      <div class="doc-toolbar" style="display: flex; gap: 10px; margin-bottom: 16px;">
-        <input type="text" id="kbQuestion" placeholder="New question" style="flex: 2;">
-        <input type="text" id="kbAnswer" placeholder="Answer" style="flex: 2;">
-        <select id="kbDeptSelect" style="flex: 1; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border); font-size: 13px; background: var(--white); outline: none; height: 38px; color: var(--blue-900);">
-          <option value="General">General</option>
-          <option value="Service & Maintenance">Service &amp; Maintenance</option>
-          <option value="Insurance & Claims">Insurance &amp; Claims</option>
-          <option value="Spare Parts">Spare Parts</option>
-          <option value="Roadside Assistance">Roadside Assistance</option>
-        </select>
-        <button class="btn-primary" id="kbAddBtn" style="height: 38px;">Add</button>
-      </div>
       <div id="kbList"></div>
     </section>
 
@@ -790,8 +775,8 @@
     <h3 style="font-size: 17px; font-weight: 700; color: var(--blue-900);">Start a New Chat?</h3>
     <p style="font-size: 13.5px; color: var(--grey-text); line-height: 1.5;">Would you like to save your current chat history before starting a new one?</p>
     <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
-      <button id="modalSaveBtn" class="btn-primary" style="padding: 12px; border-radius: var(--radius-md); font-size: 13.5px; border: none; cursor: pointer; font-weight: 600; text-align: center; background: var(--blue-600); color: var(--white);">💾 Save &amp; Start New Chat</button>
-      <button id="modalDeleteBtn" style="padding: 12px; border-radius: var(--radius-md); font-size: 13.5px; border: 1px solid var(--border); background: #fdecea; color: #c0392b; cursor: pointer; font-weight: 600; text-align: center; outline: none;">🗑️ Clear Without Saving</button>
+      <button id="modalSaveBtn" class="btn-primary" style="padding: 12px; border-radius: var(--radius-md); font-size: 13.5px; border: none; cursor: pointer; font-weight: 600; text-align: center; background: var(--blue-600); color: var(--white);">Save &amp; Start New Chat</button>
+      <button id="modalDeleteBtn" style="padding: 12px; border-radius: var(--radius-md); font-size: 13.5px; border: 1px solid var(--border); background: #fdecea; color: #c0392b; cursor: pointer; font-weight: 600; text-align: center; outline: none;">Clear Without Saving</button>
       <button id="modalCancelBtn" style="padding: 12px; border-radius: var(--radius-md); font-size: 13.5px; border: 1px solid var(--border); background: var(--white); color: var(--grey-text); cursor: pointer; font-weight: 600; text-align: center; outline: none;">Cancel</button>
     </div>
   </div>
@@ -799,10 +784,9 @@
 
 <script>
 // ---------- Configuration ----------
-// const API_BASE = "http://127.0.0.1:8000";
-// const API_KEY = "admin-secret-key"; // Default API key used in development
-const API_BASE = "https://autocare-backend-qdkf.onrender.com"; ; // "http://127.0.0.1:8000"
-const API_KEY = "admin-secret-key"; // Default API key used in development
+const API_BASE = window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost" 
+  ? "http://127.0.0.1:8000" 
+  : "https://autocare-backend-qdkf.onrender.com";
 
 let kb = [];
 let consecutiveLowConfidenceCount = 0;
@@ -1126,83 +1110,9 @@ function renderKb() {
             ${tagsHtml}
           </div>
         </div>
-        <button class="delete-btn" data-question="${escapeHtml(item.question)}">Delete</button>
       </div>
     `;
   }).join("");
-
-  // Add click handlers for delete buttons
-  list.querySelectorAll(".delete-btn").forEach(b => {
-    b.addEventListener("click", async () => {
-      const q = b.dataset.question;
-      if (confirm(`Are you sure you want to delete this FAQ entry?\n\n"${q}"`)) {
-        await deleteKbEntry(q);
-      }
-    });
-  });
-}
-
-// ---------- Add KB Entry to Backend ----------
-document.getElementById("kbAddBtn")?.addEventListener("click", async () => {
-  const qInput = document.getElementById("kbQuestion");
-  const aInput = document.getElementById("kbAnswer");
-  const deptSelect = document.getElementById("kbDeptSelect");
-  const q = qInput.value.trim();
-  const a = aInput.value.trim();
-  const dept = deptSelect ? deptSelect.value : "General";
-  
-  if (!q || !a) {
-    alert("Please fill in both the Question and the Answer fields.");
-    return;
-  }
-  
-  try {
-    const res = await fetch(`${API_BASE}/api/qa`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${API_KEY}`
-      },
-      body: JSON.stringify({ question: q, answer: a, department: dept })
-    });
-    
-    const data = await res.json();
-    if (!res.ok) {
-      throw new Error(data.detail || "Failed to add FAQ pair");
-    }
-    
-    // Clear inputs and reload
-    qInput.value = "";
-    aInput.value = "";
-    await loadKb();
-  } catch (err) {
-    console.error("Error adding QA entry:", err);
-    alert(`Error: ${err.message}`);
-  }
-});
-
-// ---------- Delete KB Entry from Backend ----------
-async function deleteKbEntry(question) {
-  try {
-    const res = await fetch(`${API_BASE}/api/qa`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${API_KEY}`
-      },
-      body: JSON.stringify({ question: question })
-    });
-    
-    const data = await res.json();
-    if (!res.ok) {
-      throw new Error(data.detail || "Failed to delete FAQ pair");
-    }
-    
-    await loadKb();
-  } catch (err) {
-    console.error("Error deleting QA entry:", err);
-    alert(`Error: ${err.message}`);
-  }
 }
 
 // ---------- AI Chat Client & History Loader ----------
@@ -1307,40 +1217,40 @@ function renderChatHistory() {
     setChatInputDisabled(true);
     chatWindow.innerHTML = `
       <div class="dept-selection-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100%; gap: 16px; padding: 20px; text-align: center; animation: fadein 0.2s ease;">
-        <div style="font-size: 32px;">💬</div>
+        <div style="font-size: 32px;"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--blue-600)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></div>
         <h3 style="font-size: 18px; font-weight: 700; color: var(--blue-900); margin-bottom: 4px;">Welcome to AutoCare Assistant</h3>
         <p style="font-size: 13.5px; color: var(--grey-text); max-width: 320px; margin-bottom: 8px;">Please select the department you want to ask questions to:</p>
         <div style="display: grid; grid-template-columns: 1fr; gap: 8px; width: 100%; max-width: 320px;">
           <button class="dept-select-card" data-dept="Service & Maintenance" style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--white); cursor: pointer; text-align: left; transition: all 0.15s ease;">
-            <span style="font-size: 18px;">🛠️</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--blue-700);"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
             <div style="flex: 1;">
               <div style="font-size: 13.5px; font-weight: 600; color: var(--blue-900);">Service &amp; Maintenance</div>
               <div style="font-size: 11px; color: var(--grey-text);">Bookings, warranty, periodic service</div>
             </div>
           </button>
           <button class="dept-select-card" data-dept="Insurance & Claims" style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--white); cursor: pointer; text-align: left; transition: all 0.15s ease;">
-            <span style="font-size: 18px;">📄</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--blue-700);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
             <div style="flex: 1;">
               <div style="font-size: 13.5px; font-weight: 600; color: var(--blue-900);">Insurance &amp; Claims</div>
               <div style="font-size: 11px; color: var(--grey-text);">Claim documentation, renewals</div>
             </div>
           </button>
           <button class="dept-select-card" data-dept="Spare Parts" style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--white); cursor: pointer; text-align: left; transition: all 0.15s ease;">
-            <span style="font-size: 18px;">⚙️</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--blue-700);"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
             <div style="flex: 1;">
               <div style="font-size: 13.5px; font-weight: 600; color: var(--blue-900);">Spare Parts</div>
               <div style="font-size: 11px; color: var(--grey-text);">Order tracking, parts availability</div>
             </div>
           </button>
           <button class="dept-select-card" data-dept="Roadside Assistance" style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--white); cursor: pointer; text-align: left; transition: all 0.15s ease;">
-            <span style="font-size: 18px;">🚨</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--blue-700);"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
             <div style="flex: 1;">
               <div style="font-size: 13.5px; font-weight: 600; color: var(--blue-900);">Roadside Assistance</div>
               <div style="font-size: 11px; color: var(--grey-text);">Breakdown support, towing</div>
             </div>
           </button>
           <button class="dept-select-card" data-dept="General" style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--white); cursor: pointer; text-align: left; transition: all 0.15s ease;">
-            <span style="font-size: 18px;">💡</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--blue-700);"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A5 5 0 0 0 8 8c0 1 .3 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5h4z"></path><line x1="9" y1="18" x2="15" y2="18"></line><line x1="10" y1="22" x2="14" y2="22"></line></svg>
             <div style="flex: 1;">
               <div style="font-size: 13.5px; font-weight: 600; color: var(--blue-900);">General Inquiry</div>
               <div style="font-size: 11px; color: var(--grey-text);">Showrooms, smart hybrid tech</div>
@@ -1348,7 +1258,7 @@ function renderChatHistory() {
           </button>
         </div>
         <button onclick="document.querySelector('.nav-item[data-page=\\'departments\\']').click()" style="margin-top: 12px; background: transparent; border: none; color: #2563eb; text-decoration: underline; font-size: 12.5px; font-weight: 500; cursor: pointer; font-family: inherit;">
-          🔍 View all department queries &amp; details
+          View all department queries &amp; details
         </button>
       </div>
     `;
@@ -1428,8 +1338,8 @@ function addMessageUI(text, sender, meta, id, feedbackSubmitted, isHistoryLoad) 
     } else {
       feedbackHtml = `
         <div class="bubble-actions">
-          <button class="feedback-btn thumbs-up" onclick="handleFeedback('${id}', 'up')">👍</button>
-          <button class="feedback-btn thumbs-down" onclick="handleFeedback('${id}', 'down')">👎</button>
+          <button class="feedback-btn thumbs-up" onclick="handleFeedback('${id}', 'up')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg></button>
+          <button class="feedback-btn thumbs-down" onclick="handleFeedback('${id}', 'down')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-3"></path></svg></button>
         </div>
       `;
     }
@@ -1624,7 +1534,7 @@ function renderFollowUpChips(matchedQuestion, answer, query) {
   
   const yesBtn = document.createElement("button");
   yesBtn.className = "chip";
-  yesBtn.textContent = "👍 Yes, helpful";
+  yesBtn.textContent = "Yes, helpful";
   yesBtn.addEventListener("click", () => {
     if (lastBotMsgId) {
       window.handleFeedback(lastBotMsgId, "up");
@@ -1634,7 +1544,7 @@ function renderFollowUpChips(matchedQuestion, answer, query) {
   
   const noBtn = document.createElement("button");
   noBtn.className = "chip";
-  noBtn.textContent = "👎 No, unhelpful";
+  noBtn.textContent = "No, unhelpful";
   noBtn.addEventListener("click", () => {
     if (lastBotMsgId) {
       window.handleFeedback(lastBotMsgId, "down");
@@ -1644,7 +1554,7 @@ function renderFollowUpChips(matchedQuestion, answer, query) {
   
   const relBtn = document.createElement("button");
   relBtn.className = "chip";
-  relBtn.textContent = `🔍 Ask: ${relatedLabel}`;
+  relBtn.textContent = `Ask: ${relatedLabel}`;
   relBtn.dataset.q = relatedQuestion;
   relBtn.addEventListener("click", () => {
     sendMessage(relatedQuestion);
@@ -1729,16 +1639,36 @@ function renderEscalationUI(escalId) {
     <div class="avatar bot-avatar">AC</div>
     <div class="bubble">
       I'm sorry I couldn't resolve your queries. Would you like to escalate this issue to a human support advisor?
-      <div class="escalation-box">
-        <label for="escalSelect_${escalId}" style="font-size: 11.5px; font-weight: 600; color: var(--blue-900);">Select Department:</label>
-        <select id="escalSelect_${escalId}">
-          <option value="Service & Maintenance">Service & Maintenance</option>
-          <option value="Insurance & Claims">Insurance & Claims</option>
-          <option value="Spare Parts">Spare Parts</option>
-          <option value="Roadside Assistance">Roadside Assistance</option>
-          <option value="General Inquiry">General Inquiry</option>
-        </select>
-        <button id="escalBtn_${escalId}" onclick="escalateQuery('${escalId}')">Talk to a human</button>
+      <div class="escalation-box" style="display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 320px; margin-top: 10px; background: #fafbfc; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px;">
+        <div style="font-size: 13px; font-weight: 700; color: var(--blue-900);">Escalate to Human Advisor</div>
+        
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <label for="escalSelect_${escalId}" style="font-size: 10.5px; font-weight: 600; color: var(--grey-text);">Select Department:</label>
+          <select id="escalSelect_${escalId}" style="padding: 6px; font-size: 12.5px; border-radius: var(--radius-sm); border: 1px solid var(--border); outline: none;">
+            <option value="Service & Maintenance">Service & Maintenance</option>
+            <option value="Insurance & Claims">Insurance & Claims</option>
+            <option value="Spare Parts">Spare Parts</option>
+            <option value="Roadside Assistance">Roadside Assistance</option>
+            <option value="General Inquiry">General Inquiry</option>
+          </select>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <label for="escalName_${escalId}" style="font-size: 10.5px; font-weight: 600; color: var(--grey-text);">Full Name:</label>
+          <input type="text" id="escalName_${escalId}" placeholder="e.g. Shivanshi Sharma" style="padding: 6px; font-size: 12.5px; border-radius: var(--radius-sm); border: 1px solid var(--border); outline: none;">
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <label for="escalEmail_${escalId}" style="font-size: 10.5px; font-weight: 600; color: var(--grey-text);">Email Address:</label>
+          <input type="email" id="escalEmail_${escalId}" placeholder="e.g. shiivanshi@example.com" style="padding: 6px; font-size: 12.5px; border-radius: var(--radius-sm); border: 1px solid var(--border); outline: none;">
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <label for="escalPhone_${escalId}" style="font-size: 10.5px; font-weight: 600; color: var(--grey-text);">Phone Number:</label>
+          <input type="tel" id="escalPhone_${escalId}" placeholder="e.g. 9876543210" style="padding: 6px; font-size: 12.5px; border-radius: var(--radius-sm); border: 1px solid var(--border); outline: none;">
+        </div>
+
+        <button id="escalBtn_${escalId}" onclick="escalateQuery('${escalId}')" style="background: var(--blue-600); color: white; border: none; padding: 8px 12px; border-radius: var(--radius-sm); font-weight: 600; font-size: 12.5px; cursor: pointer; margin-top: 4px; transition: background 0.15s ease;">Submit Support Request</button>
       </div>
     </div>
   `;
@@ -1747,74 +1677,133 @@ function renderEscalationUI(escalId) {
   chatWindow.scrollTop = chatWindow.scrollHeight;
 }
 
-window.escalateQuery = function(escalId) {
+window.escalateQuery = async function(escalId) {
   const select = document.getElementById(`escalSelect_${escalId}`);
-  if (!select) return;
+  const nameInput = document.getElementById(`escalName_${escalId}`);
+  const emailInput = document.getElementById(`escalEmail_${escalId}`);
+  const phoneInput = document.getElementById(`escalPhone_${escalId}`);
+  
+  if (!select || !nameInput || !emailInput || !phoneInput) return;
   
   const deptName = select.value;
+  const name = nameInput.value.trim();
+  const email = emailInput.value.trim();
+  const phone = phoneInput.value.trim();
   
-  const escalIndex = chatHistory.findIndex(m => m.id === escalId);
-  if (escalIndex !== -1) {
-    chatHistory[escalIndex].resolved = true;
-    chatHistory[escalIndex].dept = deptName;
-    sessionStorage.setItem("chat_history", JSON.stringify(chatHistory));
+  if (!name || !email || !phone) {
+    alert("Please fill in all contact details (Name, Email, Phone) so an advisor can contact you.");
+    return;
   }
   
-  const msgEl = document.querySelector(`[data-msg-id="${escalId}"]`);
-  if (msgEl) {
-    const box = msgEl.querySelector(".escalation-box");
-    if (box) {
-      box.innerHTML = `<span style="font-size: 13.5px; font-weight: 600; color: var(--blue-700);">Escalated to ${escapeHtml(deptName)}. An advisor will reach out shortly.</span>`;
-    }
+  // Disable form elements
+  const btn = document.getElementById(`escalBtn_${escalId}`);
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = "Submitting...";
   }
-  
-  // Find user's original query text to append to the openings board
+  nameInput.disabled = true;
+  emailInput.disabled = true;
+  phoneInput.disabled = true;
+  select.disabled = true;
+
+  // Retrieve last user query
   const lastUserMsg = chatHistory.filter(m => m.sender === 'user').slice(-1)[0];
   const queryText = lastUserMsg ? lastUserMsg.text : "Support Ticket Inquiry";
 
-  // Append new ticket to the live escalatedTickets dictionary
-  const deptKeyMap = {
-    "Service & Maintenance": "service",
-    "Insurance & Claims": "insurance",
-    "Spare Parts": "parts",
-    "Roadside Assistance": "roadside",
-    "General Inquiry": "general"
-  };
-  const key = deptKeyMap[deptName];
-  if (key) {
-    escalatedTickets[key].push({
-      q: queryText,
-      user: "Self (Escalated)",
-      status: "New Case",
-      statusClass: "priority"
+  try {
+    const res = await fetch(`${API_BASE}/api/escalation`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        name: name,
+        email: email,
+        phone: phone,
+        query: queryText,
+        department: deptName
+      })
     });
-    sessionStorage.setItem("escalated_tickets", JSON.stringify(escalatedTickets));
-    renderAllOpenings();
-  }
+    
+    if (!res.ok) {
+      throw new Error("Failed to submit support request to server.");
+    }
+    
+    const escalIndex = chatHistory.findIndex(m => m.id === escalId);
+    if (escalIndex !== -1) {
+      chatHistory[escalIndex].resolved = true;
+      chatHistory[escalIndex].dept = deptName;
+      chatHistory[escalIndex].userName = name;
+      chatHistory[escalIndex].userEmail = email;
+      chatHistory[escalIndex].userPhone = phone;
+      sessionStorage.setItem("chat_history", JSON.stringify(chatHistory));
+    }
+    
+    const msgEl = document.querySelector(`[data-msg-id="${escalId}"]`);
+    if (msgEl) {
+      const box = msgEl.querySelector(".escalation-box");
+      if (box) {
+        box.innerHTML = `
+          <div style="background: var(--blue-100); color: var(--blue-700); padding: 12px; border-radius: var(--radius-sm); font-size: 13px; line-height: 1.45; font-weight: 500;">
+            <strong>Request Submitted Successfully!</strong><br>
+            Thank you, ${escapeHtml(name)}. Your ticket has been logged with the <strong>${escapeHtml(deptName)}</strong> department. An advisor will reach out to you at <strong>${escapeHtml(email)}</strong> or <strong>${escapeHtml(phone)}</strong> shortly.
+          </div>
+        `;
+      }
+    }
 
-  // Update status in recentConversations array to Escalated
-  const item = recentConversations.find(c => c.q.toLowerCase() === queryText.toLowerCase());
-  if (item) {
-    item.status = "Escalated";
-    item.statusClass = "escalated";
-  } else {
-    recentConversations.unshift({
-      q: queryText,
-      status: "Escalated",
-      statusClass: "escalated"
-    });
-  }
-  sessionStorage.setItem("recent_conversations", JSON.stringify(recentConversations));
-  renderRecentConversations();
+    const deptKeyMap = {
+      "Service & Maintenance": "service",
+      "Insurance & Claims": "insurance",
+      "Spare Parts": "parts",
+      "Roadside Assistance": "roadside",
+      "General Inquiry": "general"
+    };
+    const key = deptKeyMap[deptName];
+    if (key && escalatedTickets[key]) {
+      escalatedTickets[key].push({
+        q: queryText,
+        user: name,
+        status: "New Case",
+        statusClass: "priority"
+      });
+      sessionStorage.setItem("escalated_tickets", JSON.stringify(escalatedTickets));
+      renderAllOpenings();
+    }
 
-  // Track metrics in dashboard
-  escalatedCount++;
-  sessionStorage.setItem("escalated_count", escalatedCount);
-  updateDashboardStats();
-  
-  // Reset tracker
-  consecutiveLowConfidenceCount = 0;
-  sessionStorage.setItem("consecutive_low_confidence", 0);
+    const item = recentConversations.find(c => c.q.toLowerCase() === queryText.toLowerCase());
+    if (item) {
+      item.status = "Escalated";
+      item.statusClass = "escalated";
+    } else {
+      recentConversations.unshift({
+        q: queryText,
+        status: "Escalated",
+        statusClass: "escalated"
+      });
+    }
+    sessionStorage.setItem("recent_conversations", JSON.stringify(recentConversations));
+    renderRecentConversations();
+
+    escalatedCount++;
+    sessionStorage.setItem("escalated_count", escalatedCount);
+    updateDashboardStats();
+    
+    consecutiveLowConfidenceCount = 0;
+    sessionStorage.setItem("consecutive_low_confidence", 0);
+
+  } catch (err) {
+    console.error("Escalation submit error:", err);
+    alert(`Could not submit request: ${err.message}`);
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = "Submit Support Request";
+    }
+    nameInput.disabled = false;
+    emailInput.disabled = false;
+    phoneInput.disabled = false;
+    select.disabled = false;
+  }
 };
 
 document.getElementById("sendBtn")?.addEventListener("click", () => sendMessage(chatInput.value));
@@ -1858,106 +1847,7 @@ function escapeHtml(str) {
   return d.innerHTML;
 }
 
-// ---------- PDF Drag & Drop Ingestion ----------
-function initPdfUpload() {
-  const uploadBox = document.getElementById("uploadBox");
-  if (!uploadBox) return;
-
-  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-    uploadBox.addEventListener(eventName, e => {
-      e.preventDefault();
-      e.stopPropagation();
-    }, false);
-  });
-
-  ['dragenter', 'dragover'].forEach(eventName => {
-    uploadBox.addEventListener(eventName, () => {
-      uploadBox.style.background = "var(--blue-100)";
-      uploadBox.style.borderColor = "var(--blue-500)";
-    }, false);
-  });
-
-  ['dragleave', 'drop'].forEach(eventName => {
-    uploadBox.addEventListener(eventName, () => {
-      uploadBox.style.background = "var(--blue-50)";
-      uploadBox.style.borderColor = "var(--blue-200)";
-    }, false);
-  });
-
-  uploadBox.addEventListener('drop', e => {
-    const dt = e.dataTransfer;
-    const files = dt.files;
-    if (files.length > 0) {
-      handlePdfUpload(files[0]);
-    }
-  });
-
-  uploadBox.addEventListener('click', () => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = ".pdf";
-    input.onchange = e => {
-      if (e.target.files.length > 0) {
-        handlePdfUpload(e.target.files[0]);
-      }
-    };
-    input.click();
-  });
-}
-
-async function handlePdfUpload(file) {
-  const uploadBox = document.getElementById("uploadBox");
-  if (!uploadBox) return;
-
-  if (!file.name.toLowerCase().endsWith(".pdf")) {
-    alert("Only PDF files are supported.");
-    return;
-  }
-  
-  uploadBox.innerHTML = `<span>⏳ Uploading and extracting Q&As from <strong>${escapeHtml(file.name)}</strong>...</span>`;
-  
-  const formData = new FormData();
-  formData.append("file", file);
-  
-  try {
-    const res = await fetch(`${API_BASE}/api/upload-pdf`, {
-      method: "POST",
-      body: formData
-    });
-    
-    const data = await res.json();
-    if (!res.ok) {
-      throw new Error(data.detail || "Failed to process PDF file.");
-    }
-    
-    uploadBox.innerHTML = `<span style="color: #27ae60; font-weight: bold;">✔</span> Successfully extracted <strong>${data.extracted}</strong> pairs (added <strong>${data.added}</strong> new entries) from ${escapeHtml(file.name)}!`;
-    
-    await loadKb();
-    
-    setTimeout(() => {
-      uploadBox.innerHTML = `
-        <span>📄 Drag &amp; drop a PDF here to extract Q&amp;A pairs automatically</span>
-        <span style="font-size: 12px; color: var(--grey-text);">or</span>
-        <button class="btn-primary" style="padding: 8px 16px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; cursor: pointer; border: none; background: var(--blue-600); color: var(--white); display: inline-flex; align-items: center; gap: 6px; pointer-events: none;">
-          <span>📤</span> Upload PDF
-        </button>
-      `;
-    }, 4500);
-    
-  } catch (err) {
-    console.error(err);
-    uploadBox.innerHTML = `<span style="color: #c0392b;">⚠️ Error: ${escapeHtml(err.message)}</span>`;
-    setTimeout(() => {
-      uploadBox.innerHTML = `
-        <span>📄 Drag &amp; drop a PDF here to extract Q&amp;A pairs automatically</span>
-        <span style="font-size: 12px; color: var(--grey-text);">or</span>
-        <button class="btn-primary" style="padding: 8px 16px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; cursor: pointer; border: none; background: var(--blue-600); color: var(--white); display: inline-flex; align-items: center; gap: 6px; pointer-events: none;">
-          <span>📤</span> Upload PDF
-        </button>
-      `;
-    }, 4500);
-  }
-}
+// PDF uploading is removed from public page.
 
 // ---------- Saved Chats (New Chat, Save/Delete) & Department Filters ----------
 let savedChats = [];
@@ -2170,7 +2060,6 @@ async function init() {
   resetDefaultChips();
   renderAllOpenings();
   renderRecentConversations();
-  initPdfUpload();
   renderSavedChats();
   initNewChatHandlers();
   initDeptFilters();

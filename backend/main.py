@@ -9,6 +9,8 @@ import logging
 import os
 import io
 import re
+import time
+from datetime import datetime
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -95,6 +97,7 @@ def cos_sim_vector(query_vec: np.ndarray, doc_matrix: np.ndarray) -> np.ndarray:
 
 
 FAQ_PATH = Path(__file__).parent / "faqs.json"
+ESCALATIONS_PATH = Path(__file__).parent / "escalations.json"
 with open(FAQ_PATH, "r", encoding="utf-8") as f:
     FAQS = json.load(f)
 
@@ -160,6 +163,24 @@ class FeedbackRequest(BaseModel):
     matched_question: str | None = None
     answer: str
     rating: str
+
+
+class EscalationRequest(BaseModel):
+    name: str
+    email: str
+    phone: str
+    query: str
+    department: str
+
+
+class EscalationStatusRequest(BaseModel):
+    ticket_id: str
+    status: str
+
+
+class RemoveGapRequest(BaseModel):
+    query: str
+    timestamp: str
 
 
 # ---------------------------------------------------------------------------
@@ -301,6 +322,194 @@ def delete_qa_pair(req: QADeleteRequest, token: str = Depends(authenticate)):
     return {"status": "success", "message": "FAQ pair deleted and embedded successfully."}
 
 
+@app.get("/api/verify")
+def verify_token(token: str = Depends(authenticate)):
+    """Protected endpoint to verify admin API key validity."""
+    return {"status": "success", "message": "API key is valid."}
+
+
+@app.get("/api/unanswered")
+def get_unanswered_queries(token: str = Depends(authenticate), limit: int = 50):
+    """Protected endpoint to retrieve and parse unresolved query gaps and negative feedback from log file."""
+    if not UNANSWERED_LOG_PATH.exists():
+        return {"queries": []}
+
+    queries = []
+    try:
+        with open(UNANSWERED_LOG_PATH, "r", encoding="utf-8") as f:
+            lines = f.readlines()
+
+        # Parse from newest to oldest
+        for line in reversed(lines):
+            line = line.strip()
+            if not line:
+                continue
+
+            parts = line.split(" - ", 1)
+            if len(parts) < 2:
+                continue
+            timestamp, msg = parts[0], parts[1]
+
+            if msg.startswith("Unanswered Query:"):
+                # Parse: Unanswered Query: '{query}' | Closest Match: '{closest}' | Confidence: {score}
+                q_match = re.search(
+                    r"Unanswered Query: '(.*?)' \| Closest Match: '(.*?)' \| Confidence: ([\d\.]+)",
+                    msg
+                )
+                if q_match:
+                    queries.append({
+                        "type": "unanswered",
+                        "timestamp": timestamp,
+                        "query": q_match.group(1),
+                        "closest_match": q_match.group(2),
+                        "confidence": float(q_match.group(3))
+                    })
+            elif msg.startswith("Negative Feedback"):
+                # Parse: Negative Feedback | Query: '{query}' | Matched Q: '{matched}' | Answer: '{answer}'
+                f_match = re.search(
+                    r"Negative Feedback \| Query: '(.*?)' \| Matched Q: '(.*?)' \| Answer: '(.*?)'",
+                    msg
+                )
+                if f_match:
+                    queries.append({
+                        "type": "negative_feedback",
+                        "timestamp": timestamp,
+                        "query": f_match.group(1),
+                        "matched_question": f_match.group(2),
+                        "answer": f_match.group(3)
+                    })
+
+            if len(queries) >= limit:
+                break
+    except Exception as e:
+        logger.error(f"Error reading unanswered queries log: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to read unanswered queries log: {str(e)}"
+        )
+    return {"queries": queries}
+
+
+@app.post("/api/unanswered/remove")
+def remove_unanswered_query(req: RemoveGapRequest, token: str = Depends(authenticate)):
+    """Remove a parsed gap log entry from the unanswered queries log file."""
+    if not UNANSWERED_LOG_PATH.exists():
+         raise HTTPException(status_code=404, detail="Log file not found")
+         
+    try:
+        with open(UNANSWERED_LOG_PATH, "r", encoding="utf-8") as f:
+            lines = f.readlines()
+            
+        new_lines = []
+        found = False
+        for line in lines:
+            stripped = line.strip()
+            if not stripped:
+                continue
+            parts = stripped.split(" - ", 1)
+            if len(parts) >= 2:
+                timestamp, msg = parts[0], parts[1]
+                if timestamp.strip() == req.timestamp.strip() and f"'{req.query}'" in msg:
+                    found = True
+                    continue
+            new_lines.append(line)
+            
+        with open(UNANSWERED_LOG_PATH, "w", encoding="utf-8") as f:
+            f.writelines(new_lines)
+            
+        return {"status": "success", "removed": found}
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to update unanswered queries log: {str(e)}"
+        )
+
+
+@app.post("/api/escalation", status_code=status.HTTP_201_CREATED)
+def submit_escalation(req: EscalationRequest):
+    """Save user escalation contact details and queries to escalations.json."""
+    escalations = []
+    if ESCALATIONS_PATH.exists():
+        try:
+            with open(ESCALATIONS_PATH, "r", encoding="utf-8") as f:
+                escalations = json.load(f)
+        except Exception as e:
+            logger.error(f"Error loading escalations: {e}")
+            escalations = []
+
+    # Add new ticket
+    new_ticket = {
+        "id": f"tkt_{int(time.time() * 1000)}",
+        "name": req.name.strip(),
+        "email": req.email.strip(),
+        "phone": req.phone.strip(),
+        "query": req.query.strip(),
+        "department": req.department.strip(),
+        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "status": "New"
+    }
+    escalations.append(new_ticket)
+
+    try:
+        with open(ESCALATIONS_PATH, "w", encoding="utf-8") as f:
+            json.dump(escalations, f, indent=2, ensure_ascii=False)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to persist escalation ticket: {str(e)}"
+        )
+
+    return {"status": "success", "ticket": new_ticket}
+
+
+@app.get("/api/escalation")
+def list_escalations(token: str = Depends(authenticate)):
+    """List all user escalation support tickets (admin protected)."""
+    if not ESCALATIONS_PATH.exists():
+        return {"escalations": []}
+    try:
+        with open(ESCALATIONS_PATH, "r", encoding="utf-8") as f:
+            escalations = json.load(f)
+        return {"escalations": escalations}
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to read escalations database: {str(e)}"
+        )
+
+
+@app.put("/api/escalation")
+def update_escalation_status(req: EscalationStatusRequest, token: str = Depends(authenticate)):
+    """Update status of a support ticket (admin protected)."""
+    if not ESCALATIONS_PATH.exists():
+        raise HTTPException(status_code=404, detail="No tickets found")
+    try:
+        with open(ESCALATIONS_PATH, "r", encoding="utf-8") as f:
+            tickets = json.load(f)
+
+        found = False
+        for t in tickets:
+            if t["id"] == req.ticket_id:
+                t["status"] = req.status
+                found = True
+                break
+
+        if not found:
+            raise HTTPException(status_code=404, detail="Ticket not found")
+
+        with open(ESCALATIONS_PATH, "w", encoding="utf-8") as f:
+            json.dump(tickets, f, indent=2, ensure_ascii=False)
+
+        return {"status": "success"}
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+         raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to update ticket: {str(e)}"
+        )
+
+
 @app.post("/api/feedback", status_code=status.HTTP_200_OK)
 def submit_feedback(req: FeedbackRequest):
     """Log thumbs up/down user feedback into the gaps/analytics log."""
@@ -316,7 +525,7 @@ def submit_feedback(req: FeedbackRequest):
 
 
 @app.post("/api/upload-pdf")
-async def upload_pdf(file: UploadFile = File(...)):
+async def upload_pdf(file: UploadFile = File(...), token: str = Depends(authenticate)):
     """Extract Q&A pairs from an uploaded PDF and dynamically update the FAQ database."""
     global FAQS, FAQ_QUESTIONS, FAQ_EMBEDDINGS
 
@@ -438,6 +647,6 @@ async def upload_pdf(file: UploadFile = File(...)):
 if __name__ == "__main__":
     import uvicorn
     port = int(os.getenv("PORT", 8000))
-    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=False)
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True)
 
 

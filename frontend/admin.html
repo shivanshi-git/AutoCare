@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoCare Admin Panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue-900: #0a2a66;
+    --blue-700: #103e91;
+    --blue-600: #1554c7;
+    --blue-500: #2166e8;
+    --blue-200: #c7d8f7;
+    --blue-100: #e6edfb;
+    --blue-50: #f5f8fd;
+    --white: #ffffff;
+    --grey-text: #64748b;
+    --grey-light: #94a3b8;
+    --border: #e2e8f0;
+    --radius-lg: 16px;
+    --radius-md: 12px;
+    --radius-sm: 8px;
+    --danger: #ef4444;
+    --danger-light: #fef2f2;
+    --success: #22c55e;
+    --success-light: #f0fdf4;
+    --warning: #f59e0b;
+    --warning-light: #fefbeb;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--blue-50);
+    color: var(--blue-900);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+  }
+
+  /* ---------- Login Gate UI ---------- */
+  .login-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: radial-gradient(circle at 10% 20%, rgb(4, 32, 84) 0%, rgb(10, 42, 102) 90.2%);
+    padding: 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .login-card {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 24px;
+    padding: 40px;
+    width: 100%;
+    max-width: 440px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    animation: card-appear 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes card-appear {
+    from { opacity: 0; transform: scale(0.9) translateY(20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .login-logo {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 20px;
+    box-shadow: 0 8px 16px rgba(37, 99, 235, 0.3);
+    margin: 0 auto 20px auto;
+  }
+
+  .login-card h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 8px;
+  }
+
+  .login-card p {
+    font-size: 13.5px;
+    color: var(--grey-text);
+    margin-bottom: 28px;
+  }
+
+  .form-group {
+    text-align: left;
+    margin-bottom: 20px;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    outline: none;
+    font-family: inherit;
+    font-size: 14px;
+    transition: all 0.2s ease;
+  }
+
+  .form-control:focus {
+    border-color: var(--blue-500);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  }
+
+  .login-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    transition: all 0.2s ease;
+  }
+
+  .login-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+  }
+
+  .login-error {
+    background: var(--danger-light);
+    color: var(--danger);
+    font-size: 13px;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 20px;
+    display: none;
+    text-align: left;
+    border: 1px solid #fee2e2;
+  }
+
+  /* ---------- Admin Shell UI ---------- */
+  .shell {
+    display: none;
+    height: 100vh;
+  }
+
+  .sidebar {
+    width: 260px;
+    background: #ffffff;
+    border-right: 1px solid #f1f5f9;
+    display: flex;
+    flex-direction: column;
+    padding: 24px 16px;
+    flex-shrink: 0;
+    box-shadow: 4px 0 24px rgba(15, 23, 42, 0.015);
+  }
+
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 4px 8px 24px 8px;
+    border-bottom: 1px solid #f1f5f9;
+    margin-bottom: 20px;
+  }
+
+  .sidebar-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #ef4444, #b91c1c);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 15px;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+    flex-shrink: 0;
+  }
+
+  .sidebar-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.25;
+  }
+
+  .sidebar-title span {
+    display: block;
+    font-weight: 600;
+    font-size: 11px;
+    color: #ef4444;
+    text-transform: uppercase;
+    margin-top: 1px;
+  }
+
+  .nav-section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #94a3b8;
+    text-transform: uppercase;
+    padding: 18px 12px 8px 12px;
+  }
+
+  .nav-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #475569;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+    transition: all 0.2s ease;
+    margin-bottom: 2px;
+  }
+
+  .nav-item .icon {
+    font-size: 16px;
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    transition: color 0.2s ease;
+  }
+
+  .nav-item:hover {
+    background: #f8fafc;
+    color: #0f172a;
+  }
+
+  .nav-item.active {
+    background: #fef2f2;
+    color: #b91c1c;
+    font-weight: 600;
+  }
+
+  .nav-item.active .icon {
+    color: #b91c1c;
+  }
+
+  .nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 10px;
+    bottom: 10px;
+    width: 3px;
+    border-radius: 99px;
+    background: #ef4444;
+  }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .btn-outline-danger {
+    background: transparent;
+    border: 1px solid var(--danger);
+    color: var(--danger);
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+    text-align: center;
+  }
+
+  .btn-outline-danger:hover {
+    background: var(--danger-light);
+  }
+
+  .main {
+    flex: 1;
+    overflow-y: auto;
+    padding: 32px 44px;
+    max-height: 100vh;
+  }
+
+  .page { display: none; animation: fadein 0.15s ease; }
+  .page.active { display: block; }
+
+  @keyframes fadein {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .page-header { margin-bottom: 28px; }
+  .page-header h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .page-header p { font-size: 13.5px; color: var(--grey-text); }
+
+  /* ---------- Dashboard Stats ---------- */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .stat-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  }
+
+  .stat-card .label { font-size: 12px; color: var(--grey-text); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+  .stat-card .value { font-size: 28px; font-weight: 700; color: var(--blue-900); }
+  .stat-card .desc { font-size: 12px; color: var(--grey-text); margin-top: 4px; }
+
+  .panel {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  }
+
+  .panel h3 { font-size: 15px; margin-bottom: 16px; font-weight: 700; color: var(--blue-900); border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; }
+
+  /* ---------- Forms ---------- */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .btn-primary {
+    background: var(--blue-600);
+    color: var(--white);
+    border: none;
+    padding: 10px 18px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.15s ease;
+  }
+
+  .btn-primary:hover { background: var(--blue-700); }
+
+  /* ---------- KB Lists ---------- */
+  .kb-item {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 12px;
+    transition: all 0.15s ease;
+  }
+
+  .kb-item:hover {
+    border-color: var(--blue-200);
+    box-shadow: 0 4px 12px rgba(10, 42, 102, 0.02);
+  }
+
+  .kb-item .q { font-weight: 600; font-size: 14px; margin-bottom: 6px; color: var(--blue-900); }
+  .kb-item .a { color: var(--grey-text); font-size: 13px; line-height: 1.5; }
+  
+  .tag {
+    display: inline-block;
+    font-size: 10.5px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    margin-top: 8px;
+    font-weight: 500;
+  }
+
+  .delete-btn {
+    background: transparent;
+    border: 1px solid #fecaca;
+    color: var(--danger);
+    border-radius: var(--radius-sm);
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.15s ease;
+  }
+
+  .delete-btn:hover {
+    background: var(--danger-light);
+    border-color: #fee2e2;
+  }
+
+  /* ---------- PDF Ingestion ---------- */
+  .upload-box {
+    background: var(--white);
+    border: 2px dashed var(--blue-200);
+    border-radius: var(--radius-lg);
+    padding: 40px;
+    text-align: center;
+    color: var(--blue-700);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .upload-box:hover {
+    background: var(--blue-50);
+    border-color: var(--blue-500);
+  }
+
+  .upload-box span { font-weight: 500; font-size: 14px; }
+  .upload-box p { color: var(--grey-text); font-size: 12px; }
+
+  /* ---------- Gaps / Logs Panel ---------- */
+  .gap-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    margin-bottom: 12px;
+    border-left: 4px solid var(--warning);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .gap-card.negative-feedback {
+    border-left-color: var(--danger);
+  }
+
+  .gap-info { flex: 1; }
+  .gap-query { font-weight: 600; font-size: 14px; color: var(--blue-900); margin-bottom: 4px; }
+  .gap-meta { font-size: 12px; color: var(--grey-text); display: flex; gap: 12px; flex-wrap: wrap; }
+  .gap-meta-item { display: inline-flex; align-items: center; gap: 4px; }
+
+  .resolve-btn {
+    background: var(--blue-100);
+    color: var(--blue-700);
+    border: 1px solid var(--blue-200);
+    padding: 8px 14px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.15s ease;
+  }
+
+  .resolve-btn:hover {
+    background: var(--blue-600);
+    color: var(--white);
+    border-color: var(--blue-600);
+  }
+
+  .badge-unanswered { background: var(--warning-light); color: var(--warning); padding: 2px 6px; border-radius: 4px; font-weight: 600; font-size: 10px; text-transform: uppercase; }
+  .badge-negative { background: var(--danger-light); color: var(--danger); padding: 2px 6px; border-radius: 4px; font-weight: 600; font-size: 10px; text-transform: uppercase; }
+
+</style>
+</head>
+<body>
+
+  <!-- AUTHENTICATION GATE -->
+  <div class="login-container" id="loginContainer">
+    <div class="login-card">
+      <div class="login-logo">AC</div>
+      <h2>Administrator Authentication</h2>
+      <p>Please enter your API Key to access management tools</p>
+      
+      <div class="login-error" id="loginError"></div>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="apiKeyInput">API Admin Key</label>
+          <input type="password" id="apiKeyInput" class="form-control" placeholder="••••••••••••••••" required>
+        </div>
+        <button type="submit" class="login-btn">Authenticate &amp; Open Panel</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ADMIN SHELL -->
+  <div class="shell" id="adminShell">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">ADM</div>
+        <div class="sidebar-title">AutoCare<span>Admin Dashboard</span></div>
+      </div>
+
+      <div class="nav-section-label" style="padding-top: 0; padding-bottom: 4px;">Management</div>
+      <div style="display: flex; flex-direction: column; gap: 2px; margin-bottom: 16px;">
+        <button class="nav-item active" data-page="dashboard">
+          <span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg></span> Dashboard
+        </button>
+        <button class="nav-item" data-page="kb">
+          <span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg></span> FAQ Knowledge Base
+        </button>
+        <button class="nav-item" data-page="gaps">
+          <span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></span> Knowledge Gaps
+        </button>
+        <button class="nav-item" data-page="tickets">
+          <span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg></span> Support Tickets
+        </button>
+        <button class="nav-item" data-page="pdf">
+          <span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></span> PDF Auto-Ingestion
+        </button>
+      </div>
+
+      <div class="sidebar-footer">
+        <a href="index.html" class="btn-outline-danger" style="text-decoration: none; border-color: var(--blue-200); color: var(--blue-700); margin-bottom: 4px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg> Public Chatbot
+        </a>
+        <button id="logoutBtn" class="btn-outline-danger">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg> Log Out
+        </button>
+      </div>
+    </aside>
+
+    <main class="main">
+      
+      <!-- DASHBOARD PAGE -->
+      <section class="page active" id="page-dashboard">
+        <div class="page-header">
+          <h1>Admin Dashboard</h1>
+          <p>Key analytics on chatbot performance and knowledge status.</p>
+        </div>
+
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div class="label">Total FAQ Entries</div>
+            <div class="value" id="statKbSize">-</div>
+            <div class="desc">Active database articles</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Unanswered Gaps logged</div>
+            <div class="value" id="statGapsCount">-</div>
+            <div class="desc">Questions awaiting answers</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Support Tickets</div>
+            <div class="value" id="statTicketsCount">-</div>
+            <div class="desc">Active escalated queries</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">AutoCare Status</div>
+            <div class="value" style="color: var(--success);">Online</div>
+            <div class="desc">FastAPI server connected</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Knowledge Distribution by Department</h3>
+          <div id="deptDistribution" style="display: flex; flex-direction: column; gap: 14px;">
+            <!-- Render department breakdown dynamically -->
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ KNOWLEDGE BASE PAGE -->
+      <section class="page" id="page-kb">
+        <div class="page-header">
+          <h1>FAQ Knowledge Base</h1>
+          <p>Search, review, add, or remove items from the FAQ dataset.</p>
+        </div>
+
+        <!-- Add FAQ Form -->
+        <div class="panel">
+          <h3>Add New FAQ Entry</h3>
+          <form id="addFaqForm">
+            <div class="grid-2">
+              <div class="form-group" style="margin-bottom: 0;">
+                <label for="faqQuestion">Question</label>
+                <input type="text" id="faqQuestion" class="form-control" placeholder="e.g. How do I request roadside assistance?" required>
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label for="faqDeptSelect">Department</label>
+                <select id="faqDeptSelect" class="form-control" style="background: white;" required>
+                  <option value="General">General</option>
+                  <option value="Service & Maintenance">Service &amp; Maintenance</option>
+                  <option value="Insurance & Claims">Insurance &amp; Claims</option>
+                  <option value="Spare Parts">Spare Parts</option>
+                  <option value="Roadside Assistance">Roadside Assistance</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="faqAnswer">Answer</label>
+              <textarea id="faqAnswer" class="form-control" style="min-height: 80px; resize: vertical;" placeholder="Provide the precise response for the chatbot..." required></textarea>
+            </div>
+            <button type="submit" class="btn-primary">Add Entry to KB</button>
+          </form>
+        </div>
+
+        <!-- Filter & Search Toolbar -->
+        <div style="display: flex; gap: 12px; margin-bottom: 20px;">
+          <input type="text" id="searchFaqInput" class="form-control" style="flex: 2;" placeholder="Search existing FAQs by keywords...">
+          <select id="filterFaqDept" class="form-control" style="flex: 1; background: white;">
+            <option value="all">All Departments</option>
+            <option value="General">General</option>
+            <option value="Service & Maintenance">Service &amp; Maintenance</option>
+            <option value="Insurance & Claims">Insurance &amp; Claims</option>
+            <option value="Spare Parts">Spare Parts</option>
+            <option value="Roadside Assistance">Roadside Assistance</option>
+          </select>
+        </div>
+
+        <!-- FAQ List Container -->
+        <div id="faqList"></div>
+      </section>
+
+      <!-- KNOWLEDGE GAPS PAGE -->
+      <section class="page" id="page-gaps">
+        <div class="page-header">
+          <h1>Knowledge Gaps Analyzer</h1>
+          <p>Unanswered queries and negative customer feedback parsed from system logs. Instantly resolve gaps by clicking "+" next to any item.</p>
+        </div>
+
+        <div id="gapsList"></div>
+      </section>
+
+      <!-- PDF AUTO-INGESTION PAGE -->
+      <section class="page" id="page-pdf">
+        <div class="page-header">
+          <h1>PDF Auto-Ingestion</h1>
+          <p>Upload files (like customer service manuals) to automatically extract and embed Q&A pairs.</p>
+        </div>
+
+        <div class="upload-box" id="pdfUploadBox">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--blue-600); margin-bottom: 8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+          <span>Drag &amp; Drop a PDF manual here</span>
+          <p>Supports files up to 15MB. The backend will use heuristic patterns to parse Questions &amp; Answers dynamically.</p>
+          <button class="btn-primary" style="pointer-events: none; margin-top: 10px;">Select PDF File</button>
+        </div>
+
+        <div id="pdfUploadResults" class="panel" style="display: none; margin-top: 24px;">
+          <h3>Extracted Q&amp;A Pairs</h3>
+          <div id="extractedList" style="display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto;">
+            <!-- Extracted pairs listed here -->
+          </div>
+        </div>
+      </section>
+
+      <!-- SUPPORT TICKETS PAGE -->
+      <section class="page" id="page-tickets">
+        <div class="page-header">
+          <h1>Support Tickets</h1>
+          <p>Manage human-escalated chatbot queries. View customer contact details and update ticket progress.</p>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-bottom: 20px;">
+          <input type="text" id="searchTicketInput" class="form-control" style="flex: 2;" placeholder="Search tickets by user name, email, or query...">
+          <select id="filterTicketStatus" class="form-control" style="flex: 1; background: white;">
+            <option value="all">All Statuses</option>
+            <option value="New">New</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Resolved">Resolved</option>
+          </select>
+        </div>
+
+        <div id="ticketsList"></div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    // ---------- Configuration & State ----------
+    const API_BASE = window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost" 
+      ? "http://127.0.0.1:8000" 
+      : "https://autocare-backend-qdkf.onrender.com";
+
+    let adminToken = sessionStorage.getItem("admin_api_token") || "";
+    let faqs = [];
+    let gapLogs = [];
+    let tickets = [];
+
+    // ---------- App Initialization ----------
+    async function init() {
+      // Check auth status
+      if (adminToken) {
+        const isValid = await checkTokenValidity(adminToken);
+        if (isValid) {
+          showAdminPanel();
+          return;
+        }
+      }
+      showLoginGate();
+    }
+
+    // ---------- Authentication & Token Handling ----------
+    async function checkTokenValidity(token) {
+      try {
+        const res = await fetch(`${API_BASE}/api/verify`, {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+        return res.ok;
+      } catch (err) {
+        console.error("Token verification failed:", err);
+        return false;
+      }
+    }
+
+    function showLoginGate() {
+      document.getElementById("loginContainer").style.display = "flex";
+      document.getElementById("adminShell").style.display = "none";
+    }
+
+    function showAdminPanel() {
+      document.getElementById("loginContainer").style.display = "none";
+      document.getElementById("adminShell").style.display = "flex";
+      loadAdminData();
+    }
+
+    // Login Form Submit handler
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const errEl = document.getElementById("loginError");
+      const keyInput = document.getElementById("apiKeyInput");
+      const token = keyInput.value.trim();
+
+      errEl.style.display = "none";
+
+      if (!token) return;
+
+      const isValid = await checkTokenValidity(token);
+      if (isValid) {
+        adminToken = token;
+        sessionStorage.setItem("admin_api_token", token);
+        showAdminPanel();
+        keyInput.value = "";
+      } else {
+        errEl.textContent = "Invalid API Key. Please verify and try again.";
+        errEl.style.display = "block";
+      }
+    });
+
+    // Logout click handler
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      adminToken = "";
+      sessionStorage.removeItem("admin_api_token");
+      showLoginGate();
+    });
+
+    // ---------- Navigation ----------
+    document.querySelectorAll(".nav-item").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".nav-item").forEach(b => b.classList.remove("active"));
+        document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+        
+        btn.classList.add("active");
+        
+        const pageId = "page-" + btn.dataset.page;
+        const pageEl = document.getElementById(pageId);
+        if (pageEl) {
+          pageEl.classList.add("active");
+        }
+      });
+    });
+
+    // ---------- API Calls ----------
+    async function loadAdminData() {
+      await fetchFaqs();
+      await fetchGapLogs();
+      await fetchTickets();
+      renderDashboard();
+      renderFaqs();
+      renderGapLogs();
+      renderTickets();
+      initPdfUpload();
+    }
+
+    async function fetchFaqs() {
+      try {
+        const res = await fetch(`${API_BASE}/api/qa`);
+        if (!res.ok) throw new Error("Failed to fetch FAQs");
+        const data = await res.json();
+        faqs = data.faqs || [];
+      } catch (err) {
+        console.error("Error loading FAQs:", err);
+      }
+    }
+
+    async function fetchGapLogs() {
+      try {
+        const res = await fetch(`${API_BASE}/api/unanswered`, {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${adminToken}`
+          }
+        });
+        if (!res.ok) throw new Error("Failed to fetch unanswered queries logs");
+        const data = await res.json();
+        gapLogs = data.queries || [];
+      } catch (err) {
+        console.error("Error loading unanswered logs:", err);
+      }
+    }
+
+    async function fetchTickets() {
+      try {
+        const res = await fetch(`${API_BASE}/api/escalation`, {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${adminToken}`
+          }
+        });
+        if (!res.ok) throw new Error("Failed to fetch tickets");
+        const data = await res.json();
+        tickets = data.escalations || [];
+      } catch (err) {
+        console.error("Error loading tickets:", err);
+      }
+    }
+
+    window.handleUpdateTicketStatus = async function(ticketId, newStatus) {
+      try {
+        const res = await fetch(`${API_BASE}/api/escalation`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${adminToken}`
+          },
+          body: JSON.stringify({
+            ticket_id: ticketId,
+            status: newStatus
+          })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "Failed to update ticket status");
+
+        await loadAdminData();
+      } catch (err) {
+        alert("Error updating ticket status: " + err.message);
+      }
+    };
+
+    // ---------- Render Modules ----------
+
+    // 1. Dashboard
+    function renderDashboard() {
+      document.getElementById("statKbSize").textContent = faqs.length;
+      document.getElementById("statGapsCount").textContent = gapLogs.length;
+      document.getElementById("statTicketsCount").textContent = tickets.filter(t => t.status !== "Resolved").length;
+
+      // Group FAQs by department
+      const depts = {
+        "General": 0,
+        "Service & Maintenance": 0,
+        "Insurance & Claims": 0,
+        "Spare Parts": 0,
+        "Roadside Assistance": 0
+      };
+
+      faqs.forEach(faq => {
+        const dept = faq.department || "General";
+        if (depts[dept] !== undefined) {
+          depts[dept]++;
+        } else {
+          depts[dept] = 1;
+        }
+      });
+
+      const container = document.getElementById("deptDistribution");
+      container.innerHTML = Object.entries(depts).map(([dept, count]) => {
+        const pct = faqs.length > 0 ? (count / faqs.length * 100).toFixed(0) : 0;
+        
+        let barColor = "#2563eb"; // blue
+        if (dept === "Service & Maintenance") barColor = "#2e7d32"; // green
+        if (dept === "Insurance & Claims") barColor = "#1565c0"; // darker blue
+        if (dept === "Spare Parts") barColor = "#7b1fa2"; // purple
+        if (dept === "Roadside Assistance") barColor = "#e65100"; // orange
+
+        return `
+          <div>
+            <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; margin-bottom: 4px;">
+              <span>${escapeHtml(dept)}</span>
+              <span>${count} (${pct}%)</span>
+            </div>
+            <div style="background: var(--blue-50); height: 8px; border-radius: 999px; overflow: hidden; border: 1px solid var(--border);">
+              <div style="background: ${barColor}; height: 100%; width: ${pct}%;"></div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    // 2. FAQ List & Manager
+    function renderFaqs() {
+      const searchVal = document.getElementById("searchFaqInput").value.toLowerCase().trim();
+      const deptFilter = document.getElementById("filterFaqDept").value;
+
+      const filtered = faqs.filter(faq => {
+        const matchesSearch = faq.question.toLowerCase().includes(searchVal) || faq.answer.toLowerCase().includes(searchVal);
+        const matchesDept = deptFilter === "all" || (faq.department || "General") === deptFilter;
+        return matchesSearch && matchesDept;
+      });
+
+      const listContainer = document.getElementById("faqList");
+      if (filtered.length === 0) {
+        listContainer.innerHTML = `<div class="panel" style="color: var(--grey-text); text-align: center;">No FAQs match your search filters.</div>`;
+        return;
+      }
+
+      listContainer.innerHTML = filtered.map(faq => {
+        const dept = faq.department || "General";
+        
+        let tagStyle = "background: #f5f5f5; color: #424242; border: 1px solid #e0e0e0;";
+        if (dept === "Service & Maintenance") tagStyle = "background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9;";
+        if (dept === "Insurance & Claims") tagStyle = "background: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb;";
+        if (dept === "Spare Parts") tagStyle = "background: #f3e5f5; color: #6a1b9a; border: 1px solid #e1bee7;";
+        if (dept === "Roadside Assistance") tagStyle = "background: #fff3e0; color: #e65100; border: 1px solid #ffe0b2;";
+
+        return `
+          <div class="kb-item">
+            <div style="flex: 1;">
+              <div class="q">${escapeHtml(faq.question)}</div>
+              <div class="a">${escapeHtml(faq.answer)}</div>
+              <span class="tag" style="${tagStyle}">${escapeHtml(dept)}</span>
+            </div>
+            <button class="delete-btn" onclick="handleDeleteFaq('${escapeHtml(faq.question)}')">Delete</button>
+          </div>
+        `;
+      }).join("");
+    }
+
+    // Add FAQ Submit Handler
+    document.getElementById("addFaqForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const qInput = document.getElementById("faqQuestion");
+      const aInput = document.getElementById("faqAnswer");
+      const deptSelect = document.getElementById("faqDeptSelect");
+
+      const question = qInput.value.trim();
+      const answer = aInput.value.trim();
+      const department = deptSelect.value;
+
+      if (!question || !answer) return;
+
+      try {
+        const res = await fetch(`${API_BASE}/api/qa`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${adminToken}`
+          },
+          body: JSON.stringify({ question, answer, department })
+        });
+        
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "Failed to add FAQ pair");
+
+        qInput.value = "";
+        aInput.value = "";
+        
+        // Reload all data
+        await loadAdminData();
+      } catch (err) {
+        alert("Error adding QA entry: " + err.message);
+      }
+    });
+
+    // Delete FAQ Action Handler
+    window.handleDeleteFaq = async function(question) {
+      if (!confirm(`Are you sure you want to delete the following FAQ?\n\n"${question}"`)) {
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/api/qa`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${adminToken}`
+          },
+          body: JSON.stringify({ question })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "Failed to delete FAQ");
+
+        await loadAdminData();
+      } catch (err) {
+        alert("Error deleting QA entry: " + err.message);
+      }
+    };
+
+    // Filter event listeners
+    document.getElementById("searchFaqInput").addEventListener("input", renderFaqs);
+    document.getElementById("filterFaqDept").addEventListener("change", renderFaqs);
+
+    document.getElementById("searchTicketInput").addEventListener("input", renderTickets);
+    document.getElementById("filterTicketStatus").addEventListener("change", renderTickets);
+
+    function renderTickets() {
+      const searchVal = document.getElementById("searchTicketInput").value.toLowerCase().trim();
+      const statusFilter = document.getElementById("filterTicketStatus").value;
+
+      const filtered = tickets.filter(t => {
+        const matchesSearch = t.name.toLowerCase().includes(searchVal) || 
+                              t.email.toLowerCase().includes(searchVal) || 
+                              t.phone.toLowerCase().includes(searchVal) || 
+                              t.query.toLowerCase().includes(searchVal) || 
+                              t.id.toLowerCase().includes(searchVal);
+        const matchesStatus = statusFilter === "all" || t.status === statusFilter;
+        return matchesSearch && matchesStatus;
+      });
+
+      const listContainer = document.getElementById("ticketsList");
+      if (filtered.length === 0) {
+        listContainer.innerHTML = `<div class="panel" style="color: var(--grey-text); text-align: center;">No support tickets match your search filters.</div>`;
+        return;
+      }
+
+      listContainer.innerHTML = filtered.map(t => {
+        return `
+          <div class="gap-card" style="border-left-color: var(--blue-600); align-items: flex-start; flex-direction: column; gap: 12px; border-left-width: 4px;">
+            <div style="display: flex; justify-content: space-between; width: 100%; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 8px;">
+              <div style="font-weight: 700; color: var(--blue-900);">Ticket ID: ${t.id}</div>
+              <div style="font-size: 12px; color: var(--grey-text);">${t.timestamp}</div>
+            </div>
+            <div style="width: 100%;">
+              <div style="font-size: 13.5px; font-weight: 600; color: #1e293b; margin-bottom: 4px;">User Query:</div>
+              <div style="background: var(--blue-50); padding: 10px; border-radius: var(--radius-sm); font-size: 13px; font-style: italic; color: #475569; border-left: 3px solid var(--blue-200); margin-bottom: 12px;">"${escapeHtml(t.query)}"</div>
+              
+              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; font-size: 12.5px; margin-bottom: 12px; background: #fafbfc; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                <div><strong>Customer:</strong> ${escapeHtml(t.name)}</div>
+                <div><strong>Email:</strong> <a href="mailto:${escapeHtml(t.email)}" style="color: var(--blue-600);">${escapeHtml(t.email)}</a></div>
+                <div><strong>Phone:</strong> <a href="tel:${escapeHtml(t.phone)}" style="color: var(--blue-600);">${escapeHtml(t.phone)}</a></div>
+              </div>
+              
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="font-size: 12px; color: var(--grey-text);">Department: <span class="tag" style="background: var(--blue-100); color: var(--blue-700); border: 1px solid var(--blue-200); margin-top: 0;">${escapeHtml(t.department)}</span></div>
+                
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-size: 12px; font-weight: 600; color: var(--grey-text);">Status:</span>
+                  <select onchange="handleUpdateTicketStatus('${t.id}', this.value)" style="padding: 4px 8px; font-size: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); outline: none; background: white; font-weight: 600;">
+                    <option value="New" ${t.status === 'New' ? 'selected' : ''}>New</option>
+                    <option value="In Progress" ${t.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+                    <option value="Resolved" ${t.status === 'Resolved' ? 'selected' : ''}>Resolved</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    // 3. Knowledge Gaps (Logs)
+    function renderGapLogs() {
+      const container = document.getElementById("gapsList");
+      if (gapLogs.length === 0) {
+        container.innerHTML = `<div class="panel" style="color: var(--grey-text); text-align: center;">No knowledge gaps logged. Good job! All queries are answered with high confidence.</div>`;
+        return;
+      }
+
+      container.innerHTML = gapLogs.map((log, index) => {
+        if (log.type === "unanswered") {
+          return `
+            <div class="gap-card">
+              <div class="gap-info">
+                <div class="gap-query">"${escapeHtml(log.query)}"</div>
+                <div class="gap-meta">
+                  <span class="gap-meta-item"><span class="badge-unanswered">Unanswered</span></span>
+                  <span class="gap-meta-item">Time: ${escapeHtml(log.timestamp)}</span>
+                  <span class="gap-meta-item">Closest Match: <em>"${escapeHtml(log.closest_match)}"</em></span>
+                  <span class="gap-meta-item">Confidence: ${(log.confidence * 100).toFixed(0)}%</span>
+                </div>
+              </div>
+              <button class="resolve-btn" onclick="handleResolveGap(${index})">Resolve</button>
+            </div>
+          `;
+        } else if (log.type === "negative_feedback") {
+          return `
+            <div class="gap-card negative-feedback">
+              <div class="gap-info">
+                <div class="gap-query">"${escapeHtml(log.query)}"</div>
+                <div class="gap-meta">
+                  <span class="gap-meta-item"><span class="badge-negative">Downvoted</span></span>
+                  <span class="gap-meta-item">Time: ${escapeHtml(log.timestamp)}</span>
+                  <span class="gap-meta-item">Matched Q: <em>"${escapeHtml(log.matched_question)}"</em></span>
+                  <span class="gap-meta-item">Provided Answer: <em>"${escapeHtml(log.answer)}"</em></span>
+                </div>
+              </div>
+              <button class="resolve-btn" onclick="handleResolveGap(${index})">Resolve</button>
+            </div>
+          `;
+        } else {
+          return `
+            <div class="gap-card" style="border-left-color: var(--grey-light);">
+              <div class="gap-info">
+                <div class="gap-query" style="font-weight: 500; font-size: 13px;">${escapeHtml(log.content)}</div>
+              </div>
+            </div>
+          `;
+        }
+      }).join("");
+    }
+
+    // Gap resolution button handler
+    window.handleResolveGap = function(index) {
+      const log = gapLogs[index];
+      if (!log) return;
+
+      // Populate Q&A inputs
+      document.getElementById("faqQuestion").value = log.query;
+      document.getElementById("faqAnswer").value = log.type === "negative_feedback" ? `Corrected answer: ${log.answer}` : "";
+      
+      // Auto-classify department if we can
+      const queryLower = log.query.toLowerCase();
+      let department = "General";
+      if (queryLower.includes("warranty") || queryLower.includes("service") || queryLower.includes("maintenance")) {
+        department = "Service & Maintenance";
+      } else if (queryLower.includes("insurance") || queryLower.includes("claim")) {
+        department = "Insurance & Claims";
+      } else if (queryLower.includes("parts") || queryLower.includes("accessory")) {
+        department = "Spare Parts";
+      } else if (queryLower.includes("roadside") || queryLower.includes("assistance") || queryLower.includes("breakdown")) {
+        department = "Roadside Assistance";
+      }
+      document.getElementById("faqDeptSelect").value = department;
+
+      // Switch tab to KB Management
+      document.querySelector('.nav-item[data-page="kb"]').click();
+      
+      // Focus on answer textbox
+      document.getElementById("faqAnswer").focus();
+    };
+
+    // 4. PDF Auto-Ingestion
+    function initPdfUpload() {
+      const box = document.getElementById("pdfUploadBox");
+      if (!box) return;
+
+      // Reset handlers to prevent duplicates
+      const newBox = box.cloneNode(true);
+      box.parentNode.replaceChild(newBox, box);
+
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(evt => {
+        newBox.addEventListener(evt, e => {
+          e.preventDefault();
+          e.stopPropagation();
+        }, false);
+      });
+
+      ['dragenter', 'dragover'].forEach(evt => {
+        newBox.addEventListener(evt, () => {
+          newBox.style.background = "var(--blue-50)";
+          newBox.style.borderColor = "var(--blue-500)";
+        }, false);
+      });
+
+      ['dragleave', 'drop'].forEach(evt => {
+        newBox.addEventListener(evt, () => {
+          newBox.style.background = "var(--white)";
+          newBox.style.borderColor = "var(--blue-200)";
+        }, false);
+      });
+
+      newBox.addEventListener('drop', e => {
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+          handlePdfUpload(files[0]);
+        }
+      });
+
+      newBox.addEventListener('click', () => {
+        const fileInput = document.createElement("input");
+        fileInput.type = "file";
+        fileInput.accept = ".pdf";
+        fileInput.onchange = e => {
+          if (e.target.files.length > 0) {
+            handlePdfUpload(e.target.files[0]);
+          }
+        };
+        fileInput.click();
+      });
+    }
+
+    async function handlePdfUpload(file) {
+      const box = document.getElementById("pdfUploadBox");
+      const resultsEl = document.getElementById("pdfUploadResults");
+      const listEl = document.getElementById("extractedList");
+      
+      if (!file.name.toLowerCase().endsWith(".pdf")) {
+        alert("Please upload a PDF file.");
+        return;
+      }
+
+      box.innerHTML = `
+        <span style="font-weight: bold; color: var(--blue-600); margin-bottom: 8px;">Processing...</span>
+        <span>Extracting Q&As from <strong>${escapeHtml(file.name)}</strong>...</span>
+        <p>This may take up to a minute depending on file length. Please stay on this tab.</p>
+      `;
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      try {
+        const res = await fetch(`${API_BASE}/api/upload-pdf`, {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${adminToken}`
+          },
+          body: formData
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "PDF extraction service error");
+
+        box.innerHTML = `
+          <span style="color: var(--success); font-weight: 700; font-size: 16px;">Extraction Success!</span>
+          <p>Extracted <strong>${data.extracted}</strong> FAQ pairs, and loaded <strong>${data.added}</strong> new entries into the KB database.</p>
+        `;
+
+        // Render extracted list
+        if (data.pairs && data.pairs.length > 0) {
+          resultsEl.style.display = "block";
+          listEl.innerHTML = data.pairs.map(pair => `
+            <div style="background: var(--blue-50); border: 1px solid var(--border); padding: 12px; border-radius: var(--radius-sm);">
+              <div style="font-weight: 600; font-size: 13px; color: var(--blue-900); margin-bottom: 4px;">Q: "${escapeHtml(pair.question)}"</div>
+              <div style="font-size: 12px; color: var(--grey-text);">A: ${escapeHtml(pair.answer)}</div>
+            </div>
+          `).join("");
+        }
+
+        // Reload data
+        await loadAdminData();
+
+        setTimeout(() => {
+          resultsEl.style.display = "none";
+          box.innerHTML = `
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--blue-600); margin-bottom: 8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+            <span>Drag &amp; Drop a PDF manual here</span>
+            <p>Supports files up to 15MB. The backend will use heuristic patterns to parse Questions &amp; Answers dynamically.</p>
+            <button class="btn-primary" style="pointer-events: none; margin-top: 10px;">Select PDF File</button>
+          `;
+          initPdfUpload();
+        }, 8000);
+
+      } catch (err) {
+        console.error("PDF upload failure:", err);
+        box.innerHTML = `
+          <span style="color: var(--danger); font-weight: 700; font-size: 16px;">Extraction Failed</span>
+          <p>Error details: ${escapeHtml(err.message)}</p>
+        `;
+        setTimeout(() => {
+          box.innerHTML = `
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--blue-600); margin-bottom: 8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+            <span>Drag &amp; Drop a PDF manual here</span>
+            <p>Supports files up to 15MB. The backend will use heuristic patterns to parse Questions &amp; Answers dynamically.</p>
+            <button class="btn-primary" style="pointer-events: none; margin-top: 10px;">Select PDF File</button>
+          `;
+          initPdfUpload();
+        }, 5000);
+      }
+    }
+
+    // ---------- Utils ----------
+    function escapeHtml(str) {
+      if (!str) return "";
+      const div = document.createElement("div");
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    // Run on page load
+    init();
+  </script>
+</body>
+</html>

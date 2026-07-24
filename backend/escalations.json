@@ -1,0 +1,32 @@
+[
+  {
+    "id": "tkt_1784899639661",
+    "name": "Shivanshi Sharma",
+    "email": "shiivanshi@example.com",
+    "phone": "9876543210",
+    "query": "How do I claim insurance for collision?",
+    "department": "Insurance & Claims",
+    "timestamp": "2026-07-24 18:57:19",
+    "status": "In Progress"
+  },
+  {
+    "id": "tkt_1784899858557",
+    "name": "rohit",
+    "email": "rohit@example.com",
+    "phone": "9998887776",
+    "query": "how to repaire purring car engine",
+    "department": "Service & Maintenance",
+    "timestamp": "2026-07-24 19:00:58",
+    "status": "Resolved"
+  },
+  {
+    "id": "tkt_1784900003400",
+    "name": "Shii Sharma",
+    "email": "shii@example.com",
+    "phone": "9876543210",
+    "query": "How do I claim insurance for collision?",
+    "department": "Insurance & Claims",
+    "timestamp": "2026-07-24 19:03:23",
+    "status": "In Progress"
+  }
+]
