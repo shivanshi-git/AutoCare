@@ -10,6 +10,11 @@ FastAPI & FastEmbed FAQ matching chatbot and admin portal for Maruti Suzuki.
 - **PDF Ingestion**: Parses PDF files to extract Q&A pairs.
 - **Analytics & Escalation**: Logs unanswered queries to `escalations.json` and `unanswered_queries.log`.
 
+## Live Demo
+
+- **Customer App**: [https://autocare-frontend.onrender.com/](https://autocare-frontend.onrender.com/)
+- **Admin App**: [https://autocare-frontend.onrender.com/admin.html](https://autocare-frontend.onrender.com/admin.html)
+
 ## Directory Structure
 
 ```
