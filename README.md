@@ -12,7 +12,7 @@
 
 Enterprise-grade customer support automation with semantic search, real-time FAQ matching, and intelligent department routing — built without heavy ML frameworks.
 
-[Live Demo](https://autocare-frontend.onrender.com/) · [Admin Portal](https://autocare-frontend.onrender.com/admin.html) · [API Docs](http://127.0.0.1:8000/docs)
+[Documentation](https://shivanshi-git.github.io/AutoCare/) · [Live Demo](https://autocare-frontend.onrender.com/) · [Admin Portal](https://autocare-frontend.onrender.com/admin.html) · [API Docs](http://127.0.0.1:8000/docs)
 
 </div>
 
