@@ -1294,12 +1294,15 @@ def get_document(document_id: str, principal: dict = Depends(require_permission(
     }
 
 
+REQUIRED_POINTERS = ["Introduction", "Methodology", "Results", "Conclusion", "Safety Warning"]
+
 @app.post("/api/documents/upload", status_code=status.HTTP_201_CREATED)
 async def upload_document(
     file: UploadFile = File(...),
     model: str = Form(""),
     team: str = Form(""),
     category: str = Form(""),
+    replace_document_id: str = Form(""),
     principal: dict = Depends(require_permission("upload")),
 ):
     """Store, classify, index, and publish a QA document."""
@@ -1323,6 +1326,11 @@ async def upload_document(
     if not full_text:
         raise HTTPException(status_code=400, detail="No readable text was found in this PDF.")
 
+    lower_text = full_text.lower()
+    found_pointers = [p for p in REQUIRED_POINTERS if p.lower() in lower_text]
+    missing_pointers = [p for p in REQUIRED_POINTERS if p.lower() not in lower_text]
+    score = int((len(found_pointers) / len(REQUIRED_POINTERS)) * 100)
+
     inferred = infer_document_metadata(file.filename, full_text)
     settings = load_admin_settings()
     resolved_model = model.strip() or inferred["model"]
@@ -1334,63 +1342,91 @@ async def upload_document(
         raise HTTPException(status_code=400, detail="The selected engineering team is not enabled by the administrator.")
     if resolved_category not in settings["categories"]:
         raise HTTPException(status_code=400, detail="The selected document category is not enabled by the administrator.")
-    requires_approval = (
-        (principal["role"] == "Engineering" and settings.get("engineering_upload_requires_qa_approval", True))
-        or (principal["role"] == "QA" and not settings.get("qa_upload_auto_approves", True))
-    )
-    approval_state = "Pending QA Approval" if requires_approval else "Approved"
+    
+    approval_state = "Approved" if score == 100 else "Draft"
+    
     safe_filename = re.sub(r"[^A-Za-z0-9._-]", "_", Path(file.filename).name)
     stored_name = f"{uuid.uuid4().hex}_{safe_filename}"
     file_path = UPLOADS_PATH / stored_name
 
-    document = {
-        "id": f"doc_{uuid.uuid4().hex}",
-        "name": Path(file.filename).name,
-        "model": resolved_model,
-        "team": resolved_team,
-        "category": resolved_category,
-        "content": re.sub(r"\s+", " ", full_text)[:12000],
-        "pages": page_records,
-        "uploaded_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "revision": "R1",
-        "approval_state": approval_state,
-        "owner": principal["department"],
-        "uploaded_by": principal["id"],
-        "uploaded_by_name": principal["name"],
-        "last_reviewed": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "size": len(contents),
-        "stored_name": stored_name,
-    }
+    existing_doc = None
+    if replace_document_id:
+        existing_doc = next((doc for doc in DOCUMENTS if doc["id"] == replace_document_id), None)
+        if existing_doc and existing_doc["uploaded_by"] != principal["id"] and principal["role"] not in ("QA Admin", "Admin"):
+            raise HTTPException(status_code=403, detail="You can only replace your own drafts.")
+            
+    if existing_doc:
+        document = existing_doc
+        document.update({
+            "name": Path(file.filename).name,
+            "model": resolved_model,
+            "team": resolved_team,
+            "category": resolved_category,
+            "content": re.sub(r"\s+", " ", full_text)[:12000],
+            "pages": page_records,
+            "approval_state": approval_state,
+            "last_reviewed": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "size": len(contents),
+            "stored_name": stored_name,
+            "score": score,
+            "missing_pointers": missing_pointers,
+        })
+    else:
+        document = {
+            "id": f"doc_{uuid.uuid4().hex}",
+            "name": Path(file.filename).name,
+            "model": resolved_model,
+            "team": resolved_team,
+            "category": resolved_category,
+            "content": re.sub(r"\s+", " ", full_text)[:12000],
+            "pages": page_records,
+            "uploaded_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "revision": "R1",
+            "approval_state": approval_state,
+            "owner": principal["department"],
+            "uploaded_by": principal["id"],
+            "uploaded_by_name": principal["name"],
+            "last_reviewed": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "size": len(contents),
+            "stored_name": stored_name,
+            "score": score,
+            "missing_pointers": missing_pointers,
+        }
 
     try:
         file_path.write_bytes(contents)
-        DOCUMENTS.append(document)
+        if not existing_doc:
+            DOCUMENTS.append(document)
         persist_documents()
         rebuild_document_index()
         audit("document.uploaded", principal, document["id"], {
             "name": document["name"],
             "approval_state": approval_state,
+            "score": score,
             "model": resolved_model,
             "team": resolved_team,
             "category": resolved_category,
+            "replaced": bool(existing_doc)
         })
     except Exception as exc:
-        if DOCUMENTS and DOCUMENTS[-1].get("id") == document["id"]:
+        if not existing_doc and DOCUMENTS and DOCUMENTS[-1].get("id") == document["id"]:
             DOCUMENTS.pop()
         file_path.unlink(missing_ok=True)
         raise HTTPException(status_code=500, detail=f"Failed to store document: {exc}")
 
     return {
         "status": "success",
-        "message": "Document classified and added to the QA library.",
+        "message": f"Document {'approved' if score == 100 else 'saved as draft'}.",
         "document": {key: value for key, value in document.items() if key != "content"},
         "classification": {
             "model": document["model"],
             "team": document["team"],
             "category": document["category"],
         },
-        "characters_indexed": len(document["content"]),
+        "score": score,
+        "missing_pointers": missing_pointers,
         "approval_state": approval_state,
+        "replaced": bool(existing_doc)
     }
 
 

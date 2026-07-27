@@ -195,5 +195,23 @@
     "action": "user.login",
     "target": "usr_117b7f0b0522",
     "details": {}
+  },
+  {
+    "id": "audit_7e2efd16ce4d",
+    "timestamp": "2026-07-28T00:14:31",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_c1c9ccc985e6",
+    "details": {}
+  },
+  {
+    "id": "audit_88caa48e65b3",
+    "timestamp": "2026-07-28T00:21:24",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_c1c9ccc985e6",
+    "details": {}
   }
 ]
