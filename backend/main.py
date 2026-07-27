@@ -363,6 +363,8 @@ def classify_department(question: str) -> str:
         return "Production"
     if any(k in q for k in ["part", "inspection", "defect", "approval", "quality"]):
         return "Parts Quality"
+    if any(k in q for k in ["new model", "drbfm", "mizen", "mizenboshi", "gd3", "concern point", "design review"]):
+        return "QA New Model Development"
     return "QA"
 
 
@@ -1004,6 +1006,17 @@ def dashboard_summary(principal: dict = Depends(require_permission("view"))):
             "under_qa": len(model_documents) - approved_count,
             "progress": round((approved_count / len(model_documents)) * 100) if model_documents else 0,
         })
+    # Categorize models by Mizen Boushi process status
+    completed_models = [m for m in active_models if m["documents"] > 0 and m["progress"] == 100]
+    in_process_models = [m for m in active_models if m["documents"] > 0 and m["progress"] < 100]
+    not_started_models = [
+        {"model": m.get("model", "Unknown"), "planned_start": m.get("planned_start", "TBD"), "status": m.get("status", "Planned")}
+        for m in settings.get("upcoming_mizenboshi_models", [])
+    ]
+    # Also include active models with zero documents as not started
+    for m in active_models:
+        if m["documents"] == 0:
+            not_started_models.insert(0, {"model": m["model"], "planned_start": "Pending documents", "status": "Awaiting uploads"})
     return {
         "generated_at": now.isoformat(timespec="seconds"),
         "metrics": {
@@ -1023,6 +1036,9 @@ def dashboard_summary(principal: dict = Depends(require_permission("view"))):
             "can_view_qa_documents": can_view_qa_documents,
             "active_models": active_models,
             "upcoming_models": settings.get("upcoming_mizenboshi_models", []),
+            "completed_models": completed_models,
+            "in_process_models": in_process_models,
+            "not_started_models": not_started_models,
         },
     }
 

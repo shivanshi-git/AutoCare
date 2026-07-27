@@ -195,5 +195,77 @@
     "action": "user.login",
     "target": "usr_117b7f0b0522",
     "details": {}
+  },
+  {
+    "id": "audit_3585f5ecc1e0",
+    "timestamp": "2026-07-28T00:01:53",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_627740e0fb24",
+    "details": {}
+  },
+  {
+    "id": "audit_1c8b7d0ac78c",
+    "timestamp": "2026-07-28T00:03:17",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_627740e0fb24",
+    "details": {}
+  },
+  {
+    "id": "audit_07bb8fa4eed2",
+    "timestamp": "2026-07-28T00:05:53",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_627740e0fb24",
+    "details": {}
+  },
+  {
+    "id": "audit_ad1c5a10516a",
+    "timestamp": "2026-07-28T00:07:04",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_627740e0fb24",
+    "details": {}
+  },
+  {
+    "id": "audit_58ff62c30635",
+    "timestamp": "2026-07-28T00:07:15",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_627740e0fb24",
+    "details": {}
+  },
+  {
+    "id": "audit_d22e8744cf61",
+    "timestamp": "2026-07-28T00:10:30",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_627740e0fb24",
+    "details": {}
+  },
+  {
+    "id": "audit_224bb09aedf5",
+    "timestamp": "2026-07-28T01:14:33",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_627740e0fb24",
+    "details": {}
+  },
+  {
+    "id": "audit_136036c0a2aa",
+    "timestamp": "2026-07-28T01:15:12",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_627740e0fb24",
+    "details": {}
   }
 ]

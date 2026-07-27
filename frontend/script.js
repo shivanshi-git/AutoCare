@@ -1,5 +1,5 @@
 // ---------- Configuration ----------
-const API_BASE = "http://127.0.0.1:8000";
+const API_BASE = "http://127.0.0.1:8005";
 const API_KEY = "admin-secret-key"; // Default API key used in development
 
 let kb = [];
@@ -174,7 +174,28 @@ async function deleteKbEntry(question) {
 const chatWindow = document.getElementById("chatWindow");
 const chatInput = document.getElementById("chatInput");
 
-function addMessage(text, sender, meta) {
+// ---------- Citation Cards for Chat Answers ----------
+function renderCitationCards(citations) {
+  if (!citations || !citations.length) return "";
+  const cards = citations.map((c, i) => {
+    const label = escapeHtml(c.name || "Source");
+    const kind = c.kind || "Document";
+    const page = c.page ? `Page ${c.page}` : "";
+    const detail = kind === "Industry Reference"
+      ? `Industry reference · ${escapeHtml(c.topic || "General")} ↗`
+      : [page, escapeHtml(c.model || ""), escapeHtml(c.team || "")].filter(Boolean).join(" · ");
+    return `<div class="citation-card" title="${escapeHtml(c.excerpt || '')}">
+      <span class="citation-index">${i + 1}</span>
+      <span class="citation-info">
+        <span class="citation-name">${label}</span>
+        <span class="citation-detail">${detail}</span>
+      </span>
+    </div>`;
+  }).join("");
+  return `<div class="citation-list">${cards}</div>`;
+}
+
+function addMessage(text, sender, meta, citations) {
   if (!chatWindow) return;
   
   const msg = document.createElement("div");
@@ -188,6 +209,7 @@ function addMessage(text, sender, meta) {
     <div class="bubble">
       ${escapeHtml(text)}
       ${meta ? `<span class="meta">${escapeHtml(meta)}</span>` : ""}
+      ${sender === 'bot' ? renderCitationCards(citations) : ""}
     </div>
   `;
   chatWindow.appendChild(msg);
@@ -220,7 +242,7 @@ async function sendMessage(text) {
       metaInfo = `Confidence: ${(data.confidence * 100).toFixed(0)}%`;
     }
     
-    addMessage(data.answer, "bot", metaInfo);
+    addMessage(data.answer, "bot", metaInfo, data.citations);
   } catch (err) {
     console.error("API call failed:", err);
     addMessage(`Could not connect to the backend server. Make sure it is running on ${API_BASE}`, "bot");

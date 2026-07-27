@@ -959,6 +959,18 @@
         </div>
         <div class="dept-openings" id="openings-general"></div>
       </div>
+
+      <!-- QA New Model Development -->
+      <div class="dept-group">
+        <div class="dept-row" onclick="toggleOpenings('newmodel')">
+          <div>
+            <div class="name">QA New Model Development</div>
+            <div class="meta">Mizen Boushi, DRBFM, new model QA process</div>
+          </div>
+          <span class="dept-badge" id="badge-newmodel">0 open</span>
+        </div>
+        <div class="dept-openings" id="openings-newmodel"></div>
+      </div>
     </section>
 
   </main>
@@ -980,7 +992,7 @@
 <script>
 // ---------- Configuration ----------
 const API_BASE = window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost" 
-  ? "http://127.0.0.1:8000" 
+  ? "http://127.0.0.1:8005" 
   : window.location.origin;
 let portalToken = sessionStorage.getItem("mizenboshi_portal_token") || "";
 let portalUser = null;
@@ -1015,7 +1027,8 @@ let escalatedTickets = {
   ],
   general: [
     { q: "NEXA model comparison Swift vs Baleno", user: "Shiva (Escalated)", status: "In Progress", statusClass: "progress" }
-  ]
+  ],
+  newmodel: []
 };
 
 // Load escalated tickets from sessionStorage if they exist
@@ -1150,13 +1163,14 @@ window.toggleOpenings = function(deptId) {
 
 // ---------- Render Department Ticket Openings ----------
 function renderAllOpenings() {
-  const keys = ["service", "insurance", "parts", "roadside", "general"];
+  const keys = ["service", "insurance", "parts", "roadside", "general", "newmodel"];
   const keyToDeptMap = {
     "service": "Service & Maintenance",
     "insurance": "Insurance & Claims",
     "parts": "Spare Parts",
     "roadside": "Roadside Assistance",
-    "general": "General Inquiry"
+    "general": "General Inquiry",
+    "newmodel": "QA New Model Development"
   };
   keys.forEach(key => {
     const listEl = document.getElementById(`openings-${key}`);
@@ -1294,6 +1308,8 @@ function renderKb() {
       badgeStyle = "background: #f3e5f5; color: #6a1b9a; border: 1px solid #e1bee7;";
     } else if (dept === "Roadside Assistance") {
       badgeStyle = "background: #fff3e0; color: #e65100; border: 1px solid #ffe0b2;";
+    } else if (dept === "QA New Model Development") {
+      badgeStyle = "background: #e0f2f1; color: #00695c; border: 1px solid #b2dfdb;";
     }
 
     const deptHtml = `<span class="tag" style="${badgeStyle}; font-weight: 600; text-transform: uppercase; font-size: 10px; margin-right: 6px;">${escapeHtml(dept)}</span>`;
@@ -1378,6 +1394,12 @@ function renderDeptSuggestions(deptName) {
       fallbacks = [
         { label: "Get roadside assistance", q: "Can I get roadside assistance?" }
       ];
+    } else if (deptName === "QA New Model Development") {
+      fallbacks = [
+        { label: "New model QA process", q: "What is the QA process for a new model development?" },
+        { label: "DRBFM review steps", q: "What are the DRBFM review steps for new parts?" },
+        { label: "Mizen Boushi stages", q: "What are the three stages of Mizen Boushi?" }
+      ];
     } else {
       fallbacks = [
         { label: "Smart Hybrid tech", q: "What is Suzuki Smart Hybrid technology?" },
@@ -1452,6 +1474,13 @@ function renderChatHistory() {
             <div style="flex: 1;">
               <div style="font-size: 13.5px; font-weight: 600; color: var(--blue-900);">General Inquiry</div>
               <div style="font-size: 11px; color: var(--grey-text);">Showrooms, smart hybrid tech</div>
+            </div>
+          </button>
+          <button class="dept-select-card" data-dept="QA New Model Development" style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--white); cursor: pointer; text-align: left; transition: all 0.15s ease;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--blue-700);"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+            <div style="flex: 1;">
+              <div style="font-size: 13.5px; font-weight: 600; color: var(--blue-900);">QA New Model Development</div>
+              <div style="font-size: 11px; color: var(--grey-text);">Mizen Boushi, DRBFM, new model QA</div>
             </div>
           </button>
         </div>
@@ -1555,6 +1584,8 @@ function addMessageUI(text, sender, meta, id, feedbackSubmitted, isHistoryLoad) 
   chatWindow.scrollTop = chatWindow.scrollHeight;
 }
 
+let downvoteCount = parseInt(sessionStorage.getItem("chat_downvote_count")) || 0;
+
 // Global feedback click handler
 window.handleFeedback = async function(msgId, rating) {
   const msgIndex = chatHistory.findIndex(m => m.id === msgId);
@@ -1567,9 +1598,9 @@ window.handleFeedback = async function(msgId, rating) {
   // Disable buttons in UI
   const msgEl = document.querySelector(`[data-msg-id="${msgId}"]`);
   if (msgEl) {
-    const actionsEl = msgEl.querySelector(".bubble-actions");
+    const actionsEl = msgEl.querySelector(".message-actions, .bubble-actions");
     if (actionsEl) {
-      actionsEl.innerHTML = `<span style="font-size: 11px; opacity: 0.6;">Thank you for your feedback!</span>`;
+      actionsEl.innerHTML = `<span style="font-size: 10px; color: var(--app-secondary);">Feedback submitted</span>`;
     }
   }
   
@@ -1589,11 +1620,32 @@ window.handleFeedback = async function(msgId, rating) {
     console.error("Failed to submit feedback rating:", err);
   }
 
-  // Directly show escalation if user downvotes
   if (rating === "down") {
-    showEscalationUI();
+    downvoteCount++;
+    sessionStorage.setItem("chat_downvote_count", downvoteCount);
+    
+    if (downvoteCount === 1 && msg.queryText) {
+      // First downvote: Try ONE MORE TIME to answer with expanded context
+      triggerSecondAttempt(msg);
+    } else {
+      // Second downvote: Escalate to Contact Admin form
+      downvoteCount = 0;
+      sessionStorage.setItem("chat_downvote_count", 0);
+      showEscalationUI();
+    }
+  } else if (rating === "up") {
+    downvoteCount = 0;
+    sessionStorage.setItem("chat_downvote_count", 0);
   }
 };
+
+function triggerSecondAttempt(msg) {
+  const query = msg.queryText;
+  if (!query || chatStreamActive) return;
+
+  const retryText = `Comprehensive details and guidelines regarding: ${query}`;
+  sendMessage(retryText);
+}
 
 async function sendMessage(text) {
   const query = text.trim();
@@ -1695,11 +1747,6 @@ async function sendMessage(text) {
       sessionStorage.setItem("recent_conversations", JSON.stringify(recentConversations));
       renderRecentConversations();
       
-      // Escalate if confidence is low
-      if (isLowConfidence) {
-        showEscalationUI();
-      }
-      
       if (sendBtn) sendBtn.disabled = false;
       if (chatInput) {
         chatInput.disabled = false;
@@ -1800,6 +1847,34 @@ function resetDefaultChips() {
   });
 }
 
+// ---------- Low-Confidence Hint (Graduated Escalation) ----------
+function addLowConfidenceHint(hintText, level) {
+  if (!chatWindow) return;
+  const hintId = 'hint_' + Date.now();
+  const hint = document.createElement("div");
+  hint.className = "message bot";
+  hint.dataset.msgId = hintId;
+  hint.innerHTML = `<div class="avatar bot-avatar">AC</div>
+    <div class="bubble">
+      <div class="low-confidence-hint ${level >= 2 ? 'hint-level-2' : ''}">
+        <span class="hint-icon">${level >= 2 ? '⚠️' : '💡'}</span>
+        <span class="hint-text">${escapeHtml(hintText)}</span>
+      </div>
+    </div>`;
+  chatWindow.appendChild(hint);
+  chatWindow.scrollTop = chatWindow.scrollHeight;
+
+  chatHistory.push({
+    id: hintId,
+    sender: 'bot',
+    text: hintText,
+    meta: level >= 2 ? 'Rephrase suggestion (attempt 2)' : 'Rephrase suggestion',
+    feedbackSubmitted: false,
+    isEscalation: false
+  });
+  sessionStorage.setItem("chat_history", JSON.stringify(chatHistory));
+}
+
 // ---------- Escalation Path ----------
 function showEscalationUI() {
   const escalId = 'escal_' + Date.now();
@@ -1854,6 +1929,7 @@ function renderEscalationUI(escalId) {
             <option value="Insurance & Claims">Insurance & Claims</option>
             <option value="Spare Parts">Spare Parts</option>
             <option value="Roadside Assistance">Roadside Assistance</option>
+            <option value="QA New Model Development">QA New Model Development</option>
             <option value="General Inquiry">General Inquiry</option>
           </select>
         </div>
@@ -1962,6 +2038,7 @@ window.escalateQuery = async function(escalId) {
       "Insurance & Claims": "insurance",
       "Spare Parts": "parts",
       "Roadside Assistance": "roadside",
+      "QA New Model Development": "newmodel",
       "General Inquiry": "general"
     };
     const key = deptKeyMap[deptName];
@@ -2537,6 +2614,15 @@ init();
     border-color:var(--app-separator) !important;
   }
   .escalation-box { background:var(--app-glass-strong) !important; border-color:var(--app-separator) !important; }
+  .low-confidence-hint {
+    display:flex; align-items:flex-start; gap:8px; margin-top:10px; padding:10px 12px;
+    border:1px solid rgba(255,204,0,.28); border-radius:10px;
+    background:rgba(255,204,0,.08); color:var(--app-text); font-size:11.5px; line-height:1.5;
+  }
+  .low-confidence-hint .hint-icon { flex:0 0 18px; font-size:14px; line-height:1; }
+  .low-confidence-hint .hint-text { flex:1; }
+  .low-confidence-hint strong { font-weight:700; color:var(--app-text); }
+  .low-confidence-hint.hint-level-2 { border-color:rgba(255,149,0,.32); background:rgba(255,149,0,.08); }
   html[data-theme="dark"] [style*="color: #64748b"] { color:var(--app-secondary) !important; }
   .preview-summary { color:var(--app-text) !important; }
   .status.escalated,.ticket-status.priority { background:rgba(255,69,58,.14) !important; color:#ff6961 !important; }
@@ -3573,6 +3659,28 @@ loadKb().then(restoreWorkspaceState);
   .upcoming-status { display:inline-block;margin-top:6px;padding:3px 6px;border-radius:999px;background:var(--app-accent-soft);color:var(--app-accent);font-size:8px;font-weight:750; }
   .pipeline-loading { min-height:150px;border-radius:12px;background:rgba(127,156,198,.08);animation:metricPulse 1.2s ease-in-out infinite alternate; }
   .pipeline-note { padding:13px 8px;color:var(--app-secondary);font-size:9.5px;line-height:1.5;text-align:center; }
+
+  /* ---------- Model Process Status Banner ---------- */
+  .model-status-banner { display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px; }
+  .model-status-column { padding:14px;border:1px solid var(--app-separator);border-radius:12px;background:var(--app-reading-subtle); }
+  .model-status-header { display:flex;align-items:center;gap:8px;margin-bottom:10px; }
+  .status-dot { width:9px;height:9px;border-radius:50%;flex:0 0 9px; }
+  .status-dot.done { background:#30d158; }
+  .status-dot.inprocess { background:#ff9f0a; }
+  .status-dot.notstarted { background:rgba(142,142,147,.55); }
+  .model-status-title { color:var(--app-text);font-size:11.5px;font-weight:780; }
+  .model-status-count { min-width:20px;height:20px;display:grid;place-items:center;padding:0 6px;border-radius:999px;background:var(--app-accent-soft);color:var(--app-accent);font-size:9px;font-weight:800;margin-left:auto; }
+  .model-status-list { display:flex;flex-direction:column;gap:7px; }
+  .model-status-card { padding:10px;border-radius:9px;background:var(--app-reading);border:1px solid transparent;transition:border-color .15s; }
+  .model-status-card:hover { border-color:var(--app-accent); }
+  .model-status-card-top { display:flex;align-items:center;justify-content:space-between;gap:8px; }
+  .model-status-name { color:var(--app-text);font-size:10.5px;font-weight:720; }
+  .model-badge-done { display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:999px;background:rgba(48,209,88,.14);color:#30d158;font-size:8.5px;font-weight:750; }
+  .model-badge-inprocess { display:inline-flex;align-items:center;padding:2px 8px;border-radius:999px;background:rgba(255,159,10,.14);color:#ff9f0a;font-size:8.5px;font-weight:750; }
+  .model-badge-notstarted { display:inline-flex;align-items:center;padding:2px 8px;border-radius:999px;background:rgba(142,142,147,.14);color:var(--app-secondary);font-size:8.5px;font-weight:750; }
+  .model-status-detail { margin-top:6px;color:var(--app-secondary);font-size:9px;line-height:1.4; }
+  .model-status-card .model-progress-track { margin-top:6px; }
+  @media(max-width:900px){.model-status-banner{grid-template-columns:1fr}}
   @media(max-width:1050px){.pipeline-columns{grid-template-columns:1fr 1fr}.pipeline-column:first-child{grid-column:1/-1}}
   @media(max-width:900px){.dashboard-widgets{grid-template-columns:1fr}.dashboard-widget{grid-column:1!important}.action-columns,.continue-grid,.pipeline-columns{grid-template-columns:1fr}.pipeline-column:first-child{grid-column:auto}.drag-handle{display:none}}
 
@@ -3693,6 +3801,28 @@ loadKb().then(restoreWorkspaceState);
   const renderPipeline=pipeline=>{
     const target=document.getElementById("mizenboshiPipeline");
     if(!target)return;
+
+    // --- Model Process Status Summary (Done / In Process / Not Started) ---
+    const doneModels = pipeline.completed_models || [];
+    const inProcessModels = pipeline.in_process_models || [];
+    const notStartedModels = pipeline.not_started_models || [];
+
+    const statusBanner = `<div class="model-status-banner">
+      <div class="model-status-column status-done">
+        <div class="model-status-header"><span class="status-dot done"></span><span class="model-status-title">Process Done</span><span class="model-status-count">${doneModels.length}</span></div>
+        ${doneModels.length ? `<div class="model-status-list">${doneModels.map(m=>`<div class="model-status-card done"><div class="model-status-card-top"><span class="model-status-name">${escapeHtml(m.model)}</span><span class="model-badge-done">✓ 100% Approved</span></div><div class="model-status-detail">${m.approved}/${m.documents} documents approved</div></div>`).join("")}</div>` : `<div class="pipeline-note">No models have completed the full QA process yet.</div>`}
+      </div>
+      <div class="model-status-column status-inprocess">
+        <div class="model-status-header"><span class="status-dot inprocess"></span><span class="model-status-title">In Process</span><span class="model-status-count">${inProcessModels.length}</span></div>
+        ${inProcessModels.length ? `<div class="model-status-list">${inProcessModels.map(m=>`<div class="model-status-card inprocess"><div class="model-status-card-top"><span class="model-status-name">${escapeHtml(m.model)}</span><span class="model-badge-inprocess">${m.progress}%</span></div><div class="model-progress-track"><div class="model-progress-fill" style="width:${Math.max(3,m.progress)}%"></div></div><div class="model-status-detail">${m.approved}/${m.documents} approved · ${m.under_qa} under QA</div></div>`).join("")}</div>` : `<div class="pipeline-note">No models are currently in process.</div>`}
+      </div>
+      <div class="model-status-column status-notstarted">
+        <div class="model-status-header"><span class="status-dot notstarted"></span><span class="model-status-title">Not Started</span><span class="model-status-count">${notStartedModels.length}</span></div>
+        ${notStartedModels.length ? `<div class="model-status-list">${notStartedModels.map(m=>`<div class="model-status-card notstarted"><div class="model-status-card-top"><span class="model-status-name">${escapeHtml(m.model)}</span><span class="model-badge-notstarted">${escapeHtml(m.status||"Planned")}</span></div><div class="model-status-detail">Planned start · ${escapeHtml(m.planned_start||"TBD")}</div></div>`).join("")}</div>` : `<div class="pipeline-note">All models have been started.</div>`}
+      </div>
+    </div>`;
+
+    // --- Existing Pipeline Columns (Documents under QA, Models in process, Upcoming) ---
     const qaDocuments=pipeline.documents_under_qa||[];
     const qaContent=!pipeline.can_view_qa_documents
       ? `<div class="pipeline-note">${pipeline.documents_under_qa_count} document${pipeline.documents_under_qa_count===1?" is":"s are"} currently in QA review. Details are available to QA and Engineering.</div>`
@@ -3705,7 +3835,7 @@ loadKb().then(restoreWorkspaceState);
     const upcomingContent=(pipeline.upcoming_models||[]).length
       ? `<div class="pipeline-list">${pipeline.upcoming_models.map(item=>`<div class="upcoming-model-card"><div class="pipeline-item-title">${escapeHtml(item.model)}</div><div class="pipeline-item-meta">Planned start · ${escapeHtml(item.planned_start||"To be confirmed")}</div><span class="upcoming-status">${escapeHtml(item.status||"Planned")}</span></div>`).join("")}</div>`
       : `<div class="pipeline-note">No upcoming model activity is scheduled.</div>`;
-    target.innerHTML=`<section class="pipeline-column"><div class="pipeline-column-head"><span class="pipeline-column-title">Documents under QA</span><span class="pipeline-count">${pipeline.documents_under_qa_count||0}</span></div>${qaContent}</section><section class="pipeline-column"><div class="pipeline-column-head"><span class="pipeline-column-title">Models in process</span><span class="pipeline-count">${(pipeline.active_models||[]).length}</span></div>${activeContent}</section><section class="pipeline-column"><div class="pipeline-column-head"><span class="pipeline-column-title">Upcoming models</span><span class="pipeline-count">${(pipeline.upcoming_models||[]).length}</span></div>${upcomingContent}</section>`;
+    target.innerHTML=statusBanner+`<section class="pipeline-column"><div class="pipeline-column-head"><span class="pipeline-column-title">Documents under QA</span><span class="pipeline-count">${pipeline.documents_under_qa_count||0}</span></div>${qaContent}</section><section class="pipeline-column"><div class="pipeline-column-head"><span class="pipeline-column-title">Models in process</span><span class="pipeline-count">${(pipeline.active_models||[]).length}</span></div>${activeContent}</section><section class="pipeline-column"><div class="pipeline-column-head"><span class="pipeline-column-title">Upcoming models</span><span class="pipeline-count">${(pipeline.upcoming_models||[]).length}</span></div>${upcomingContent}</section>`;
     target.querySelectorAll("[data-pipeline-document]").forEach(button=>button.onclick=()=>openDocumentPreview(button.dataset.pipelineDocument));
   };
   window.renderContinueWorking=()=>{
