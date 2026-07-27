@@ -1,0 +1,113 @@
+[
+  {
+    "id": "doc_m1_t1_new",
+    "name": "New Systems Overview.pdf",
+    "model": "Model 1",
+    "team": "Engineering Team 1",
+    "category": "New Parts Details",
+    "content": "New systems overview for Model 1. Includes the initial part specification, ownership, interface requirements, validation checkpoints, and QA review expectations.",
+    "uploaded_at": "2026-07-24 10:00:00",
+    "size": 248000,
+    "stored_name": null
+  },
+  {
+    "id": "doc_m1_t1_approval",
+    "name": "Part Approval Checklist.pdf",
+    "model": "Model 1",
+    "team": "Engineering Team 1",
+    "category": "Approval of Part Details",
+    "content": "Part approval checklist for Model 1. QA verifies dimensional results, material certificates, test evidence, open deviations, and engineering sign-off before approval.",
+    "uploaded_at": "2026-07-23 14:20:00",
+    "size": 192000,
+    "stored_name": null
+  },
+  {
+    "id": "doc_m1_t2_design",
+    "name": "New Part Design Review.pdf",
+    "model": "Model 1",
+    "team": "Engineering Team 2",
+    "category": "Design Review of New Parts",
+    "content": "Design review record for new Model 1 parts. Covers drawing maturity, tolerance stack, DFMEA actions, interface risks, validation status, and QA observations.",
+    "uploaded_at": "2026-07-22 09:45:00",
+    "size": 356000,
+    "stored_name": null
+  },
+  {
+    "id": "doc_m2_t1_new",
+    "name": "Model 2 New Parts Register.pdf",
+    "model": "Model 2",
+    "team": "Engineering Team 1",
+    "category": "New Parts Details",
+    "content": "Register of new Model 2 parts with part names, drawing references, suppliers, maturity status, planned inspection dates, and QA ownership.",
+    "uploaded_at": "2026-07-21 16:30:00",
+    "size": 284000,
+    "stored_name": null
+  },
+  {
+    "id": "doc_m3_t2_approval",
+    "name": "Model 3 Approval Status.pdf",
+    "model": "Model 3",
+    "team": "Engineering Team 2",
+    "category": "Approval of Part Details",
+    "content": "Approval status for Model 3 parts, including accepted submissions, conditional approvals, rejected evidence, and pending QA actions.",
+    "uploaded_at": "2026-07-20 11:15:00",
+    "size": 212000,
+    "stored_name": null
+  },
+  {
+    "id": "doc_m4_t1_design",
+    "name": "Model 4 Design Review Actions.pdf",
+    "model": "Model 4",
+    "team": "Engineering Team 1",
+    "category": "Design Review of New Parts",
+    "content": "Open and closed design review actions for Model 4, with QA comments, responsible engineering owners, due dates, and evidence requirements.",
+    "uploaded_at": "2026-07-19 13:10:00",
+    "size": 330000,
+    "stored_name": null
+  },
+  {
+    "id": "doc_0feba499b38245839ead8a83d924df4b",
+    "name": "Engineering details.pdf",
+    "model": "Model 1",
+    "team": "Engineering Team 1",
+    "category": "Design Review of New Parts",
+    "content": "Sample Document This document contains placeholder information only. All values are fictitious and are intended solely for testing document upload, preview, search, and AI classification features. Field Sample Value Document Title Sample Design Review Document ID SAMPLE-001 Department Sample Department Category Sample Category Version 1.0 Created By Sample User Reviewed By Sample Reviewer Status Draft Date 01-Jan-2026 Sample Notes  Lorem ipsum placeholder text for testing purposes.  This section contains dummy content only.  No real product, project, model, or customer information is included.  Use this document to validate upload and document processing workflows.  Replace this content with actual data in production.",
+    "uploaded_at": "2026-07-24 20:33:27",
+    "size": 2520,
+    "stored_name": "c77dd8adf4be4223b444f316c4a2df04_Engineering_details.pdf"
+  },
+  {
+    "id": "doc_a60ee464d43142bbb29a3f1452321922",
+    "name": "Engineering details.pdf",
+    "model": "Model 1",
+    "team": "Engineering Team 1",
+    "category": "New Parts Details",
+    "content": "Sample Document This document contains placeholder information only. All values are fictitious and are intended solely for testing document upload, preview, search, and AI classification features. Field Sample Value Document Title Sample Design Review Document ID SAMPLE-001 Department Sample Department Category Sample Category Version 1.0 Created By Sample User Reviewed By Sample Reviewer Status Draft Date 01-Jan-2026 Sample Notes  Lorem ipsum placeholder text for testing purposes.  This section contains dummy content only.  No real product, project, model, or customer information is included.  Use this document to validate upload and document processing workflows.  Replace this content with actual data in production.",
+    "uploaded_at": "2026-07-24 21:16:29",
+    "size": 2520,
+    "stored_name": "2a57b91586ae4336b45784a39a1492da_Engineering_details.pdf"
+  },
+  {
+    "id": "doc_3c892de14493443882a23faac9ba7901",
+    "name": "Engineering details.pdf",
+    "model": "Model 2",
+    "team": "Engineering Team 3",
+    "category": "Approval of Part Details",
+    "content": "Sample Document This document contains placeholder information only. All values are fictitious and are intended solely for testing document upload, preview, search, and AI classification features. Field Sample Value Document Title Sample Design Review Document ID SAMPLE-001 Department Sample Department Category Sample Category Version 1.0 Created By Sample User Reviewed By Sample Reviewer Status Draft Date 01-Jan-2026 Sample Notes  Lorem ipsum placeholder text for testing purposes.  This section contains dummy content only.  No real product, project, model, or customer information is included.  Use this document to validate upload and document processing workflows.  Replace this content with actual data in production.",
+    "pages": [
+      {
+        "page": 1,
+        "text": "Sample Document This document contains placeholder information only. All values are fictitious and are intended solely for testing document upload, preview, search, and AI classification features. Field Sample Value Document Title Sample Design Review Document ID SAMPLE-001 Department Sample Department Category Sample Category Version 1.0 Created By Sample User Reviewed By Sample Reviewer Status Draft Date 01-Jan-2026 Sample Notes  Lorem ipsum placeholder text for testing purposes.  This section contains dummy content only.  No real product, project, model, or customer information is included.  Use this document to validate upload and document processing workflows.  Replace this content with actual data in production."
+      }
+    ],
+    "uploaded_at": "2026-07-26 10:30:29",
+    "revision": "R1",
+    "approval_state": "Pending QA Approval",
+    "owner": "Engineering",
+    "uploaded_by": "usr_c087d7db0753",
+    "uploaded_by_name": "Engineering Contributor",
+    "last_reviewed": "2026-07-26 10:30:29",
+    "size": 2520,
+    "stored_name": "33e5bee67d7340a7bae829d159929ff9_Engineering_details.pdf"
+  }
+]

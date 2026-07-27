@@ -1,0 +1,72 @@
+[
+  {
+    "topic": "Mizen Boushi and GD3",
+    "question": "What is the Mizen Boushi process?",
+    "content": "Mizen Boushi means preventing a problem before it occurs. In the Toyota-oriented GD3 approach, prevention is strengthened through Good Design, Good Discussion, and Good Design Review. The practical focus is to identify changes and change points, use experienced cross-functional reviewers to surface concern points and possible failure modes, agree preventive countermeasures, verify that the countermeasures were completed, and retain the learning for future work.",
+    "source": "JUSE QualityOne: DRBFM and GD3",
+    "url": "https://www.juse.or.jp/sqip/mailnews/qualityone/backnumber/QualityOne201108.pdf"
+  },
+  {
+    "topic": "DRBFM review",
+    "question": "How should a DRBFM or Mizen Boushi review be conducted?",
+    "content": "Start with the intended function and every change point. The designer records the part or system, the change, the functions affected, anticipated concern points, and the design measures already taken. Bring together design, production, quality, supplier, testing, and service knowledge. Ask what else could go wrong, what factors may have been missed, and whether the proposed design measure is sufficient. Record recommended actions, owners, evidence, and closure. Continue until the team can identify no credible unmanaged concern points.",
+    "source": "JUSE QualityOne: DRBFM review sequence",
+    "url": "https://www.juse.or.jp/sqip/mailnews/qualityone/backnumber/QualityOne201108.pdf"
+  },
+  {
+    "topic": "Change-point control",
+    "question": "What changes should trigger Mizen Boushi activity?",
+    "content": "Trigger preventive review for changes in design, material, supplier, tooling, process conditions, software, controls, inspection method, production location, logistics, regulation, usage environment, or interfaces. Also review new technology and carry-over designs used under new conditions. For every change, document the reason, affected function, interfaces, possible side effects, validation plan, responsible owner, and approval evidence.",
+    "source": "JUSE QualityOne: change requirements and concern-point review",
+    "url": "https://www.juse.or.jp/sqip/mailnews/qualityone/backnumber/QualityOne201108.pdf"
+  },
+  {
+    "topic": "Risk prioritization",
+    "question": "How are Mizen Boushi concern points prioritized?",
+    "content": "Prioritize concern points by customer and safety impact, regulatory impact, likelihood under actual use and manufacturing variation, detectability before shipment, novelty, interface complexity, and weakness of existing controls. High-severity concerns should not be accepted only because occurrence is estimated to be low. Escalate them for stronger design prevention, independent evidence, and management approval.",
+    "source": "Toyota Quality and Service: process criteria and customer confidence",
+    "url": "https://global.toyota/en/sustainability/esg/quality/"
+  },
+  {
+    "topic": "Built-in quality",
+    "question": "How do Jidoka and poka-yoke support Mizen Boushi?",
+    "content": "Jidoka prevents defective products from continuing through the process by detecting an abnormality and stopping equipment or work so the cause can be addressed. Poka-yoke prevents or immediately exposes simple mistakes through fail-safe design. In Mizen Boushi planning, prefer controls that prevent an error or stop the process at the source over controls that depend only on final inspection.",
+    "source": "Toyota Production System: Jidoka and Poka-yoke",
+    "url": "https://global.toyota/en/company/plant-tours/production-system/"
+  },
+  {
+    "topic": "Genchi Genbutsu",
+    "question": "What evidence is expected before closing a preventive action?",
+    "content": "Closure should be based on evidence from the actual product and process: confirmed requirements, updated drawings and specifications, test or simulation results, capability and measurement evidence, trial-build observations, supplier evidence, validation under realistic boundary conditions, and confirmation at the genba where the work occurs. Record the result, residual risk, approver, review date, and any standard or lesson updated.",
+    "source": "Toyota recurrence prevention: onsite management and abnormality control",
+    "url": "https://global.toyota/en/newsroom/corporate/42317624.html"
+  },
+  {
+    "topic": "Cross-functional responsibility",
+    "question": "Who should participate in a Mizen Boushi review?",
+    "content": "The review owner should include the functions that create, make, verify, supply, and experience the product: design engineering, production engineering, manufacturing, QA, supplier or parts quality, testing, purchasing when supplier decisions matter, service or field quality, and regulatory specialists when applicable. The designer owns design intent; action owners own completion evidence; QA confirms that the review and evidence meet the agreed criteria.",
+    "source": "Toyota Quality and Service: quality across the full value chain",
+    "url": "https://global.toyota/en/sustainability/esg/quality/"
+  },
+  {
+    "topic": "Recurrence prevention",
+    "question": "How is Mizen Boushi different from recurrence prevention?",
+    "content": "Mizen Boushi prevents credible problems before first occurrence, usually by studying changes, functions, interfaces, and concern points. Recurrence prevention begins with a problem that has already occurred and removes its root and systemic causes. They should connect: lessons from field issues, defects, near misses, and audits must become reusable concern points, standards, checklists, design rules, and poka-yoke for future Mizen Boushi reviews.",
+    "source": "Toyota quality assurance and recurrence-prevention measures",
+    "url": "https://global.toyota/en/detail/332467"
+  },
+  {
+    "topic": "Approval gate",
+    "question": "What should QA check before approving a Mizen Boushi review?",
+    "content": "QA should confirm that all changes and affected functions are identified; relevant past problems and lessons were considered; cross-functional concern points are recorded; safety, regulatory, customer, manufacturing, supplier, and interface risks were discussed; actions have named owners and due dates; objective validation evidence is attached; open risks are explicitly accepted by authorized owners; document revision and traceability are correct; and lessons have been fed back into standards where appropriate.",
+    "source": "Toyota quality standards and JUSE GD3 review practice",
+    "url": "https://global.toyota/en/sustainability/esg/quality/"
+  },
+  {
+    "topic": "Practical deliverables",
+    "question": "What documents are produced by a Mizen Boushi activity?",
+    "content": "A practical package normally contains the change-point list, affected-function and interface analysis, concern-point or DRBFM worksheet, references to past problems, agreed countermeasures, action register, validation plan and results, open-risk decisions, review attendance, approvals, and updated standards or lessons learned. The exact form may differ by organization; company-controlled templates and approval rules take precedence over general industry practice.",
+    "source": "JUSE QualityOne: change specification, traceability, and concern-point sheets",
+    "url": "https://www.juse.or.jp/sqip/mailnews/qualityone/backnumber/QualityOne201108.pdf"
+  }
+]
