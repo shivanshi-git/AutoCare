@@ -753,7 +753,8 @@
           <div class="data-entry-fields">
             <div class="form-group"><label for="portalDocModel">Model</label><select id="portalDocModel" class="model-select"></select></div>
             <div class="form-group"><label for="portalDocTeam">Engineering team</label><select id="portalDocTeam" class="model-select"></select></div>
-            <div class="form-group data-entry-category"><label for="portalDocCategory">Category</label><select id="portalDocCategory" class="model-select"></select></div>
+            <div class="form-group"><label for="portalDocCategory">Category</label><select id="portalDocCategory" class="model-select"></select></div>
+            <div class="form-group" id="replaceDraftGroup" style="display:none;"><label for="portalReplaceDoc">Replace Draft</label><select id="portalReplaceDoc" class="model-select"><option value="">New Document</option></select></div>
           </div>
           <div class="data-entry-divider"></div>
           <div class="data-entry-section-heading">
@@ -2785,6 +2786,20 @@ let mzDocuments = [];
 let selectedModel = sessionStorage.getItem("selected_model") || "all";
 const mzCategories = ["New Parts Details", "Approval of Part Details", "Design Review of New Parts"];
 
+function populateDraftsDropdown() {
+  const drafts = mzDocuments.filter(doc => doc.approval_state === "Draft" || doc.approval_state === "Pending QA Approval");
+  const dropdown = document.getElementById("portalReplaceDoc");
+  const group = document.getElementById("replaceDraftGroup");
+  if (!dropdown || !group) return;
+  if (drafts.length > 0) {
+    dropdown.innerHTML = '<option value="">New Document</option>' + drafts.map(d => `<option value="${escapeHtml(d.id)}">${escapeHtml(d.name)}</option>`).join("");
+    group.style.display = "block";
+  } else {
+    dropdown.innerHTML = '<option value="">New Document</option>';
+    group.style.display = "none";
+  }
+}
+
 loadKb = async function() {
   const documentList = document.getElementById("kbList");
   if (documentList) documentList.innerHTML = `<div class="document-loading-list">${Array.from({length:3},()=>`<div class="loading-document-card"><span></span><div><i></i><i></i></div></div>`).join("")}</div>`;
@@ -2797,6 +2812,7 @@ loadKb = async function() {
     kb = (await qaRes.json()).faqs || [];
     mzDocuments = (await docRes.json()).documents || [];
     populateChatScopeControls();
+    populateDraftsDropdown();
     renderKb();
     renderDashboardFiles();
     renderUserFaqs(document.getElementById("faqSearchInput")?.value || "");
@@ -2896,20 +2912,38 @@ renderKb = function() {
   const visibleModels = selectedModel === "all" ? models : [selectedModel];
   list.innerHTML = visibleModels.map(model => {
     const modelDocs = mzDocuments.filter(doc => doc.model === model);
-    const teams = [...new Set(modelDocs.map(doc => doc.team))].sort();
-    return `
-      <div class="model-section-title"><span>${escapeHtml(model)}</span><span class="model-section-count">${modelDocs.length} file${modelDocs.length === 1 ? "" : "s"}</span></div>
-      ${teams.length ? teams.map(team => `
+    const approvedDocs = modelDocs.filter(doc => doc.approval_state === "Approved");
+    const draftDocs = modelDocs.filter(doc => doc.approval_state !== "Approved");
+    
+    const renderGroup = (docs) => {
+      const teams = [...new Set(docs.map(doc => doc.team))].sort();
+      return teams.length ? teams.map(team => `
         <div class="team-panel">
           <div class="team-heading">${escapeHtml(team)}</div>
           ${mzCategories.map(category => {
-            const files = modelDocs.filter(doc => doc.team === team && doc.category === category);
+            const files = docs.filter(doc => doc.team === team && doc.category === category);
+            if (!files.length) return '';
             return `<div class="category-block">
               <div class="category-title">${escapeHtml(category)}</div>
-              ${files.length ? `<div class="document-grid">${files.map(renderDocumentRow).join("")}</div>` : `<div class="document-meta">No files in this category yet.</div>`}
+              <div class="document-grid">${files.map(renderDocumentRow).join("")}</div>
             </div>`;
           }).join("")}
-        </div>`).join("") : `<div class="panel">No files have been added to ${escapeHtml(model)} yet.</div>`}`;
+        </div>`).join("") : `<div class="panel" style="padding: 12px; font-size: 13px; color: var(--grey-text);">No files yet.</div>`;
+    };
+
+    return `
+      <div class="model-section-title"><span>${escapeHtml(model)}</span><span class="model-section-count">${modelDocs.length} file${modelDocs.length === 1 ? "" : "s"}</span></div>
+      <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 300px;">
+          <h3 style="margin-bottom: 12px; font-size: 14px; color: var(--app-text);">Approved</h3>
+          ${renderGroup(approvedDocs)}
+        </div>
+        ${draftDocs.length ? `<div style="flex: 1; min-width: 300px; border-left: 1px solid var(--app-separator); padding-left: 20px;">
+          <h3 style="margin-bottom: 12px; font-size: 14px; color: var(--app-text);">Drafts & Pending</h3>
+          ${renderGroup(draftDocs)}
+        </div>` : ''}
+      </div>
+    `;
   }).join("");
   list.querySelectorAll("[data-preview-id]").forEach(button => button.addEventListener("click", () => {
     openDocumentPreview(button.dataset.previewId);
@@ -3902,10 +3936,13 @@ loadKb().then(restoreWorkspaceState);
     if(!file||!file.name.toLowerCase().endsWith(".pdf")){result.innerHTML=`<div class="portal-upload-result">Please select a PDF file.</div>`;return}
     uploadZone.style.pointerEvents="none";uploadZone.innerHTML=`<strong>Reading ${escapeHtml(file.name)}…</strong><span>Classifying and indexing the document.</span>`;
     const body=new FormData();body.append("file",file);body.append("model",document.getElementById("portalDocModel").value);body.append("team",document.getElementById("portalDocTeam").value);body.append("category",document.getElementById("portalDocCategory").value);
+    const replaceId=document.getElementById("portalReplaceDoc")?.value;if(replaceId)body.append("replace_document_id",replaceId);
     try{
       const response=await fetch(`${API_BASE}/api/documents/upload`,{method:"POST",headers:portalAuthHeaders(),body});
       const data=await response.json();if(!response.ok)throw new Error(data.detail||"Upload failed.");
-      result.innerHTML=`<div class="portal-upload-result"><strong>${escapeHtml(data.document.name)}</strong><br>${data.approval_state==="Pending QA Approval"?"Submitted successfully and awaiting QA approval.":"Published to the approved document library."}</div>`;
+      const scoreText = typeof data.score === 'number' ? ` Score: ${data.score}/100.` : "";
+      const pointersText = data.missing_pointers?.length ? ` Missing: ${data.missing_pointers.join(', ')}.` : "";
+      result.innerHTML=`<div class="portal-upload-result"><strong>${escapeHtml(data.document.name)}</strong><br>${data.approval_state==="Draft" ? `Document needs corrections.${scoreText}${pointersText} Saved to drafts.` : `Document is correct.${scoreText} Published to the approved document library.`}</div>`;
       await loadKb();
     }catch(err){result.innerHTML=`<div class="portal-upload-result" style="color:#ff453a">${escapeHtml(err.message)}</div>`}finally{uploadZone.style.pointerEvents="";uploadZone.innerHTML=`<strong>Select or drop a PDF</strong><span>Maximum 15 MB. Engineering submissions go to QA approval.</span>`}
   };

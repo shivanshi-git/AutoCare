@@ -213,5 +213,92 @@
     "action": "user.login",
     "target": "usr_c1c9ccc985e6",
     "details": {}
+  },
+  {
+    "id": "audit_c5534501b642",
+    "timestamp": "2026-07-28T00:37:36",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_c1c9ccc985e6",
+    "details": {}
+  },
+  {
+    "id": "audit_4c8043a14706",
+    "timestamp": "2026-07-28T00:37:48",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "document.uploaded",
+    "target": "doc_3dc41b6a4dbd400091c38951c1b499bd",
+    "details": {
+      "name": "Real-Time Driver Drowsiness Detection (2).pdf",
+      "approval_state": "Draft",
+      "score": 20,
+      "model": "Model 1",
+      "team": "Engineering Team 1",
+      "category": "New Parts Details",
+      "replaced": false
+    }
+  },
+  {
+    "id": "audit_cb426d57cc91",
+    "timestamp": "2026-07-28T00:38:36",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_c1c9ccc985e6",
+    "details": {}
+  },
+  {
+    "id": "audit_df6fd5f1f2c2",
+    "timestamp": "2026-07-28T02:49:00",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_c1c9ccc985e6",
+    "details": {}
+  },
+  {
+    "id": "audit_62b8f9f1b6d6",
+    "timestamp": "2026-07-28T02:50:23",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "document.uploaded",
+    "target": "doc_d29e3c4dba794d0c93362599021583fd",
+    "details": {
+      "name": "1801.02325v1 (1).pdf",
+      "approval_state": "Draft",
+      "score": 40,
+      "model": "Model 1",
+      "team": "Engineering Team 1",
+      "category": "New Parts Details",
+      "replaced": false
+    }
+  },
+  {
+    "id": "audit_4b5ebf973da3",
+    "timestamp": "2026-07-28T02:50:37",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "document.uploaded",
+    "target": "doc_4b879d69128b4fd5bd9eb61c04feba44",
+    "details": {
+      "name": "1774762193-hough_transform_example.pdf",
+      "approval_state": "Draft",
+      "score": 0,
+      "model": "Model 1",
+      "team": "Engineering Team 1",
+      "category": "New Parts Details",
+      "replaced": false
+    }
+  },
+  {
+    "id": "audit_dd1b3846d301",
+    "timestamp": "2026-07-28T02:50:50",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_c1c9ccc985e6",
+    "details": {}
   }
 ]
