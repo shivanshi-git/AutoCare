@@ -1358,8 +1358,7 @@ async def upload_document(
         raise HTTPException(status_code=400, detail="The selected engineering team is not enabled by the administrator.")
     if resolved_category not in settings["categories"]:
         raise HTTPException(status_code=400, detail="The selected document category is not enabled by the administrator.")
-    
-    approval_state = "Approved" if score == 100 else "Draft"
+    approval_state = "Approved" if score >= 95 else "Draft"
     
     safe_filename = re.sub(r"[^A-Za-z0-9._-]", "_", Path(file.filename).name)
     stored_name = f"{uuid.uuid4().hex}_{safe_filename}"

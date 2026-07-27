@@ -371,7 +371,32 @@
     "role": "QA Admin",
     "action": "user.login",
     "target": "usr_627740e0fb24",
-
     "details": {}
+  },
+  {
+    "id": "audit_df102b2d7362",
+    "timestamp": "2026-07-28T03:27:01",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_627740e0fb24",
+    "details": {}
+  },
+  {
+    "id": "audit_c1bb13d6bec6",
+    "timestamp": "2026-07-28T03:28:07",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "document.uploaded",
+    "target": "doc_aff8d33bf4704e508f8812b9c9343c69",
+    "details": {
+      "name": "sample-local-pdf.pdf",
+      "approval_state": "Draft",
+      "score": 0,
+      "model": "Model 1",
+      "team": "Engineering Team 1",
+      "category": "New Parts Details",
+      "replaced": false
+    }
   }
 ]
