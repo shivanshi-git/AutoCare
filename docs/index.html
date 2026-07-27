@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoCare Docs — AI-Powered FAQ Chatbot</title>
+<meta name="description" content="Documentation for AutoCare — semantic FAQ matching chatbot and admin portal for Maruti Suzuki.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d1117;--bg-secondary:#161b22;--bg-tertiary:#1c2128;--bg-card:#21262d;
+  --border:#30363d;--border-light:#484f58;
+  --text:#e6edf3;--text-secondary:#8b949e;--text-muted:#6e7681;
+  --accent:#58a6ff;--accent-green:#3fb950;--accent-purple:#bc8cff;
+  --accent-orange:#d29922;--accent-red:#f85149;--accent-cyan:#39d2c0;
+  --accent-pink:#f778ba;
+  --code-bg:#161b22;
+  --sidebar-w:260px;--right-sidebar-w:220px;--nav-h:64px;
+  --font:'Inter',system-ui,-apple-system,sans-serif;
+  --mono:'JetBrains Mono','Fira Code',monospace;
+}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
+
+/* ===== LOADER ===== */
+#loader{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;transition:opacity .5s,visibility .5s}
+#loader.hidden{opacity:0;visibility:hidden}
+.loader-spinner{width:44px;height:44px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+.loader-text{color:var(--text-secondary);font-size:14px;letter-spacing:1px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ===== TOP NAV ===== */
+.topnav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:var(--bg-secondary);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;z-index:100;gap:16px;backdrop-filter:blur(12px)}
+.topnav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text);font-weight:600;font-size:18px;flex-shrink:0}
+.topnav-logo svg{width:32px;height:32px;fill:var(--text)}
+.topnav-tabs{display:flex;gap:4px;margin-left:24px}
+.topnav-tab{padding:6px 14px;color:var(--text-secondary);text-decoration:none;font-size:13px;font-weight:500;border-radius:6px;transition:all .2s}
+.topnav-tab:hover{background:var(--bg-card);color:var(--text)}
+.topnav-tab.active{color:var(--text);background:var(--bg-card)}
+.topnav-search{margin-left:auto;position:relative;flex-shrink:0}
+.topnav-search input{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:6px 12px 6px 32px;color:var(--text);font-size:13px;width:240px;outline:none;font-family:var(--font);transition:border-color .2s}
+.topnav-search input:focus{border-color:var(--accent)}
+.topnav-search svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;fill:var(--text-muted)}
+
+/* ===== LAYOUT ===== */
+.layout{display:flex;margin-top:var(--nav-h);min-height:calc(100vh - var(--nav-h))}
+
+/* ===== LEFT SIDEBAR ===== */
+.sidebar{position:fixed;top:var(--nav-h);left:0;width:var(--sidebar-w);height:calc(100vh - var(--nav-h));background:var(--bg-secondary);border-right:1px solid var(--border);overflow-y:auto;padding:16px 0;z-index:50;transition:transform .3s}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+.sidebar-group{margin-bottom:8px}
+.sidebar-group-title{padding:8px 20px 4px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-muted)}
+.sidebar-link{display:flex;align-items:center;gap:8px;padding:7px 20px 7px 28px;font-size:13.5px;color:var(--text-secondary);text-decoration:none;border-left:2px solid transparent;transition:all .15s;cursor:pointer}
+.sidebar-link:hover{color:var(--text);background:rgba(88,166,255,.06)}
+.sidebar-link.active{color:var(--accent);border-left-color:var(--accent);background:rgba(88,166,255,.08);font-weight:500}
+.sidebar-link svg{width:16px;height:16px;flex-shrink:0;opacity:.6}
+
+/* ===== MAIN CONTENT ===== */
+.main{margin-left:var(--sidebar-w);margin-right:var(--right-sidebar-w);flex:1;padding:40px 48px 80px;max-width:900px;min-width:0}
+
+/* ===== RIGHT SIDEBAR ===== */
+.right-sidebar{position:fixed;top:var(--nav-h);right:0;width:var(--right-sidebar-w);height:calc(100vh - var(--nav-h));padding:24px 16px;overflow-y:auto;border-left:1px solid var(--border);background:var(--bg)}
+.right-sidebar::-webkit-scrollbar{width:4px}
+.right-sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+.right-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:12px}
+.right-link{display:block;padding:4px 0;font-size:12.5px;color:var(--text-secondary);text-decoration:none;transition:color .15s}
+.right-link:hover,.right-link.active{color:var(--accent)}
+.right-divider{border:none;border-top:1px solid var(--border);margin:16px 0}
+.right-meta{font-size:12px;color:var(--text-muted);margin-bottom:6px}
+.right-meta span{color:var(--text-secondary)}
+.status-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:500;padding:2px 8px;border-radius:12px;background:rgba(63,185,80,.15);color:var(--accent-green)}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--accent-green);animation:pulse-dot 2s infinite}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.4}}
+.contributor-row{display:flex;gap:-4px;margin-top:8px}
+.contributor-avatar{width:28px;height:28px;border-radius:50%;background:var(--bg-card);border:2px solid var(--bg);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--accent);margin-left:-6px}
+.contributor-avatar:first-child{margin-left:0}
+.progress-bar{height:4px;background:var(--bg-card);border-radius:4px;overflow:hidden;margin:6px 0}
+.progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--accent),var(--accent-green));transition:width 1.5s ease}
+
+/* ===== SECTION STYLES ===== */
+.section{margin-bottom:56px;opacity:0;transform:translateY(16px);transition:opacity .5s,transform .5s}
+.section.visible{opacity:1;transform:translateY(0)}
+
+h1{font-size:36px;font-weight:700;letter-spacing:-.5px;margin-bottom:8px;background:linear-gradient(135deg,var(--text),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.subtitle{font-size:18px;color:var(--text-secondary);font-weight:400;margin-bottom:8px}
+.description{font-size:14.5px;color:var(--text-muted);line-height:1.7;margin-bottom:24px;max-width:640px}
+h2{font-size:22px;font-weight:600;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+h2 .section-icon{font-size:20px}
+h3{font-size:16px;font-weight:600;margin:20px 0 10px;color:var(--text)}
+p{font-size:14.5px;color:var(--text-secondary);margin-bottom:12px;line-height:1.7}
+
+/* ===== BADGE ROW ===== */
+.badge-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:28px}
+.badge{height:24px;border-radius:4px}
+
+/* ===== ARCHITECTURE DIAGRAM ===== */
+.arch-diagram{background:var(--bg-secondary);border:1px solid var(--border);border-radius:12px;padding:32px 24px;margin:20px 0;overflow-x:auto}
+.arch-flow{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:nowrap;min-width:700px}
+.arch-node{padding:14px 18px;border-radius:10px;text-align:center;min-width:120px;position:relative;border:1px solid;transition:transform .2s,box-shadow .2s}
+.arch-node:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.arch-node .node-icon{font-size:24px;margin-bottom:6px}
+.arch-node .node-title{font-size:13px;font-weight:600;margin-bottom:2px}
+.arch-node .node-sub{font-size:10.5px;opacity:.7}
+.node-blue{background:rgba(88,166,255,.1);border-color:rgba(88,166,255,.3);color:var(--accent)}
+.node-green{background:rgba(63,185,80,.1);border-color:rgba(63,185,80,.3);color:var(--accent-green)}
+.node-orange{background:rgba(210,153,34,.1);border-color:rgba(210,153,34,.3);color:var(--accent-orange)}
+.node-purple{background:rgba(188,140,255,.1);border-color:rgba(188,140,255,.3);color:var(--accent-purple)}
+.node-cyan{background:rgba(57,210,192,.1);border-color:rgba(57,210,192,.3);color:var(--accent-cyan)}
+.node-red{background:rgba(248,81,73,.1);border-color:rgba(248,81,73,.3);color:var(--accent-red)}
+.arch-arrow{color:var(--text-muted);font-size:20px;padding:0 8px;flex-shrink:0}
+.arch-storage{display:flex;gap:12px;justify-content:center;margin-top:20px;flex-wrap:wrap}
+.arch-storage .arch-node{min-width:140px;padding:10px 14px}
+.arch-storage .node-sub{font-size:10px}
+
+/* ===== FEATURE CARDS ===== */
+.feature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:16px 0}
+.feature-card{background:var(--bg-secondary);border:1px solid var(--border);border-radius:10px;padding:20px;transition:all .25s;cursor:default;position:relative;overflow:hidden}
+.feature-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent-green));opacity:0;transition:opacity .25s}
+.feature-card:hover{border-color:var(--border-light);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.feature-card:hover::before{opacity:1}
+.feature-icon{font-size:28px;margin-bottom:10px}
+.feature-card h4{font-size:14px;font-weight:600;margin-bottom:6px}
+.feature-card p{font-size:12.5px;color:var(--text-muted);margin:0;line-height:1.5}
+
+/* ===== CODE BLOCKS ===== */
+.code-block{position:relative;margin:16px 0;border-radius:8px;overflow:hidden;border:1px solid var(--border)}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:var(--bg-tertiary);border-bottom:1px solid var(--border);font-size:12px;color:var(--text-muted)}
+.code-header .lang{font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.copy-btn{background:none;border:1px solid var(--border);border-radius:5px;color:var(--text-secondary);font-size:11px;padding:3px 10px;cursor:pointer;font-family:var(--font);transition:all .2s}
+.copy-btn:hover{border-color:var(--accent);color:var(--accent)}
+.copy-btn.copied{color:var(--accent-green);border-color:var(--accent-green)}
+pre{background:var(--code-bg);padding:16px;overflow-x:auto;margin:0;font-family:var(--mono);font-size:13px;line-height:1.65;color:var(--text)}
+pre .comment{color:var(--text-muted)}
+pre .cmd{color:var(--accent-green)}
+pre .flag{color:var(--accent-cyan)}
+pre .url{color:var(--accent-orange)}
+pre .string{color:var(--accent-cyan)}
+
+/* ===== TABLES ===== */
+.api-table{width:100%;border-collapse:collapse;font-size:13.5px;margin:16px 0}
+.api-table th{text-align:left;padding:10px 14px;background:var(--bg-secondary);border:1px solid var(--border);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted)}
+.api-table td{padding:10px 14px;border:1px solid var(--border);vertical-align:top}
+.api-table tr:hover td{background:rgba(88,166,255,.03)}
+.method{font-family:var(--mono);font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:4px;display:inline-block}
+.method-get{background:rgba(63,185,80,.15);color:var(--accent-green)}
+.method-post{background:rgba(88,166,255,.15);color:var(--accent)}
+.method-put{background:rgba(210,153,34,.15);color:var(--accent-orange)}
+.method-delete{background:rgba(248,81,73,.15);color:var(--accent-red)}
+.api-path{font-family:var(--mono);font-size:12.5px;color:var(--text)}
+.auth-yes{color:var(--accent-orange);font-size:12px}
+.auth-no{color:var(--text-muted);font-size:12px}
+
+/* ===== TECH STACK ===== */
+.tech-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin:16px 0}
+.tech-card{background:var(--bg-secondary);border:1px solid var(--border);border-radius:8px;padding:16px 12px;text-align:center;transition:all .2s}
+.tech-card:hover{border-color:var(--border-light);transform:translateY(-1px)}
+.tech-card .tech-emoji{font-size:26px;margin-bottom:6px}
+.tech-card .tech-name{font-size:12.5px;font-weight:600;margin-bottom:2px}
+.tech-card .tech-desc{font-size:10.5px;color:var(--text-muted)}
+
+/* ===== DATA FLOW ===== */
+.flow-steps{display:flex;flex-direction:column;gap:0;margin:16px 0}
+.flow-step{display:flex;align-items:flex-start;gap:16px;position:relative}
+.flow-step-line{width:28px;display:flex;flex-direction:column;align-items:center;flex-shrink:0}
+.flow-dot{width:12px;height:12px;border-radius:50%;border:2px solid var(--accent);background:var(--bg);z-index:1;flex-shrink:0}
+.flow-dot.green{border-color:var(--accent-green)}
+.flow-dot.purple{border-color:var(--accent-purple)}
+.flow-dot.orange{border-color:var(--accent-orange)}
+.flow-dot.red{border-color:var(--accent-red)}
+.flow-connector{width:2px;flex:1;background:var(--border);min-height:24px}
+.flow-content{padding-bottom:24px;flex:1}
+.flow-content h4{font-size:14px;font-weight:600;margin-bottom:4px}
+.flow-content p{font-size:13px;color:var(--text-muted);margin:0}
+
+/* ===== ALERT/CALLOUT ===== */
+.callout{border-left:3px solid;border-radius:0 8px 8px 0;padding:14px 18px;margin:16px 0;font-size:13.5px}
+.callout-info{border-color:var(--accent);background:rgba(88,166,255,.06);color:var(--text-secondary)}
+.callout-warn{border-color:var(--accent-orange);background:rgba(210,153,34,.06);color:var(--text-secondary)}
+.callout-title{font-weight:600;color:var(--text);margin-bottom:4px;display:flex;align-items:center;gap:6px;font-size:13px}
+.inline-code{font-family:var(--mono);font-size:12.5px;background:var(--bg-card);padding:2px 6px;border-radius:4px;color:var(--accent-cyan)}
+
+/* ===== FAQ ===== */
+.faq-item{border:1px solid var(--border);border-radius:8px;margin-bottom:8px;overflow:hidden;transition:border-color .2s}
+.faq-item:hover{border-color:var(--border-light)}
+.faq-q{padding:14px 18px;font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:background .15s;user-select:none}
+.faq-q:hover{background:rgba(88,166,255,.04)}
+.faq-arrow{font-size:12px;color:var(--text-muted);transition:transform .25s}
+.faq-item.open .faq-arrow{transform:rotate(180deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease;padding:0 18px}
+.faq-item.open .faq-a{max-height:200px;padding:0 18px 14px}
+.faq-a p{font-size:13px;color:var(--text-muted);margin:0}
+
+/* ===== FOOTER ===== */
+.footer{margin-left:var(--sidebar-w);margin-right:var(--right-sidebar-w);padding:24px 48px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--text-muted)}
+.footer a{color:var(--text-secondary);text-decoration:none}
+.footer a:hover{color:var(--accent)}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:var(--border-light)}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:1100px){
+  .right-sidebar{display:none}
+  .main{margin-right:0}
+}
+@media(max-width:800px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.mobile-open{transform:translateX(0)}
+  .main{margin-left:0;padding:24px 20px 60px}
+  .topnav-tabs{display:none}
+  .footer{margin-left:0;margin-right:0;padding:24px 20px}
+  .mobile-toggle{display:flex !important}
+}
+.mobile-toggle{display:none;background:none;border:none;color:var(--text);cursor:pointer;padding:4px}
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-spinner"></div>
+  <div class="loader-text">Loading AutoCare Docs</div>
+</div>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <button class="mobile-toggle" onclick="document.querySelector('.sidebar').classList.toggle('mobile-open')">
+    <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor"><path d="M1 2.75A.75.75 0 0 1 1.75 2h12.5a.75.75 0 0 1 0 1.5H1.75A.75.75 0 0 1 1 2.75Zm0 5A.75.75 0 0 1 1.75 7h12.5a.75.75 0 0 1 0 1.5H1.75A.75.75 0 0 1 1 7.75ZM1.75 12h12.5a.75.75 0 0 1 0 1.5H1.75a.75.75 0 0 1 0-1.5Z"/></svg>
+  </button>
+  <a href="#" class="topnav-logo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 17h14M5 17a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2M5 17l-1 3m15-3l1 3M9 13.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3ZM15 13.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"/></svg>
+    AutoCare <span style="font-weight:400;color:var(--text-muted);font-size:13px;margin-left:2px">Docs</span>
+  </a>
+  <div class="topnav-tabs">
+    <a href="#" class="topnav-tab active">Docs</a>
+    <a href="https://github.com/shivanshi-git/AutoCare" target="_blank" class="topnav-tab">Code</a>
+    <a href="https://autocare-frontend.onrender.com/" target="_blank" class="topnav-tab">Live Demo</a>
+    <a href="https://autocare-frontend.onrender.com/admin.html" target="_blank" class="topnav-tab">Admin</a>
+  </div>
+  <div class="topnav-search">
+    <svg viewBox="0 0 16 16"><path d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 1 1-1.06 1.06l-3.04-3.04ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"/></svg>
+    <input type="text" placeholder="Search documentation..." id="searchInput">
+  </div>
+</nav>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Getting Started</div>
+      <a class="sidebar-link active" data-section="introduction" onclick="navigateTo('introduction')">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M0 1.75A.75.75 0 0 1 .75 1h4.253c1.227 0 2.317.59 3 1.501A3.744 3.744 0 0 1 11.006 1h4.245a.75.75 0 0 1 .75.75v10.5a.75.75 0 0 1-.75.75h-4.507a2.25 2.25 0 0 0-1.591.659l-.622.621a.75.75 0 0 1-1.06 0l-.623-.621A2.25 2.25 0 0 0 5.258 13H.75a.75.75 0 0 1-.75-.75Zm7.251 10.324.004-5.073-.002-2.253A2.25 2.25 0 0 0 5.003 2.5H1.5v9h3.757a3.75 3.75 0 0 1 1.994.574ZM8.755 4.75l-.004 7.322a3.752 3.752 0 0 1 1.992-.572H14.5v-9h-3.495a2.25 2.25 0 0 0-2.25 2.25Z"/></svg>
+        Introduction
+      </a>
+      <a class="sidebar-link" data-section="problem" onclick="navigateTo('problem')">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M4.47.22A.749.749 0 0 1 5 0h6c.199 0 .389.079.53.22l4.25 4.25c.141.14.22.331.22.53v6a.749.749 0 0 1-.22.53l-4.25 4.25A.749.749 0 0 1 11 16H5a.749.749 0 0 1-.53-.22L.22 11.53A.749.749 0 0 1 0 11V5c0-.199.079-.389.22-.53Zm.84 1.28L1.5 5.31v5.38l3.81 3.81h5.38l3.81-3.81V5.31L10.69 1.5ZM8 4a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"/></svg>
+        Problem Statement
+      </a>
+      <a class="sidebar-link" data-section="solution" onclick="navigateTo('solution')">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z"/></svg>
+        Solution
+      </a>
+      <a class="sidebar-link" data-section="quickstart" onclick="navigateTo('quickstart')">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M7.657 6.247c.11-.33.576-.33.686 0l.645 1.937a2.89 2.89 0 0 0 1.829 1.828l1.936.645c.33.11.33.576 0 .686l-1.937.645a2.89 2.89 0 0 0-1.828 1.829l-.645 1.936a.361.361 0 0 1-.686 0l-.645-1.937a2.89 2.89 0 0 0-1.828-1.828l-1.937-.645a.361.361 0 0 1 0-.686l1.937-.645a2.89 2.89 0 0 0 1.828-1.829ZM3.794 1.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.545.89 1.063 1.063l1.162.387a.217.217 0 0 1 0 .412l-1.162.387A1.734 1.734 0 0 0 4.593 5.62l-.387 1.162a.217.217 0 0 1-.412 0L3.407 5.62a1.734 1.734 0 0 0-1.063-1.063l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387A1.734 1.734 0 0 0 3.407 2.31Z"/></svg>
+        Quick Start
+      </a>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Architecture</div>
+      <a class="sidebar-link" data-section="architecture" onclick="navigateTo('architecture')">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1.5 1.75V13.5h13.75a.75.75 0 0 1 0 1.5H.75a.75.75 0 0 1-.75-.75V1.75a.75.75 0 0 1 1.5 0Zm14.28 2.53-5.25 5.25a.75.75 0 0 1-1.06 0L7 7.06 4.28 9.78a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042l3.25-3.25a.75.75 0 0 1 1.06 0L10 7.94l4.72-4.72a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042Z"/></svg>
+        System Design
+      </a>
+      <a class="sidebar-link" data-section="dataflow" onclick="navigateTo('dataflow')">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8.22 2.97a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042l2.97-2.97H3.75a.75.75 0 0 1 0-1.5h7.44L8.22 4.03a.75.75 0 0 1 0-1.06Z"/></svg>
+        Data Flow
+      </a>
+      <a class="sidebar-link" data-section="techstack" onclick="navigateTo('techstack')">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M9 5.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm-.79 5.373A4.501 4.501 0 0 0 1.5 5.5a4.5 4.5 0 0 0 6.71 3.912.749.749 0 0 1 .553-.063l3.7 1.106.552-1.845-1.478-1.478a.75.75 0 0 1-.19-.726ZM6 1a4.5 4.5 0 0 0-2.764 8.049l-1.297 4.333a.75.75 0 0 0 .95.944l4.333-1.297A4.5 4.5 0 0 0 6 1Z"/></svg>
+        Tech Stack
+      </a>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Features</div>
+      <a class="sidebar-link" data-section="features" onclick="navigateTo('features')">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2.5 1.75v11.5c0 .138.112.25.25.25h3.17a.75.75 0 0 1 0 1.5H2.75A1.75 1.75 0 0 1 1 13.25V1.75C1 .784 1.784 0 2.75 0h7.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v3.086a.75.75 0 0 1-1.5 0V4.75h-2.25A1.75 1.75 0 0 1 9.5 3V.75H2.75a.25.25 0 0 0-.25.25ZM11 .75v2.25c0 .138.112.25.25.25h2.25L11 .75Z"/></svg>
+        Key Features
+      </a>
+      <a class="sidebar-link" data-section="aimodel" onclick="navigateTo('aimodel')">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 3.25a.25.25 0 0 1 .25-.25h5.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-5.5A.25.25 0 0 1 5 3.75Z"/></svg>
+        AI Model
+      </a>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">API</div>
+      <a class="sidebar-link" data-section="api" onclick="navigateTo('api')">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1.543 7.25h2.733c.144-2.074.866-3.756 1.58-4.948.12-.197.237-.381.348-.55A6.498 6.498 0 0 0 1.543 7.25ZM2.733 8.75H1.543a6.498 6.498 0 0 0 4.69 5.503 11.95 11.95 0 0 1-.33-.53c-.727-1.222-1.468-2.94-1.617-4.973h-.553Zm1.504 0h3.514V13.5c-.663-.06-1.457-.497-2.283-1.636-.452-.625-.832-1.397-1.12-2.258-.037-.11-.072-.221-.111-.356Zm5.018 0h3.202c-.149 2.033-.89 3.751-1.617 4.972a12.37 12.37 0 0 1-.329.531A6.498 6.498 0 0 0 14.457 8.75h-1.19c-.042.135-.077.246-.114.356-.288.861-.668 1.633-1.12 2.258-.826 1.139-1.62 1.576-2.283 1.636V8.75Zm3.202-1.5h-3.2V2.5c.663.06 1.457.497 2.283 1.636.452.625.832 1.397 1.12 2.258.037.11.071.221.111.356H9.255Zm-4.714 0H4.24c.149-2.033.89-3.751 1.617-4.972.107-.18.22-.35.33-.53A6.498 6.498 0 0 0 1.543 7.25h1.19c.043-.135.077-.246.114-.356.288-.861.668-1.633 1.12-2.258C4.793 3.497 5.587 3.06 6.25 3v4.25h-.486Z"/></svg>
+        API Reference
+      </a>
+      <a class="sidebar-link" data-section="security" onclick="navigateTo('security')">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M7.467.133a1.748 1.748 0 0 1 1.066 0l5.25 1.68A1.75 1.75 0 0 1 15 3.48V7c0 1.566-.32 3.182-1.303 4.682-.983 1.498-2.585 2.813-5.032 3.855a1.697 1.697 0 0 1-1.33 0c-2.447-1.042-4.049-2.357-5.032-3.855C1.32 10.182 1 8.566 1 7V3.48a1.75 1.75 0 0 1 1.217-1.667Zm.61 1.429a.25.25 0 0 0-.153 0l-5.25 1.68a.25.25 0 0 0-.174.238V7c0 1.358.275 2.666 1.057 3.86.784 1.194 2.121 2.34 4.366 3.297a.2.2 0 0 0 .154 0c2.245-.956 3.582-2.104 4.366-3.298C13.225 9.666 13.5 8.36 13.5 7V3.48a.251.251 0 0 0-.174-.237Z"/></svg>
+        Security
+      </a>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Deployment</div>
+      <a class="sidebar-link" data-section="deployment" onclick="navigateTo('deployment')">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 7.775V2.75C1 1.784 1.784 1 2.75 1h5.025l.5-.5h-5.525C1.784.5.5 1.784.5 2.75v5.025ZM1.573 10.024l-1.573 5.976 5.976-1.573ZM9.15 1H13.25C14.216 1 15 1.784 15 2.75v4.1l.5-.5V2.75c0-.966-.784-1.75-1.75-1.75H9.65Z"/><path d="m5.258 7.51.052.053 7.4-7.4a.749.749 0 0 1 1.06 0l1.06 1.06a.749.749 0 0 1 0 1.06l-7.4 7.4.053.053 1.06-1.06a.749.749 0 0 1 0 1.06l-1.06 1.06a.749.749 0 0 1-1.06 0L5.258 9.63Z"/></svg>
+        Deployment
+      </a>
+      <a class="sidebar-link" data-section="faq" onclick="navigateTo('faq')">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Zm7.25-3.25v2.992l2.028.812a.75.75 0 0 1-.557 1.392l-2.5-1A.751.751 0 0 1 7.25 8.25v-3.5a.75.75 0 0 1 1.5 0Z"/></svg>
+        FAQ
+      </a>
+      <a class="sidebar-link" data-section="contributors" onclick="navigateTo('contributors')">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 5.5a3.5 3.5 0 1 1 5.898 2.549 5.508 5.508 0 0 1 3.034 4.084.75.75 0 1 1-1.482.235 4.001 4.001 0 0 0-6.9 0 .75.75 0 0 1-1.482-.236A5.507 5.507 0 0 1 4.6 8.049 3.5 3.5 0 0 1 2 5.5ZM5.5 4a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm5.667.083a.75.75 0 0 1 1.032-.25 3.501 3.501 0 0 1 .78 5.396 5.49 5.49 0 0 1 2.404 3.404.75.75 0 0 1-1.462.342 3.99 3.99 0 0 0-2.265-2.867.75.75 0 0 1-.258-1.143 2.001 2.001 0 0 0-.018-2.632.75.75 0 0 1-.25-1.032Z"/></svg>
+        Contributors
+      </a>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main" id="mainContent">
+
+    <!-- INTRODUCTION -->
+    <div class="section" id="introduction">
+      <h1>AutoCare</h1>
+      <div class="subtitle">AI-Powered Semantic FAQ Chatbot for Maruti Suzuki 🇮🇳</div>
+      <p class="description">Enterprise-grade customer support automation with semantic search, real-time FAQ matching, intelligent department routing, and admin knowledge management — built without heavy ML frameworks.</p>
+      <div class="badge-row">
+        <img class="badge" src="https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python">
+        <img class="badge" src="https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white" alt="FastAPI">
+        <img class="badge" src="https://img.shields.io/badge/FastEmbed-ONNX-FF6F00?style=flat-square&logo=onnx&logoColor=white" alt="ONNX">
+        <img class="badge" src="https://img.shields.io/badge/Render-Deployed-46E3B7?style=flat-square&logo=render&logoColor=white" alt="Render">
+        <img class="badge" src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="MIT">
+      </div>
+    </div>
+
+    <!-- PROBLEM -->
+    <div class="section" id="problem">
+      <h2><span class="section-icon">⚠️</span> Problem Statement</h2>
+      <p>Maruti Suzuki dealerships and customer care teams handle thousands of repetitive queries daily — warranty coverage, service bookings, spare parts availability, insurance claims. Manual responses are slow, inconsistent, and don't scale.</p>
+      <p>Existing keyword-based chatbots fail on paraphrased questions. A customer asking <span class="inline-code">How long is my car covered?</span> gets no match for the FAQ <span class="inline-code">What is the warranty period?</span> because the words don't overlap.</p>
+    </div>
+
+    <!-- SOLUTION -->
+    <div class="section" id="solution">
+      <h2><span class="section-icon">💡</span> Solution</h2>
+      <p>AutoCare uses <strong>semantic vector similarity</strong> instead of keyword matching. Every FAQ question is encoded into a 384-dimensional embedding using FastEmbed's ONNX runtime. User queries are encoded the same way and compared using cosine similarity — meaning paraphrases, synonyms, and natural language all work.</p>
+      <div class="callout callout-info">
+        <div class="callout-title">💡 Why FastEmbed over PyTorch?</div>
+        FastEmbed uses ONNX Runtime (~100MB RAM) instead of PyTorch (~500MB+). Same model quality, 5x lighter footprint. Ideal for free-tier hosting like Render.
+      </div>
+    </div>
+
+    <!-- QUICK START -->
+    <div class="section" id="quickstart">
+      <h2><span class="section-icon">🚀</span> Quick Start</h2>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="lang">bash</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="comment"># Clone the repository</span>
+<span class="cmd">git clone</span> <span class="url">https://github.com/shivanshi-git/AutoCare.git</span>
+<span class="cmd">cd</span> AutoCare</pre>
+      </div>
+      <h3>Terminal 1 — Backend</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="lang">bash</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="cmd">cd</span> backend
+<span class="cmd">pip install</span> <span class="flag">-r</span> requirements.txt
+<span class="cmd">python</span> main.py
+<span class="comment"># → API running at http://127.0.0.1:8000</span>
+<span class="comment"># → Swagger docs at http://127.0.0.1:8000/docs</span></pre>
+      </div>
+      <h3>Terminal 2 — Frontend</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="lang">bash</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="cmd">cd</span> frontend
+<span class="cmd">python</span> <span class="flag">-m</span> http.server 3000
+<span class="comment"># → Customer chat at http://127.0.0.1:3000/index.html</span>
+<span class="comment"># → Admin portal at http://127.0.0.1:3000/admin.html</span></pre>
+      </div>
+      <div class="callout callout-warn">
+        <div class="callout-title">⚠️ First Run</div>
+        The first startup downloads the ONNX model (~90MB) from Hugging Face Hub. This takes 30-60 seconds. Subsequent starts use the cached model.
+      </div>
+    </div>
+
+    <!-- ARCHITECTURE -->
+    <div class="section" id="architecture">
+      <h2><span class="section-icon">📐</span> System Architecture</h2>
+      <p>AutoCare follows a two-tier architecture: a static frontend served via any HTTP server, and a FastAPI backend that handles semantic matching, CRUD, and analytics.</p>
+      <div class="arch-diagram">
+        <div class="arch-flow">
+          <div class="arch-node node-blue">
+            <div class="node-icon">👤</div>
+            <div class="node-title">Customer</div>
+            <div class="node-sub">index.html</div>
+          </div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-node node-green">
+            <div class="node-icon">⚡</div>
+            <div class="node-title">FastAPI</div>
+            <div class="node-sub">Port 8000</div>
+          </div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-node node-orange">
+            <div class="node-icon">🧠</div>
+            <div class="node-title">FastEmbed</div>
+            <div class="node-sub">MiniLM-L6-v2</div>
+          </div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-node node-purple">
+            <div class="node-icon">📊</div>
+            <div class="node-title">Vector Store</div>
+            <div class="node-sub">NumPy Cosine Sim</div>
+          </div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-node node-cyan">
+            <div class="node-icon">✅</div>
+            <div class="node-title">Response</div>
+            <div class="node-sub">Best Match</div>
+          </div>
+        </div>
+        <div class="arch-storage">
+          <div class="arch-node node-blue">
+            <div class="node-icon">📁</div>
+            <div class="node-title">faqs.json</div>
+            <div class="node-sub">55+ Q&A Pairs</div>
+          </div>
+          <div class="arch-node node-orange">
+            <div class="node-icon">🎫</div>
+            <div class="node-title">escalations.json</div>
+            <div class="node-sub">Support Tickets</div>
+          </div>
+          <div class="arch-node node-red">
+            <div class="node-icon">📋</div>
+            <div class="node-title">unanswered.log</div>
+            <div class="node-sub">Gap Analytics</div>
+          </div>
+          <div class="arch-node node-purple">
+            <div class="node-icon">🔐</div>
+            <div class="node-title">Admin Portal</div>
+            <div class="node-sub">admin.html + Bearer Auth</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DATA FLOW -->
+    <div class="section" id="dataflow">
+      <h2><span class="section-icon">🔄</span> Data Flow</h2>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="flow-step-line"><div class="flow-dot"></div><div class="flow-connector"></div></div>
+          <div class="flow-content"><h4>1. User submits a query</h4><p>Customer types a natural language question in the chat interface. The frontend sends a <span class="inline-code">POST /chat</span> request.</p></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-line"><div class="flow-dot green"></div><div class="flow-connector"></div></div>
+          <div class="flow-content"><h4>2. Query is encoded</h4><p>FastEmbed converts the query into a 384-dimensional vector using the all-MiniLM-L6-v2 ONNX model.</p></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-line"><div class="flow-dot purple"></div><div class="flow-connector"></div></div>
+          <div class="flow-content"><h4>3. Cosine similarity search</h4><p>The query vector is compared against all pre-computed FAQ embeddings using NumPy dot product. The highest scoring match is identified.</p></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-line"><div class="flow-dot orange"></div><div class="flow-connector"></div></div>
+          <div class="flow-content"><h4>4. Confidence check</h4><p>If the best match score ≥ 0.45, the FAQ answer is returned. Below 0.45, a fallback message is sent and the query is logged as unanswered.</p></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-line"><div class="flow-dot red"></div><div class="flow-connector" style="background:transparent"></div></div>
+          <div class="flow-content"><h4>5. Gap analytics</h4><p>Unanswered queries and negative feedback are logged for admin review. Admins can add missing Q&A pairs to close gaps.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TECH STACK -->
+    <div class="section" id="techstack">
+      <h2><span class="section-icon">🛠️</span> Tech Stack</h2>
+      <div class="tech-grid">
+        <div class="tech-card"><div class="tech-emoji">🐍</div><div class="tech-name">Python 3.10+</div><div class="tech-desc">Runtime</div></div>
+        <div class="tech-card"><div class="tech-emoji">⚡</div><div class="tech-name">FastAPI</div><div class="tech-desc">REST API</div></div>
+        <div class="tech-card"><div class="tech-emoji">🧠</div><div class="tech-name">FastEmbed</div><div class="tech-desc">Embeddings</div></div>
+        <div class="tech-card"><div class="tech-emoji">🔶</div><div class="tech-name">ONNX Runtime</div><div class="tech-desc">Inference</div></div>
+        <div class="tech-card"><div class="tech-emoji">📐</div><div class="tech-name">NumPy</div><div class="tech-desc">Vector Ops</div></div>
+        <div class="tech-card"><div class="tech-emoji">📄</div><div class="tech-name">PyPDF</div><div class="tech-desc">PDF Parsing</div></div>
+        <div class="tech-card"><div class="tech-emoji">🌐</div><div class="tech-name">HTML/CSS/JS</div><div class="tech-desc">Frontend</div></div>
+        <div class="tech-card"><div class="tech-emoji">☁️</div><div class="tech-name">Render</div><div class="tech-desc">Hosting</div></div>
+      </div>
+    </div>
+
+    <!-- FEATURES -->
+    <div class="section" id="features">
+      <h2><span class="section-icon">✨</span> Key Features</h2>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🧠</div>
+          <h4>Semantic Search</h4>
+          <p>Vector similarity matching using FastEmbed ONNX. Handles paraphrases, synonyms, and natural language without keyword dependency.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🏷️</div>
+          <h4>Smart Department Routing</h4>
+          <p>Auto-classifies queries into Service & Maintenance, Insurance, Spare Parts, Roadside Assistance, or General.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📄</div>
+          <h4>PDF Knowledge Ingestion</h4>
+          <p>Upload PDF documents to auto-extract Q&A pairs. Multi-strategy parsing with tagged, heuristic, and fallback extraction.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h4>Gap Analytics</h4>
+          <p>Tracks unanswered queries and negative feedback. Admin dashboard for identifying and closing knowledge base gaps.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔐</div>
+          <h4>Admin Portal</h4>
+          <p>Full CRUD management for FAQs, escalation ticket tracking, unanswered query review, and PDF uploads.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎫</div>
+          <h4>Escalation System</h4>
+          <p>Customers can submit contact details for unresolved queries. Tickets with status tracking and admin management.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI MODEL -->
+    <div class="section" id="aimodel">
+      <h2><span class="section-icon">🤖</span> AI Model</h2>
+      <p>AutoCare uses <strong>all-MiniLM-L6-v2</strong>, a sentence-transformers model optimized for semantic similarity tasks.</p>
+      <table class="api-table">
+        <tr><th>Property</th><th>Value</th></tr>
+        <tr><td>Model</td><td><span class="inline-code">sentence-transformers/all-MiniLM-L6-v2</span></td></tr>
+        <tr><td>Runtime</td><td>ONNX (via FastEmbed)</td></tr>
+        <tr><td>Embedding Dimensions</td><td>384</td></tr>
+        <tr><td>RAM Usage</td><td>~100MB</td></tr>
+        <tr><td>Similarity Metric</td><td>Cosine Similarity</td></tr>
+        <tr><td>Confidence Threshold</td><td>0.45</td></tr>
+        <tr><td>FAQ Dataset Size</td><td>55+ pre-loaded Q&A pairs</td></tr>
+      </table>
+    </div>
+
+    <!-- API REFERENCE -->
+    <div class="section" id="api">
+      <h2><span class="section-icon">📡</span> API Reference</h2>
+      <p>All endpoints are served from the FastAPI backend at <span class="inline-code">http://127.0.0.1:8000</span>. Interactive Swagger docs available at <span class="inline-code">/docs</span>.</p>
+      <table class="api-table">
+        <tr><th>Method</th><th>Endpoint</th><th>Auth</th><th>Description</th></tr>
+        <tr><td><span class="method method-post">POST</span></td><td class="api-path">/chat</td><td class="auth-no">—</td><td>Semantic FAQ matching. Returns best answer + confidence score.</td></tr>
+        <tr><td><span class="method method-get">GET</span></td><td class="api-path">/api/qa</td><td class="auth-no">—</td><td>List all FAQ entries in the knowledge base.</td></tr>
+        <tr><td><span class="method method-post">POST</span></td><td class="api-path">/api/qa</td><td class="auth-yes">🔒 Bearer</td><td>Add a new Q&A pair. Auto-embeds and re-indexes.</td></tr>
+        <tr><td><span class="method method-delete">DELETE</span></td><td class="api-path">/api/qa</td><td class="auth-yes">🔒 Bearer</td><td>Delete a Q&A pair by question text.</td></tr>
+        <tr><td><span class="method method-post">POST</span></td><td class="api-path">/api/upload-pdf</td><td class="auth-yes">🔒 Bearer</td><td>Extract and ingest Q&A pairs from uploaded PDF.</td></tr>
+        <tr><td><span class="method method-post">POST</span></td><td class="api-path">/api/escalation</td><td class="auth-no">—</td><td>Submit a customer escalation ticket.</td></tr>
+        <tr><td><span class="method method-get">GET</span></td><td class="api-path">/api/escalation</td><td class="auth-yes">🔒 Bearer</td><td>List all escalation tickets.</td></tr>
+        <tr><td><span class="method method-put">PUT</span></td><td class="api-path">/api/escalation</td><td class="auth-yes">🔒 Bearer</td><td>Update escalation ticket status.</td></tr>
+        <tr><td><span class="method method-delete">DELETE</span></td><td class="api-path">/api/escalation/{id}</td><td class="auth-yes">🔒 Bearer</td><td>Permanently delete an escalation ticket.</td></tr>
+        <tr><td><span class="method method-get">GET</span></td><td class="api-path">/api/unanswered</td><td class="auth-yes">🔒 Bearer</td><td>Retrieve unanswered queries and negative feedback.</td></tr>
+        <tr><td><span class="method method-post">POST</span></td><td class="api-path">/api/feedback</td><td class="auth-no">—</td><td>Submit thumbs up/down feedback on answers.</td></tr>
+        <tr><td><span class="method method-get">GET</span></td><td class="api-path">/api/verify</td><td class="auth-yes">🔒 Bearer</td><td>Validate admin API key.</td></tr>
+      </table>
+    </div>
+
+    <!-- SECURITY -->
+    <div class="section" id="security">
+      <h2><span class="section-icon">🔒</span> Security</h2>
+      <p>Admin endpoints are protected with Bearer token authentication. The default development key is:</p>
+      <div class="code-block">
+        <div class="code-header"><span class="lang">text</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>admin-secret-key</pre>
+      </div>
+      <p>To set a custom key, create a <span class="inline-code">.env</span> file in the project root:</p>
+      <div class="code-block">
+        <div class="code-header"><span class="lang">env</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>API_KEY=your-secure-key-here</pre>
+      </div>
+      <p>CORS is configured to allow all origins (<span class="inline-code">*</span>) for development. Restrict this in production.</p>
+    </div>
+
+    <!-- DEPLOYMENT -->
+    <div class="section" id="deployment">
+      <h2><span class="section-icon">☁️</span> Deployment</h2>
+      <p>AutoCare is deployed on <strong>Render</strong> with separate services for frontend and backend.</p>
+      <table class="api-table">
+        <tr><th>Service</th><th>URL</th></tr>
+        <tr><td>Customer Chatbot</td><td><a href="https://autocare-frontend.onrender.com/" target="_blank" style="color:var(--accent)">autocare-frontend.onrender.com</a></td></tr>
+        <tr><td>Admin Dashboard</td><td><a href="https://autocare-frontend.onrender.com/admin.html" target="_blank" style="color:var(--accent)">autocare-frontend.onrender.com/admin.html</a></td></tr>
+        <tr><td>API Docs (local)</td><td><span class="inline-code">http://127.0.0.1:8000/docs</span></td></tr>
+      </table>
+    </div>
+
+    <!-- FAQ -->
+    <div class="section" id="faq">
+      <h2><span class="section-icon">❓</span> FAQ</h2>
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-q">How does semantic matching work?<span class="faq-arrow">▼</span></div>
+        <div class="faq-a"><p>User queries and FAQ questions are encoded into 384-dimensional vectors using the all-MiniLM-L6-v2 model. Cosine similarity between vectors determines the best match. This captures meaning, not just keywords.</p></div>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-q">What happens when a query has no good match?<span class="faq-arrow">▼</span></div>
+        <div class="faq-a"><p>If the confidence score is below 0.45, a fallback message is returned and the query is logged to unanswered_queries.log for admin review. Admins can then add the missing FAQ.</p></div>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-q">Can I add new FAQs without restarting the server?<span class="faq-arrow">▼</span></div>
+        <div class="faq-a"><p>Yes. The POST /api/qa endpoint adds new pairs and re-indexes embeddings dynamically. No server restart needed. Same for PDF uploads.</p></div>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-q">Why not use an LLM like GPT for answers?<span class="faq-arrow">▼</span></div>
+        <div class="faq-a"><p>AutoCare is a retrieval-based system by design. It returns verified, pre-written answers — no hallucination risk. For customer support in automotive, accuracy and consistency are more important than generative flexibility.</p></div>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-q">What PDF formats are supported?<span class="faq-arrow">▼</span></div>
+        <div class="faq-a"><p>Text-based PDFs with Q:/A: tags or question-mark-terminated lines work best. Scanned PDFs (image-only) and complex table layouts are not reliably extracted.</p></div>
+      </div>
+    </div>
+
+    <!-- CONTRIBUTORS -->
+    <div class="section" id="contributors">
+      <h2><span class="section-icon">👥</span> Contributors</h2>
+      <p>Built by <a href="https://github.com/shivanshi-git" target="_blank" style="color:var(--accent)">@shivanshi-git</a></p>
+      <p style="margin-top:8px">Pull requests welcome. For major changes, open an issue first.</p>
+      <p style="font-size:13px;color:var(--text-muted);margin-top:16px">Licensed under MIT.</p>
+    </div>
+
+  </main>
+
+  <!-- RIGHT SIDEBAR -->
+  <aside class="right-sidebar" id="rightSidebar">
+    <div class="right-title">On this page</div>
+    <div id="rightNav"></div>
+    <hr class="right-divider">
+    <div class="right-title">Project Status</div>
+    <div style="margin-bottom:10px"><span class="status-badge"><span class="status-dot"></span> Active</span></div>
+    <div class="right-meta">Version: <span>1.0.0</span></div>
+    <div class="right-meta">License: <span>MIT</span></div>
+    <div class="right-meta">Model: <span>MiniLM-L6-v2</span></div>
+    <hr class="right-divider">
+    <div class="right-title">Docs Progress</div>
+    <div class="right-meta">Completion</div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="right-meta" style="text-align:right"><span id="progressText">0%</span></div>
+    <hr class="right-divider">
+    <div class="right-title">Contributors</div>
+    <div class="contributor-row">
+      <div class="contributor-avatar" style="background:rgba(88,166,255,.15)">S</div>
+    </div>
+    <hr class="right-divider">
+    <div class="right-title">Repository</div>
+    <div class="right-meta"><a href="https://github.com/shivanshi-git/AutoCare" target="_blank" style="color:var(--accent);font-size:12px">shivanshi-git/AutoCare</a></div>
+  </aside>
+
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div>© 2025 AutoCare Documentation</div>
+  <div>Powered by <a href="https://github.com/shivanshi-git/AutoCare" target="_blank">GitHub</a></div>
+</footer>
+
+<script>
+// ===== LOADER =====
+window.addEventListener('load', () => {
+  setTimeout(() => document.getElementById('loader').classList.add('hidden'), 800);
+});
+
+// ===== NAVIGATION =====
+function navigateTo(id) {
+  const el = document.getElementById(id);
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // Close mobile sidebar
+    document.querySelector('.sidebar').classList.remove('mobile-open');
+  }
+}
+
+// ===== INTERSECTION OBSERVER — Active section tracking =====
+const sections = document.querySelectorAll('.section');
+const sidebarLinks = document.querySelectorAll('.sidebar-link');
+const rightNav = document.getElementById('rightNav');
+
+// Build right sidebar nav
+sections.forEach(s => {
+  const h2 = s.querySelector('h2');
+  if (h2) {
+    const a = document.createElement('a');
+    a.className = 'right-link';
+    a.textContent = h2.textContent.replace(/^[^\w]*/, '').trim();
+    a.href = '#' + s.id;
+    a.dataset.section = s.id;
+    a.addEventListener('click', e => { e.preventDefault(); navigateTo(s.id); });
+    rightNav.appendChild(a);
+  }
+});
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    // Animate sections in
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+
+    // Update active sidebar link
+    if (entry.isIntersecting && entry.intersectionRatio > 0.1) {
+      const id = entry.target.id;
+      sidebarLinks.forEach(l => l.classList.toggle('active', l.dataset.section === id));
+      document.querySelectorAll('.right-link').forEach(l => l.classList.toggle('active', l.dataset.section === id));
+    }
+  });
+}, { threshold: [0.1, 0.5], rootMargin: '-80px 0px -40% 0px' });
+
+sections.forEach(s => observer.observe(s));
+
+// ===== SCROLL PROGRESS =====
+const progressFill = document.getElementById('progressFill');
+const progressText = document.getElementById('progressText');
+window.addEventListener('scroll', () => {
+  const scrollH = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = Math.min(100, Math.round((window.scrollY / scrollH) * 100));
+  progressFill.style.width = pct + '%';
+  progressText.textContent = pct + '%';
+});
+
+// ===== COPY CODE =====
+function copyCode(btn) {
+  const pre = btn.closest('.code-block').querySelector('pre');
+  const text = pre.textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+// ===== SEARCH =====
+document.getElementById('searchInput').addEventListener('input', e => {
+  const q = e.target.value.toLowerCase().trim();
+  sections.forEach(s => {
+    if (!q) { s.style.display = ''; return; }
+    const text = s.textContent.toLowerCase();
+    s.style.display = text.includes(q) ? '' : 'none';
+  });
+});
+</script>
+</body>
+</html>
