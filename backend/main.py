@@ -756,6 +756,10 @@ class DocumentApprovalRequest(BaseModel):
 def default_admin_settings() -> dict:
     return {
         "models": ["Model 1", "Model 2", "Model 3", "Model 4"],
+        "active_mizenboshi_models": ["Model 1", "Model 2", "Model 3"],
+        "upcoming_mizenboshi_models": [
+            {"model": "Model 4", "planned_start": "Q4 2026", "status": "Preparation"}
+        ],
         "teams": ["Engineering Team 1", "Engineering Team 2", "Engineering Team 3", "Engineering Team 4"],
         "categories": ["New Parts Details", "Approval of Part Details", "Design Review of New Parts"],
         "engineering_upload_requires_qa_approval": True,
@@ -920,6 +924,7 @@ def list_faqs(principal: dict = Depends(require_permission("view"))):
 def dashboard_summary(principal: dict = Depends(require_permission("view"))):
     """Return live QA dashboard metrics, trends, approvals, and overdue work."""
     now = datetime.now()
+    settings = load_admin_settings()
     activity = load_json_list(DASHBOARD_ACTIVITY_PATH)
     escalations = load_json_list(ESCALATIONS_PATH)
     today = now.date()
@@ -970,6 +975,35 @@ def dashboard_summary(principal: dict = Depends(require_permission("view"))):
             "queries": len(day_activity),
             "document_grounded": sum(bool(item.get("document_grounded")) for item in day_activity),
         })
+    can_view_qa_documents = "upload" in ROLE_PERMISSIONS.get(principal["role"], set())
+    documents_under_qa = [
+        {
+            "id": document.get("id"),
+            "name": document.get("name", "Untitled document"),
+            "model": document.get("model", "Unassigned"),
+            "team": document.get("team", "Engineering"),
+            "category": document.get("category", "Uncategorized"),
+            "revision": document.get("revision", "R1"),
+            "submitted_at": document.get("uploaded_at"),
+        }
+        for document in DOCUMENTS
+        if str(document.get("approval_state", "Approved")).lower()
+        in {"pending", "pending qa approval", "qa review", "under review"}
+    ]
+    active_models = []
+    for model in settings.get("active_mizenboshi_models", []):
+        model_documents = [document for document in DOCUMENTS if document.get("model") == model]
+        approved_count = sum(
+            str(document.get("approval_state", "Approved")).lower() == "approved"
+            for document in model_documents
+        )
+        active_models.append({
+            "model": model,
+            "documents": len(model_documents),
+            "approved": approved_count,
+            "under_qa": len(model_documents) - approved_count,
+            "progress": round((approved_count / len(model_documents)) * 100) if model_documents else 0,
+        })
     return {
         "generated_at": now.isoformat(timespec="seconds"),
         "metrics": {
@@ -983,6 +1017,13 @@ def dashboard_summary(principal: dict = Depends(require_permission("view"))):
         "trend": trend,
         "pending_approvals": pending_approvals[:6],
         "overdue_actions": sorted(overdue_actions, key=lambda item: item["age_hours"], reverse=True)[:6],
+        "mizenboshi_pipeline": {
+            "documents_under_qa": documents_under_qa[:8] if can_view_qa_documents else [],
+            "documents_under_qa_count": len(documents_under_qa),
+            "can_view_qa_documents": can_view_qa_documents,
+            "active_models": active_models,
+            "upcoming_models": settings.get("upcoming_mizenboshi_models", []),
+        },
     }
 
 

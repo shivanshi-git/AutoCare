@@ -676,6 +676,12 @@
           <div class="widget-heading"><div><h3>Live activity</h3><p>Current backend metrics and seven-day trends.</p></div><span class="drag-handle" title="Drag to rearrange">⠿</span></div>
           <div class="stat-grid" id="liveDashboardStats"></div>
         </section>
+        <section class="dashboard-widget dashboard-pipeline-widget" data-widget="pipeline" draggable="true">
+          <div class="widget-heading"><div><h3>Mizenboshi pipeline</h3><p>QA processing, active models, and upcoming activity.</p></div><span class="drag-handle" title="Drag to rearrange">⠿</span></div>
+          <div class="pipeline-columns" id="mizenboshiPipeline">
+            <div class="pipeline-loading"></div><div class="pipeline-loading"></div><div class="pipeline-loading"></div>
+          </div>
+        </section>
         <section class="dashboard-widget dashboard-two-column" data-widget="actions" draggable="true">
           <div class="widget-heading"><div><h3>QA work queue</h3><p>Approvals and actions that need attention.</p></div><span class="drag-handle" title="Drag to rearrange">⠿</span></div>
           <div class="action-columns"><div><div class="dashboard-subtitle">Pending approvals <span id="pendingApprovalCount">0</span></div><div id="pendingApprovalList"></div></div><div><div class="dashboard-subtitle">Overdue actions <span id="overdueActionCount">0</span></div><div id="overdueActionList"></div></div></div>
@@ -3524,7 +3530,7 @@ loadKb().then(restoreWorkspaceState);
   .dashboard-live-status #resetDashboardOrder:hover { color:var(--app-accent); }
   .dashboard-widgets { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px; }
   .dashboard-widget { min-width:0;padding:18px;border:1px solid var(--app-separator);border-radius:var(--radius-lg);background:var(--app-reading);box-shadow:inset 0 1px var(--app-highlight),0 10px 34px rgba(39,74,123,.065);transition:transform .2s ease,border-color .2s ease,opacity .2s ease; }
-  .dashboard-widget[data-widget="metrics"],.dashboard-widget[data-widget="files"] { grid-column:1/-1; }
+  .dashboard-widget[data-widget="metrics"],.dashboard-widget[data-widget="pipeline"],.dashboard-widget[data-widget="files"] { grid-column:1/-1; }
   .dashboard-widget.dragging { opacity:.48;transform:scale(.985); }
   .dashboard-widget.drag-over { border-color:var(--app-accent); }
   .widget-heading { display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:14px; }
@@ -3547,7 +3553,28 @@ loadKb().then(restoreWorkspaceState);
   .continue-card { display:flex;align-items:center;gap:10px;padding:11px;border:1px solid var(--app-separator);border-radius:11px;background:var(--app-reading-subtle);color:inherit;text-align:left;cursor:pointer; }
   .continue-card:hover { border-color:var(--app-accent);transform:translateY(-1px); }.continue-card .file-icon { width:30px;height:36px;flex:0 0 30px;font-size:7px;padding-bottom:5px; }
   .continue-name { color:var(--app-text);font-size:10.5px;font-weight:700;line-height:1.35; }.continue-meta { color:var(--app-secondary);font-size:8.5px;margin-top:3px; }
-  @media(max-width:900px){.dashboard-widgets{grid-template-columns:1fr}.dashboard-widget{grid-column:1!important}.action-columns,.continue-grid{grid-template-columns:1fr}.drag-handle{display:none}}
+  .pipeline-columns { display:grid;grid-template-columns:1.25fr 1fr .85fr;gap:12px; }
+  .pipeline-column { min-width:0;padding:13px;border:1px solid var(--app-separator);border-radius:12px;background:var(--app-reading-subtle); }
+  .pipeline-column-head { display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px; }
+  .pipeline-column-title { color:var(--app-text);font-size:11px;font-weight:750; }
+  .pipeline-count { min-width:21px;height:21px;display:grid;place-items:center;padding:0 6px;border-radius:999px;background:var(--app-accent-soft);color:var(--app-accent);font-size:9px;font-weight:800; }
+  .pipeline-list { display:flex;flex-direction:column;gap:7px; }
+  .pipeline-document { width:100%;display:flex;align-items:center;gap:9px;padding:9px;border:1px solid transparent;border-radius:9px;background:var(--app-reading);color:inherit;text-align:left;cursor:pointer; }
+  .pipeline-document:hover { border-color:var(--app-accent);transform:translateY(-1px); }
+  .pipeline-document .file-icon { width:27px;height:33px;flex:0 0 27px;font-size:6.5px;padding-bottom:4px; }
+  .pipeline-item-title { color:var(--app-text);font-size:10px;font-weight:720;line-height:1.35; }
+  .pipeline-item-meta { margin-top:2px;color:var(--app-secondary);font-size:8.5px;line-height:1.35; }
+  .model-progress-card { padding:9px;border-radius:9px;background:var(--app-reading); }
+  .model-progress-top { display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--app-text);font-size:10px;font-weight:720; }
+  .model-progress-top span:last-child { color:var(--app-secondary);font-size:8.5px;font-weight:650; }
+  .model-progress-track { height:4px;margin-top:8px;overflow:hidden;border-radius:999px;background:rgba(127,156,198,.15); }
+  .model-progress-fill { height:100%;border-radius:inherit;background:var(--app-accent); }
+  .upcoming-model-card { padding:10px;border-left:3px solid var(--app-accent);border-radius:4px 9px 9px 4px;background:var(--app-reading); }
+  .upcoming-status { display:inline-block;margin-top:6px;padding:3px 6px;border-radius:999px;background:var(--app-accent-soft);color:var(--app-accent);font-size:8px;font-weight:750; }
+  .pipeline-loading { min-height:150px;border-radius:12px;background:rgba(127,156,198,.08);animation:metricPulse 1.2s ease-in-out infinite alternate; }
+  .pipeline-note { padding:13px 8px;color:var(--app-secondary);font-size:9.5px;line-height:1.5;text-align:center; }
+  @media(max-width:1050px){.pipeline-columns{grid-template-columns:1fr 1fr}.pipeline-column:first-child{grid-column:1/-1}}
+  @media(max-width:900px){.dashboard-widgets{grid-template-columns:1fr}.dashboard-widget{grid-column:1!important}.action-columns,.continue-grid,.pipeline-columns{grid-template-columns:1fr}.pipeline-column:first-child{grid-column:auto}.drag-handle{display:none}}
 
   .sidebar-collapse {
     margin-left:auto;width:30px;height:30px;display:grid;place-items:center;flex:0 0 30px;
@@ -3663,6 +3690,24 @@ loadKb().then(restoreWorkspaceState);
     document.querySelectorAll("[data-open-admin]").forEach(button=>button.onclick=()=>window.open("admin.html","_blank"));
     document.querySelectorAll("[data-open-departments]").forEach(button=>button.onclick=()=>document.querySelector('.nav-item[data-page="departments"]')?.click());
   };
+  const renderPipeline=pipeline=>{
+    const target=document.getElementById("mizenboshiPipeline");
+    if(!target)return;
+    const qaDocuments=pipeline.documents_under_qa||[];
+    const qaContent=!pipeline.can_view_qa_documents
+      ? `<div class="pipeline-note">${pipeline.documents_under_qa_count} document${pipeline.documents_under_qa_count===1?" is":"s are"} currently in QA review. Details are available to QA and Engineering.</div>`
+      : qaDocuments.length
+        ? `<div class="pipeline-list">${qaDocuments.map(doc=>`<button class="pipeline-document" type="button" data-pipeline-document="${escapeHtml(doc.id)}"><span class="file-icon">PDF</span><span><span class="pipeline-item-title">${escapeHtml(doc.name)}</span><span class="pipeline-item-meta">${escapeHtml(doc.model)} · ${escapeHtml(doc.team)} · ${escapeHtml(doc.revision)}</span></span></button>`).join("")}</div>`
+        : `<div class="pipeline-note">No documents are waiting for QA review.</div>`;
+    const activeContent=(pipeline.active_models||[]).length
+      ? `<div class="pipeline-list">${pipeline.active_models.map(item=>`<div class="model-progress-card"><div class="model-progress-top"><span>${escapeHtml(item.model)}</span><span>${item.approved}/${item.documents} approved</span></div><div class="model-progress-track" aria-label="${escapeHtml(item.model)} ${item.progress}% complete"><div class="model-progress-fill" style="width:${Math.max(3,item.progress)}%"></div></div></div>`).join("")}</div>`
+      : `<div class="pipeline-note">No models are currently active.</div>`;
+    const upcomingContent=(pipeline.upcoming_models||[]).length
+      ? `<div class="pipeline-list">${pipeline.upcoming_models.map(item=>`<div class="upcoming-model-card"><div class="pipeline-item-title">${escapeHtml(item.model)}</div><div class="pipeline-item-meta">Planned start · ${escapeHtml(item.planned_start||"To be confirmed")}</div><span class="upcoming-status">${escapeHtml(item.status||"Planned")}</span></div>`).join("")}</div>`
+      : `<div class="pipeline-note">No upcoming model activity is scheduled.</div>`;
+    target.innerHTML=`<section class="pipeline-column"><div class="pipeline-column-head"><span class="pipeline-column-title">Documents under QA</span><span class="pipeline-count">${pipeline.documents_under_qa_count||0}</span></div>${qaContent}</section><section class="pipeline-column"><div class="pipeline-column-head"><span class="pipeline-column-title">Models in process</span><span class="pipeline-count">${(pipeline.active_models||[]).length}</span></div>${activeContent}</section><section class="pipeline-column"><div class="pipeline-column-head"><span class="pipeline-column-title">Upcoming models</span><span class="pipeline-count">${(pipeline.upcoming_models||[]).length}</span></div>${upcomingContent}</section>`;
+    target.querySelectorAll("[data-pipeline-document]").forEach(button=>button.onclick=()=>openDocumentPreview(button.dataset.pipelineDocument));
+  };
   window.renderContinueWorking=()=>{
     const target=document.getElementById("continueWorking");
     if(!target)return;
@@ -3678,6 +3723,7 @@ loadKb().then(restoreWorkspaceState);
       const data=await response.json();
       renderStats(data.metrics,data.trend);
       renderQueue(data);
+      renderPipeline(data.mizenboshi_pipeline||{documents_under_qa:[],documents_under_qa_count:0,can_view_qa_documents:false,active_models:[],upcoming_models:[]});
       document.getElementById("dashboardUpdatedAt").textContent=`Live data · updated ${new Date(data.generated_at).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})}`;
     }catch(error){
       document.getElementById("dashboardUpdatedAt").textContent="Live dashboard data is temporarily unavailable";
