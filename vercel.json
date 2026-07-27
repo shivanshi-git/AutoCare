@@ -1,0 +1,29 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/frontend/index.html"
+    },
+    {
+      "source": "/admin",
+      "destination": "/frontend/admin.html"
+    },
+    {
+      "source": "/chat",
+      "destination": "/api/index"
+    },
+    {
+      "source": "/chat/:path*",
+      "destination": "/api/index"
+    },
+    {
+      "source": "/faqs",
+      "destination": "/api/index"
+    },
+    {
+      "source": "/api/:path*",
+      "destination": "/api/index"
+    }
+  ]
+}

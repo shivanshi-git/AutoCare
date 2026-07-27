@@ -1,0 +1,35 @@
+{
+  "models": [
+    "Model 1",
+    "Model 2",
+    "Model 3",
+    "Model 4"
+  ],
+  "active_mizenboshi_models": [
+    "Model 1",
+    "Model 2",
+    "Model 3"
+  ],
+  "upcoming_mizenboshi_models": [
+    {
+      "model": "Model 4",
+      "planned_start": "Q4 2026",
+      "status": "Preparation"
+    }
+  ],
+  "teams": [
+    "Engineering Team 1",
+    "Engineering Team 2",
+    "Engineering Team 3",
+    "Engineering Team 4"
+  ],
+  "categories": [
+    "New Parts Details",
+    "Approval of Part Details",
+    "Design Review of New Parts"
+  ],
+  "engineering_upload_requires_qa_approval": true,
+  "qa_upload_auto_approves": true,
+  "retention_days": 730,
+  "retain_superseded_revisions": true
+}
