@@ -1,0 +1,52 @@
+[
+  {
+    "id": "usr_627740e0fb24",
+    "username": "qa_admin",
+    "name": "QA Administrator",
+    "role": "QA Admin",
+    "department": "QA",
+    "password_hash": "9bdbe29db244ef448bebddb52e104a12$F_AdA6PYNSkPi4bXBfByJlaSihXqI2Ug0fl2FTI-kS8=",
+    "active": true,
+    "created_at": "2026-07-28T00:01:52"
+  },
+  {
+    "id": "usr_b8470055cb0c",
+    "username": "qa_user",
+    "name": "QA Team Member",
+    "role": "QA",
+    "department": "QA",
+    "password_hash": "9f5a982b506806fb7de0e62565f1cb8b$DTgwkvVvudh3-w0HOtvJmhqsRTj-V0tD3zXC1kzWKRc=",
+    "active": true,
+    "created_at": "2026-07-28T00:01:52"
+  },
+  {
+    "id": "usr_c7df8146c499",
+    "username": "engineering_user",
+    "name": "Engineering Contributor",
+    "role": "Engineering",
+    "department": "Engineering",
+    "password_hash": "156efc1c577ebced6fa42fd7874cf832$kifOvsKcw5kQpj9q17xS2iOf8VYLoNpgTirAHTCWyOk=",
+    "active": true,
+    "created_at": "2026-07-28T00:01:53"
+  },
+  {
+    "id": "usr_49e31cda95f6",
+    "username": "production_user",
+    "name": "Production Reviewer",
+    "role": "Production",
+    "department": "Production",
+    "password_hash": "3b8e282cc63abd7dee66d65b7c997a96$U4MVnScoiVQR9K1tw2YGTeHBVIUg_DthBY3L7-XiAF8=",
+    "active": true,
+    "created_at": "2026-07-28T00:01:53"
+  },
+  {
+    "id": "usr_fb7bdb6da2ba",
+    "username": "parts_quality_user",
+    "name": "Parts Quality Reviewer",
+    "role": "Parts Quality",
+    "department": "Parts Quality",
+    "password_hash": "87d78f0bc6678a9fef8b8d64fca84052$bp6RxmXfIm8aSAYKyZSciU7xc4mcetkH_7H70t7dLds=",
+    "active": true,
+    "created_at": "2026-07-28T00:01:53"
+  }
+]

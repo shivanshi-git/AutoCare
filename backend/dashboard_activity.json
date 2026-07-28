@@ -1,0 +1,227 @@
+[
+  {
+    "timestamp": "2026-07-26T00:54:22",
+    "query": "Where can Engineering Team 1 find the new systems document?",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-26T00:54:28",
+    "query": "What must QA verify before approving a new part?",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-26T00:54:41",
+    "query": "What is cricket",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-26T00:55:45",
+    "query": "What is included in a design review of new parts?",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-26T00:57:43",
+    "query": "What is included in a design review of new parts?",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-26T00:57:50",
+    "query": "Where can Engineering Team 1 find the new systems document?",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-26T00:57:54",
+    "query": "What must QA verify before approving a new part?",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-26T00:58:10",
+    "query": "What is cricket?",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-26T00:58:26",
+    "query": "What is autocare",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-26T00:58:41",
+    "query": "What is autocare",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-26T00:58:47",
+    "query": "What is autocare",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-26T00:58:49",
+    "query": "What is autocare",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-26T00:58:54",
+    "query": "Where can Engineering Team 1 find the new systems document?",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-26T00:58:57",
+    "query": "What is included in a design review of new parts?",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-26T00:59:02",
+    "query": "What must QA verify before approving a new part?",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-26T01:02:51",
+    "query": "What is the Mizen Boushi process?",
+    "document_grounded": false
+  },
+  {
+    "timestamp": "2026-07-26T01:02:57",
+    "query": "How should we run a DRBFM review?",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-26T01:03:03",
+    "query": "How do jidoka and poka-yoke help prevent defects?",
+    "document_grounded": false
+  },
+  {
+    "timestamp": "2026-07-26T01:03:20",
+    "query": "What is the difference between Mizen Boushi and recurrence prevention?",
+    "document_grounded": false
+  },
+  {
+    "timestamp": "2026-07-26T01:05:08",
+    "query": "What is autocare",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-26T01:05:51",
+    "query": "What is the Mizen Boushi process?",
+    "document_grounded": false
+  },
+  {
+    "timestamp": "2026-07-26T01:12:00",
+    "query": "Where can Engineering Team 1 find the new systems document?",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-26T10:23:09",
+    "query": "What is the purpose of AutoCare?",
+    "document_grounded": false
+  },
+  {
+    "timestamp": "2026-07-26T10:32:32",
+    "query": "What is included in a design review of new parts?",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-27T00:26:44",
+    "query": "Where can Engineering Team 1 find the new systems document?",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-27T00:26:47",
+    "query": "What is included in a design review of new parts?",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-28T00:07:47",
+    "query": "What is included in a design review of new parts?",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-28T00:22:26",
+    "query": "What must QA verify before approving a new part?",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-28T00:23:13",
+    "query": "What is included in a design review of new parts?",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-28T00:23:36",
+    "query": "asdfghjkl random nonsense xyz",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-28T00:24:39",
+    "query": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-28T00:25:00",
+    "query": "??????????????????????????????????????????????????",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-28T00:25:26",
+    "query": "//////////////////////////////////////////////////",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-28T00:28:30",
+    "query": "hjhhh",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-28T00:28:39",
+    "query": "Where can Engineering Team 1 find the new systems document?",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-28T00:31:29",
+    "query": "What is model 4 design review?",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-28T00:50:24",
+    "query": "What must QA verify before approving a new part?",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-28T00:50:29",
+    "query": "hbhbj",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-28T00:53:13",
+    "query": "Where is the drawing maturity table?",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-28T00:53:45",
+    "query": "Comprehensive details and guidelines regarding: Where is the drawing maturity table?",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-28T01:13:49",
+    "query": "Where is the drawing maturity table?",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-28T01:13:59",
+    "query": "Comprehensive details and guidelines regarding: Where is the drawing maturity table?",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-28T01:18:22",
+    "query": "escalate",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-28T15:44:34",
+    "query": "What is included in a design review of new parts?",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-28T15:44:38",
+    "query": "Comprehensive details and guidelines regarding: What is included in a design review of new parts?",
+    "document_grounded": true
+  }
+]

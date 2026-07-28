@@ -1,0 +1,530 @@
+[
+  {
+    "id": "audit_40a553a37175",
+    "timestamp": "2026-07-26T10:10:30",
+    "actor": "Engineering Contributor",
+    "role": "Engineering",
+    "action": "user.login",
+    "target": "usr_c087d7db0753",
+    "details": {}
+  },
+  {
+    "id": "audit_84ea08e56a4c",
+    "timestamp": "2026-07-26T10:15:47",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_c1c9ccc985e6",
+    "details": {}
+  },
+  {
+    "id": "audit_95e8c370c2bf",
+    "timestamp": "2026-07-26T10:15:47",
+    "actor": "QA Team Member",
+    "role": "QA",
+    "action": "user.login",
+    "target": "usr_c04f25efde52",
+    "details": {}
+  },
+  {
+    "id": "audit_b772aa1a45af",
+    "timestamp": "2026-07-26T10:15:47",
+    "actor": "Engineering Contributor",
+    "role": "Engineering",
+    "action": "user.login",
+    "target": "usr_c087d7db0753",
+    "details": {}
+  },
+  {
+    "id": "audit_b6bed2cd9954",
+    "timestamp": "2026-07-26T10:15:47",
+    "actor": "Production Reviewer",
+    "role": "Production",
+    "action": "user.login",
+    "target": "usr_117b7f0b0522",
+    "details": {}
+  },
+  {
+    "id": "audit_152bd48c664b",
+    "timestamp": "2026-07-26T10:15:48",
+    "actor": "Parts Quality Reviewer",
+    "role": "Parts Quality",
+    "action": "user.login",
+    "target": "usr_3e6f1c8f7422",
+    "details": {}
+  },
+  {
+    "id": "audit_aa5cd2f133d8",
+    "timestamp": "2026-07-26T10:15:57",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_c1c9ccc985e6",
+    "details": {}
+  },
+  {
+    "id": "audit_2f7783b1b339",
+    "timestamp": "2026-07-26T10:17:33",
+    "actor": "Engineering Contributor",
+    "role": "Engineering",
+    "action": "user.login",
+    "target": "usr_c087d7db0753",
+    "details": {}
+  },
+  {
+    "id": "audit_ef334bdd3028",
+    "timestamp": "2026-07-26T10:17:33",
+    "actor": "Production Reviewer",
+    "role": "Production",
+    "action": "user.login",
+    "target": "usr_117b7f0b0522",
+    "details": {}
+  },
+  {
+    "id": "audit_e585170c9d81",
+    "timestamp": "2026-07-26T10:17:33",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_c1c9ccc985e6",
+    "details": {}
+  },
+  {
+    "id": "audit_ba4de00ade3b",
+    "timestamp": "2026-07-26T10:17:33",
+    "actor": "Engineering Contributor",
+    "role": "Engineering",
+    "action": "document.uploaded",
+    "target": "doc_92753c28fde744bd959d99e90294d695",
+    "details": {
+      "name": "c77dd8adf4be4223b444f316c4a2df04_Engineering_details.pdf",
+      "approval_state": "Pending QA Approval",
+      "model": "Model 1",
+      "team": "Engineering Team 1",
+      "category": "New Parts Details"
+    }
+  },
+  {
+    "id": "audit_45c69f7c73b5",
+    "timestamp": "2026-07-26T10:17:33",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "document.approval_updated",
+    "target": "doc_92753c28fde744bd959d99e90294d695",
+    "details": {
+      "state": "Approved",
+      "comment": "RBAC verification"
+    }
+  },
+  {
+    "id": "audit_227a369e596c",
+    "timestamp": "2026-07-26T10:17:33",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "document.deleted",
+    "target": "doc_92753c28fde744bd959d99e90294d695",
+    "details": {
+      "name": "c77dd8adf4be4223b444f316c4a2df04_Engineering_details.pdf"
+    }
+  },
+  {
+    "id": "audit_1b096e5318b4",
+    "timestamp": "2026-07-26T10:23:09",
+    "actor": "Production Reviewer",
+    "role": "Production",
+    "action": "user.login",
+    "target": "usr_117b7f0b0522",
+    "details": {}
+  },
+  {
+    "id": "audit_5877e6dc91bf",
+    "timestamp": "2026-07-26T10:25:29",
+    "actor": "Engineering Contributor",
+    "role": "Engineering",
+    "action": "user.login",
+    "target": "usr_c087d7db0753",
+    "details": {}
+  },
+  {
+    "id": "audit_e46f121dd3f7",
+    "timestamp": "2026-07-26T10:25:57",
+    "actor": "Engineering Contributor",
+    "role": "Engineering",
+    "action": "user.login",
+    "target": "usr_c087d7db0753",
+    "details": {}
+  },
+  {
+    "id": "audit_c88982f66519",
+    "timestamp": "2026-07-26T10:30:29",
+    "actor": "Engineering Contributor",
+    "role": "Engineering",
+    "action": "document.uploaded",
+    "target": "doc_3c892de14493443882a23faac9ba7901",
+    "details": {
+      "name": "Engineering details.pdf",
+      "approval_state": "Pending QA Approval",
+      "model": "Model 2",
+      "team": "Engineering Team 3",
+      "category": "Approval of Part Details"
+    }
+  },
+  {
+    "id": "audit_b9338bf4843c",
+    "timestamp": "2026-07-27T00:07:30",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_c1c9ccc985e6",
+    "details": {}
+  },
+  {
+    "id": "audit_1e57bf29f1cb",
+    "timestamp": "2026-07-27T00:07:49",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_c1c9ccc985e6",
+    "details": {}
+  },
+  {
+    "id": "audit_5f9122726030",
+    "timestamp": "2026-07-27T00:26:44",
+    "actor": "Production Reviewer",
+    "role": "Production",
+    "action": "user.login",
+    "target": "usr_117b7f0b0522",
+    "details": {}
+  },
+  {
+    "id": "audit_7e2efd16ce4d",
+    "timestamp": "2026-07-28T00:14:31",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_c1c9ccc985e6",
+    "details": {}
+  },
+  {
+    "id": "audit_88caa48e65b3",
+    "timestamp": "2026-07-28T00:21:24",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_c1c9ccc985e6",
+    "details": {}
+  },
+  {
+    "id": "audit_c5534501b642",
+    "timestamp": "2026-07-28T00:37:36",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_c1c9ccc985e6",
+    "details": {}
+  },
+  {
+    "id": "audit_4c8043a14706",
+    "timestamp": "2026-07-28T00:37:48",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "document.uploaded",
+    "target": "doc_3dc41b6a4dbd400091c38951c1b499bd",
+    "details": {
+      "name": "Real-Time Driver Drowsiness Detection (2).pdf",
+      "approval_state": "Draft",
+      "score": 20,
+      "model": "Model 1",
+      "team": "Engineering Team 1",
+      "category": "New Parts Details",
+      "replaced": false
+    }
+  },
+  {
+    "id": "audit_cb426d57cc91",
+    "timestamp": "2026-07-28T00:38:36",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_c1c9ccc985e6",
+    "details": {}
+  },
+  {
+    "id": "audit_df6fd5f1f2c2",
+    "timestamp": "2026-07-28T02:49:00",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_c1c9ccc985e6",
+    "details": {}
+  },
+  {
+    "id": "audit_62b8f9f1b6d6",
+    "timestamp": "2026-07-28T02:50:23",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "document.uploaded",
+    "target": "doc_d29e3c4dba794d0c93362599021583fd",
+    "details": {
+      "name": "1801.02325v1 (1).pdf",
+      "approval_state": "Draft",
+      "score": 40,
+      "model": "Model 1",
+      "team": "Engineering Team 1",
+      "category": "New Parts Details",
+      "replaced": false
+    }
+  },
+  {
+    "id": "audit_4b5ebf973da3",
+    "timestamp": "2026-07-28T02:50:37",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "document.uploaded",
+    "target": "doc_4b879d69128b4fd5bd9eb61c04feba44",
+    "details": {
+      "name": "1774762193-hough_transform_example.pdf",
+      "approval_state": "Draft",
+      "score": 0,
+      "model": "Model 1",
+      "team": "Engineering Team 1",
+      "category": "New Parts Details",
+      "replaced": false
+    }
+  },
+  {
+    "id": "audit_dd1b3846d301",
+    "timestamp": "2026-07-28T02:50:50",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_c1c9ccc985e6",
+    "details": {}
+  },
+  {
+    "id": "audit_3585f5ecc1e0",
+    "timestamp": "2026-07-28T00:01:53",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_627740e0fb24",
+    "details": {}
+  },
+  {
+    "id": "audit_1c8b7d0ac78c",
+    "timestamp": "2026-07-28T00:03:17",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_627740e0fb24",
+    "details": {}
+  },
+  {
+    "id": "audit_07bb8fa4eed2",
+    "timestamp": "2026-07-28T00:05:53",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_627740e0fb24",
+    "details": {}
+  },
+  {
+    "id": "audit_ad1c5a10516a",
+    "timestamp": "2026-07-28T00:07:04",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_627740e0fb24",
+    "details": {}
+  },
+  {
+    "id": "audit_58ff62c30635",
+    "timestamp": "2026-07-28T00:07:15",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_627740e0fb24",
+    "details": {}
+  },
+  {
+    "id": "audit_d22e8744cf61",
+    "timestamp": "2026-07-28T00:10:30",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_627740e0fb24",
+    "details": {}
+  },
+  {
+    "id": "audit_224bb09aedf5",
+    "timestamp": "2026-07-28T01:14:33",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_627740e0fb24",
+    "details": {}
+  },
+  {
+    "id": "audit_136036c0a2aa",
+    "timestamp": "2026-07-28T01:15:12",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_627740e0fb24",
+    "details": {}
+  },
+  {
+    "id": "audit_df102b2d7362",
+    "timestamp": "2026-07-28T03:27:01",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_627740e0fb24",
+    "details": {}
+  },
+  {
+    "id": "audit_c1bb13d6bec6",
+    "timestamp": "2026-07-28T03:28:07",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "document.uploaded",
+    "target": "doc_aff8d33bf4704e508f8812b9c9343c69",
+    "details": {
+      "name": "sample-local-pdf.pdf",
+      "approval_state": "Draft",
+      "score": 0,
+      "model": "Model 1",
+      "team": "Engineering Team 1",
+      "category": "New Parts Details",
+      "replaced": false
+    }
+  },
+  {
+    "id": "audit_c909338c1542",
+    "timestamp": "2026-07-28T15:17:11",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_627740e0fb24",
+    "details": {}
+  },
+  {
+    "id": "audit_996fd5ca66b9",
+    "timestamp": "2026-07-28T15:45:11",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_627740e0fb24",
+    "details": {}
+  },
+  {
+    "id": "audit_ccd2208a198f",
+    "timestamp": "2026-07-28T15:45:25",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "ticket.status_updated",
+    "target": "tkt_1785233693099",
+    "details": {
+      "status": "Resolved"
+    }
+  },
+  {
+    "id": "audit_47fdb9003cae",
+    "timestamp": "2026-07-28T15:46:21",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "document.uploaded",
+    "target": "doc_9f90edd4e7e04dbdb4f8122d434cd33d",
+    "details": {
+      "name": "AdmissionLetter_254809-7870661.PDF",
+      "approval_state": "Draft",
+      "score": 0,
+      "model": "Model 1",
+      "team": "Engineering Team 1",
+      "category": "New Parts Details",
+      "replaced": false
+    }
+  },
+  {
+    "id": "audit_14f9ccc5c043",
+    "timestamp": "2026-07-28T15:46:26",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "document.uploaded",
+    "target": "doc_982c9aafb90d4ab884819b86e44986b9",
+    "details": {
+      "name": "s12911-023-02134-2.pdf",
+      "approval_state": "Draft",
+      "score": 60,
+      "model": "Model 1",
+      "team": "Engineering Team 1",
+      "category": "New Parts Details",
+      "replaced": false
+    }
+  },
+  {
+    "id": "audit_c3306420892b",
+    "timestamp": "2026-07-28T16:19:52",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_627740e0fb24",
+    "details": {}
+  },
+  {
+    "id": "audit_98d9adc49b5c",
+    "timestamp": "2026-07-28T16:20:04",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "document.uploaded",
+    "target": "doc_19a0c4f6cc3741efacf23dc5879e8a9c",
+    "details": {
+      "name": "d391b1a7-dfa1-4fef-af7c-bd439fc3c5a8.pdf",
+      "approval_state": "Draft",
+      "score": 0,
+      "model": "Model 1",
+      "team": "Engineering Team 1",
+      "category": "New Parts Details",
+      "replaced": false
+    }
+  },
+  {
+    "id": "audit_dd3644740ed1",
+    "timestamp": "2026-07-28T16:20:15",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "document.uploaded",
+    "target": "doc_19a0c4f6cc3741efacf23dc5879e8a9c",
+    "details": {
+      "name": "s12911-023-02134-2.pdf",
+      "approval_state": "Draft",
+      "score": 60,
+      "model": "Model 1",
+      "team": "Engineering Team 1",
+      "category": "New Parts Details",
+      "replaced": true
+    }
+  },
+  {
+    "id": "audit_df4641678b1f",
+    "timestamp": "2026-07-28T16:20:18",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "document.submitted",
+    "target": "doc_19a0c4f6cc3741efacf23dc5879e8a9c",
+    "details": {
+      "name": "s12911-023-02134-2.pdf",
+      "score": 60,
+      "approval_state": "Approved"
+    }
+  },
+  {
+    "id": "audit_38d3e741093a",
+    "timestamp": "2026-07-28T16:20:33",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_627740e0fb24",
+    "details": {}
+  }
+]

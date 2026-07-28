@@ -1,0 +1,2304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoCare QA Admin Panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>
+  (() => {
+    const preference = localStorage.getItem("autocare_theme") || "system";
+    const dark = preference === "dark" || (preference === "system" && matchMedia("(prefers-color-scheme: dark)").matches);
+    document.documentElement.dataset.theme = dark ? "dark" : "light";
+    document.documentElement.dataset.themePreference = preference;
+  })();
+</script>
+<style>
+  :root {
+    --blue-900: #0a2a66;
+    --blue-700: #103e91;
+    --blue-600: #1554c7;
+    --blue-500: #2166e8;
+    --blue-200: #c7d8f7;
+    --blue-100: #e6edfb;
+    --blue-50: #f5f8fd;
+    --white: #ffffff;
+    --grey-text: #64748b;
+    --grey-light: #94a3b8;
+    --border: #e2e8f0;
+    --radius-lg: 16px;
+    --radius-md: 12px;
+    --radius-sm: 8px;
+    --danger: #ef4444;
+    --danger-light: #fef2f2;
+    --success: #22c55e;
+    --success-light: #f0fdf4;
+    --warning: #f59e0b;
+    --warning-light: #fefbeb;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--blue-50);
+    color: var(--blue-900);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+  }
+
+  /* ---------- Login Gate UI ---------- */
+  .login-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: radial-gradient(circle at 10% 20%, rgb(4, 32, 84) 0%, rgb(10, 42, 102) 90.2%);
+    padding: 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .login-card {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 24px;
+    padding: 40px;
+    width: 100%;
+    max-width: 440px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    animation: card-appear 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes card-appear {
+    from { opacity: 0; transform: scale(0.9) translateY(20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .login-logo {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 20px;
+    box-shadow: 0 8px 16px rgba(37, 99, 235, 0.3);
+    margin: 0 auto 20px auto;
+  }
+
+  .login-card h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 8px;
+  }
+
+  .login-card p {
+    font-size: 13.5px;
+    color: var(--grey-text);
+    margin-bottom: 28px;
+  }
+
+  .form-group {
+    text-align: left;
+    margin-bottom: 20px;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    outline: none;
+    font-family: inherit;
+    font-size: 14px;
+    transition: all 0.2s ease;
+  }
+
+  .form-control:focus {
+    border-color: var(--blue-500);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  }
+
+  .login-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    transition: all 0.2s ease;
+  }
+
+  .login-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+  }
+
+  .login-error {
+    background: var(--danger-light);
+    color: var(--danger);
+    font-size: 13px;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 20px;
+    display: none;
+    text-align: left;
+    border: 1px solid #fee2e2;
+  }
+
+  /* ---------- Admin Shell UI ---------- */
+  .shell {
+    display: none;
+    height: 100vh;
+  }
+
+  .sidebar {
+    width: 260px;
+    background: #ffffff;
+    border-right: 1px solid #f1f5f9;
+    display: flex;
+    flex-direction: column;
+    padding: 24px 16px;
+    flex-shrink: 0;
+    box-shadow: 4px 0 24px rgba(15, 23, 42, 0.015);
+  }
+
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 4px 8px 24px 8px;
+    border-bottom: 1px solid #f1f5f9;
+    margin-bottom: 20px;
+  }
+
+  .sidebar-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #ef4444, #b91c1c);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 15px;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+    flex-shrink: 0;
+  }
+
+  .sidebar-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.25;
+  }
+
+  .sidebar-title span {
+    display: block;
+    font-weight: 600;
+    font-size: 11px;
+    color: #ef4444;
+    text-transform: uppercase;
+    margin-top: 1px;
+  }
+
+  .nav-section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #94a3b8;
+    text-transform: uppercase;
+    padding: 18px 12px 8px 12px;
+  }
+
+  .nav-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #475569;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+    transition: all 0.2s ease;
+    margin-bottom: 2px;
+  }
+
+  .nav-item .icon {
+    font-size: 16px;
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    transition: color 0.2s ease;
+  }
+
+  .nav-item:hover {
+    background: #f8fafc;
+    color: #0f172a;
+  }
+
+  .nav-item.active {
+    background: #fef2f2;
+    color: #b91c1c;
+    font-weight: 600;
+  }
+
+  .nav-item.active .icon {
+    color: #b91c1c;
+  }
+
+  .nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 10px;
+    bottom: 10px;
+    width: 3px;
+    border-radius: 99px;
+    background: #ef4444;
+  }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .btn-outline-danger {
+    background: transparent;
+    border: 1px solid var(--danger);
+    color: var(--danger);
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+    text-align: center;
+  }
+
+  .btn-outline-danger:hover {
+    background: var(--danger-light);
+  }
+
+  .main {
+    flex: 1;
+    overflow-y: auto;
+    padding: 32px 44px;
+    max-height: 100vh;
+  }
+
+  .page { display: none; animation: fadein 0.15s ease; }
+  .page.active { display: block; }
+
+  @keyframes fadein {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .page-header { margin-bottom: 28px; }
+  .page-header h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .page-header p { font-size: 13.5px; color: var(--grey-text); }
+
+  /* ---------- Dashboard Stats ---------- */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .stat-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  }
+
+  .stat-card .label { font-size: 12px; color: var(--grey-text); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+  .stat-card .value { font-size: 28px; font-weight: 700; color: var(--blue-900); }
+  .stat-card .desc { font-size: 12px; color: var(--grey-text); margin-top: 4px; }
+
+  .panel {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  }
+
+  .panel h3 { font-size: 15px; margin-bottom: 16px; font-weight: 700; color: var(--blue-900); border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; }
+
+  /* ---------- Forms ---------- */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .btn-primary {
+    background: var(--blue-600);
+    color: var(--white);
+    border: none;
+    padding: 10px 18px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.15s ease;
+  }
+
+  .btn-primary:hover { background: var(--blue-700); }
+
+  /* ---------- KB Lists ---------- */
+  .kb-item {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 12px;
+    transition: all 0.15s ease;
+  }
+
+  .kb-item:hover {
+    border-color: var(--blue-200);
+    box-shadow: 0 4px 12px rgba(10, 42, 102, 0.02);
+  }
+
+  .kb-item .q { font-weight: 600; font-size: 14px; margin-bottom: 6px; color: var(--blue-900); }
+  .kb-item .a { color: var(--grey-text); font-size: 13px; line-height: 1.5; }
+  
+  .tag {
+    display: inline-block;
+    font-size: 10.5px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    margin-top: 8px;
+    font-weight: 500;
+  }
+
+  .delete-btn {
+    background: transparent;
+    border: 1px solid #fecaca;
+    color: var(--danger);
+    border-radius: var(--radius-sm);
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.15s ease;
+  }
+
+  .delete-btn:hover {
+    background: var(--danger-light);
+    border-color: #fee2e2;
+  }
+
+  .approve-btn {
+    background: var(--success-light);
+    border: 1px solid #bbf7d0;
+    color: var(--success);
+    border-radius: var(--radius-sm);
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.15s ease;
+    margin-right: 8px;
+  }
+
+  .approve-btn:hover {
+    background: #dcfce7;
+    border-color: #86efac;
+  }
+
+  .badge-status {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-left: 8px;
+  }
+
+  .badge-status.draft {
+    background: #e2e8f0;
+    color: #475569;
+  }
+
+  .badge-status.pending {
+    background: var(--warning-light);
+    color: #b45309;
+    border: 1px solid #fde68a;
+  }
+
+  .badge-status.approved {
+    background: var(--success-light);
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+  }
+
+  /* ---------- PDF Ingestion ---------- */
+  .upload-box {
+    background: var(--white);
+    border: 2px dashed var(--blue-200);
+    border-radius: var(--radius-lg);
+    padding: 40px;
+    text-align: center;
+    color: var(--blue-700);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .upload-box:hover {
+    background: var(--blue-50);
+    border-color: var(--blue-500);
+  }
+
+  .upload-box span { font-weight: 500; font-size: 14px; }
+  .upload-box p { color: var(--grey-text); font-size: 12px; }
+
+  /* ---------- Gaps / Logs Panel ---------- */
+  .gap-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    margin-bottom: 12px;
+    border-left: 4px solid var(--warning);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .gap-card.negative-feedback {
+    border-left-color: var(--danger);
+  }
+
+  .gap-info { flex: 1; }
+  .gap-query { font-weight: 600; font-size: 14px; color: var(--blue-900); margin-bottom: 4px; }
+  .gap-meta { font-size: 12px; color: var(--grey-text); display: flex; gap: 12px; flex-wrap: wrap; }
+  .gap-meta-item { display: inline-flex; align-items: center; gap: 4px; }
+
+  .resolve-btn {
+    background: var(--blue-100);
+    color: var(--blue-700);
+    border: 1px solid var(--blue-200);
+    padding: 8px 14px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.15s ease;
+  }
+
+  .resolve-btn:hover {
+    background: var(--blue-600);
+    color: var(--white);
+    border-color: var(--blue-600);
+  }
+
+  .badge-unanswered { background: var(--warning-light); color: var(--warning); padding: 2px 6px; border-radius: 4px; font-weight: 600; font-size: 10px; text-transform: uppercase; }
+  .badge-negative { background: var(--danger-light); color: var(--danger); padding: 2px 6px; border-radius: 4px; font-weight: 600; font-size: 10px; text-transform: uppercase; }
+
+  /* ---------- Toast Notifications ---------- */
+  #toastContainer {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+  }
+
+  .toast {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    border-radius: var(--radius-md);
+    font-size: 13.5px;
+    font-weight: 600;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    min-width: 280px;
+    max-width: 380px;
+    pointer-events: all;
+    animation: toast-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    border: 1px solid transparent;
+  }
+
+  @keyframes toast-in {
+    from { opacity: 0; transform: translateX(40px) scale(0.95); }
+    to   { opacity: 1; transform: translateX(0) scale(1); }
+  }
+
+  @keyframes toast-out {
+    from { opacity: 1; transform: translateX(0) scale(1); }
+    to   { opacity: 0; transform: translateX(40px) scale(0.95); }
+  }
+
+  .toast.success { background: var(--success-light); color: #166534; border-color: #bbf7d0; }
+  .toast.warning { background: var(--warning-light); color: #92400e; border-color: #fde68a; }
+  .toast.error   { background: var(--danger-light);  color: #991b1b; border-color: #fecaca; }
+  .toast-icon { font-size: 18px; flex-shrink: 0; }
+  .toast-msg  { flex: 1; line-height: 1.4; }
+
+  /* ---------- Modal Overlay ---------- */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 20, 50, 0.45);
+    backdrop-filter: blur(4px);
+    z-index: 10000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal-card {
+    background: #fff;
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    width: 100%;
+    max-width: 460px;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.2);
+    animation: card-appear 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .modal-title { font-size: 17px; font-weight: 700; color: var(--blue-900); margin-bottom: 8px; }
+  .modal-subtitle { font-size: 13px; color: var(--grey-text); margin-bottom: 20px; line-height: 1.5; }
+
+  .modal-query-preview {
+    background: var(--blue-50);
+    border: 1px solid var(--blue-200);
+    border-left: 3px solid var(--blue-500);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    font-size: 13px;
+    font-style: italic;
+    color: var(--blue-700);
+    margin-bottom: 24px;
+  }
+
+  .modal-actions { display: flex; flex-direction: column; gap: 10px; }
+
+  .modal-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    border-radius: var(--radius-md);
+    border: 1.5px solid var(--border);
+    background: #fff;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--blue-900);
+    transition: all 0.15s ease;
+    text-align: left;
+  }
+  .modal-btn:hover { border-color: var(--blue-400); background: var(--blue-50); }
+  .modal-btn.danger { color: var(--danger); border-color: #fecaca; }
+  .modal-btn.danger:hover { background: var(--danger-light); border-color: var(--danger); }
+  .modal-btn.success-btn { color: #166534; border-color: #bbf7d0; }
+  .modal-btn.success-btn:hover { background: var(--success-light); border-color: var(--success); }
+
+  .theme-control { display:grid; grid-template-columns:repeat(3,1fr); gap:3px; padding:3px; border:1px solid var(--border); border-radius:9px; background:var(--blue-50); margin-bottom:8px; }
+  .theme-option { border:0; border-radius:6px; padding:6px 4px; background:transparent; color:var(--grey-text); font:600 10px inherit; cursor:pointer; }
+  .theme-option.active { background:var(--white); color:var(--blue-600); box-shadow:0 1px 4px rgba(15,23,42,.1); }
+  html[data-theme="dark"] {
+    color-scheme:dark;
+    --blue-900:#f5f7fa;
+    --blue-700:#8fc2ff;
+    --blue-600:#409cff;
+    --blue-500:#409cff;
+    --blue-200:#33445e;
+    --blue-100:#20334d;
+    --blue-50:#0c111b;
+    --white:#182131;
+    --grey-text:#9ca9bc;
+    --grey-light:#718096;
+    --border:#2d3a4f;
+    --danger-light:#3a1f28;
+    --success-light:#173428;
+    --warning-light:#382f19;
+  }
+  html[data-theme="dark"] body { background:#0c111b; color:#f5f7fa; }
+  html[data-theme="dark"] .sidebar { background:#111827; border-color:#253247; box-shadow:4px 0 24px rgba(0,0,0,.18); }
+  html[data-theme="dark"] .sidebar-header { border-color:#253247; }
+  html[data-theme="dark"] .sidebar-title,
+  html[data-theme="dark"] .nav-item:hover { color:#f5f7fa; }
+  html[data-theme="dark"] .sidebar-title span,
+  html[data-theme="dark"] .nav-item,
+  html[data-theme="dark"] .nav-item .icon { color:#9ca9bc; }
+  html[data-theme="dark"] .nav-item:hover { background:rgba(255,255,255,.055); }
+  html[data-theme="dark"] .nav-item.active { background:rgba(64,156,255,.16); color:#6db4ff; }
+  html[data-theme="dark"] .panel,
+  html[data-theme="dark"] .stat-card,
+  html[data-theme="dark"] .kb-item,
+  html[data-theme="dark"] .ticket-card,
+  html[data-theme="dark"] .gap-card,
+  html[data-theme="dark"] .modal,
+  html[data-theme="dark"] .login-card,
+  html[data-theme="dark"] .upload-zone { background:#182131; border-color:#2d3a4f; color:#f5f7fa; }
+  html[data-theme="dark"] .login-card h2,
+  html[data-theme="dark"] .form-group label { color:#f5f7fa; }
+  html[data-theme="dark"] input,
+  html[data-theme="dark"] textarea,
+  html[data-theme="dark"] select,
+  html[data-theme="dark"] .form-control { background:#111827 !important; color:#f5f7fa !important; border-color:#2d3a4f !important; }
+  /* Composite controls use a single shared surface without a nested input layer. */
+  .command-search input {
+    background:transparent !important;
+    border:0 !important;
+    box-shadow:none !important;
+  }
+  html[data-theme="dark"] .theme-control { background:#0c111b; }
+  html[data-theme="dark"] .theme-option.active { background:#2a3850; color:#8fc2ff; box-shadow:0 1px 5px rgba(0,0,0,.3); }
+  html[data-theme="dark"] .toast.success { color:#78e6a7; border-color:#285c42; }
+  html[data-theme="dark"] .toast.warning { color:#ffd36a; border-color:#665629; }
+  html[data-theme="dark"] .toast.error { color:#ff8e8e; border-color:#703842; }
+  .modal-btn-icon { font-size: 20px; flex-shrink: 0; }
+  .modal-btn-label { font-weight: 700; font-size: 13.5px; display: block; }
+  .modal-btn-desc { font-weight: 400; font-size: 12px; color: var(--grey-text); display: block; margin-top: 2px; }
+
+  .modal-cancel {
+    margin-top: 8px;
+    text-align: center;
+    font-size: 12.5px;
+    color: var(--grey-text);
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-weight: 600;
+    text-decoration: underline;
+    width: 100%;
+    padding: 4px;
+  }
+  .modal-cancel:hover { color: var(--blue-700); }
+
+
+
+</style>
+</head>
+<body>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer"></div>
+
+  <!-- Resolve Gap Modal -->
+  <div class="modal-overlay" id="resolveGapModal">
+    <div class="modal-card">
+      <div class="modal-title">Resolve Knowledge Gap</div>
+      <div class="modal-subtitle">What would you like to do with this logged query?</div>
+      <div class="modal-query-preview" id="resolveGapQuery"></div>
+      <div class="modal-actions">
+        <button class="modal-btn success-btn" id="resolveGapAddKb">
+          <span class="modal-btn-icon">📥</span>
+          <span>
+            <span class="modal-btn-label">Add to Knowledge Base</span>
+            <span class="modal-btn-desc">Pre-fill the KB form with this query and remove it from the gap log</span>
+          </span>
+        </button>
+        <button class="modal-btn danger" id="resolveGapRemove">
+          <span class="modal-btn-icon">🗑</span>
+          <span>
+            <span class="modal-btn-label">Just Remove from Log</span>
+            <span class="modal-btn-desc">Delete this entry without adding it to the KB</span>
+          </span>
+        </button>
+      </div>
+      <button class="modal-cancel" id="resolveGapCancel">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Resolve Ticket Modal -->
+  <div class="modal-overlay" id="resolveTicketModal">
+    <div class="modal-card">
+      <div class="modal-title">Resolve Support Ticket</div>
+      <div class="modal-subtitle">This ticket will be marked as <strong>Resolved</strong>. Do you also want to remove it from the list?</div>
+      <div class="modal-query-preview" id="resolveTicketQuery"></div>
+      <div class="modal-actions">
+        <button class="modal-btn success-btn" id="resolveTicketKeep">
+          <span class="modal-btn-icon">✅</span>
+          <span>
+            <span class="modal-btn-label">Mark Resolved &amp; Keep</span>
+            <span class="modal-btn-desc">Update status to Resolved and keep in the list</span>
+          </span>
+        </button>
+        <button class="modal-btn danger" id="resolveTicketRemove">
+          <span class="modal-btn-icon">🗑</span>
+          <span>
+            <span class="modal-btn-label">Mark Resolved &amp; Remove</span>
+            <span class="modal-btn-desc">Update status and permanently delete this ticket</span>
+          </span>
+        </button>
+      </div>
+      <button class="modal-cancel" id="resolveTicketCancel">Cancel</button>
+    </div>
+  </div>
+
+  <!-- AUTHENTICATION GATE -->
+  <div class="login-container" id="loginContainer">
+    <div class="login-card">
+      <div class="login-logo">AC</div>
+      <h2>Administrator Authentication</h2>
+      <p>Sign in with a QA Administrator account.</p>
+      
+      <div class="login-error" id="loginError"></div>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="adminUsernameInput">Username</label>
+          <input id="adminUsernameInput" class="form-control" autocomplete="username" value="qa_admin" required>
+        </div>
+        <div class="form-group">
+          <label for="adminPasswordInput">Password</label>
+          <input type="password" id="adminPasswordInput" class="form-control" autocomplete="current-password" required>
+        </div>
+        <details style="margin-bottom:14px"><summary style="font-size:11px;color:var(--grey-text);cursor:pointer">Use emergency API key</summary><input type="password" id="apiKeyInput" class="form-control" style="margin-top:8px" placeholder="API admin key"></details>
+        <button type="submit" class="login-btn">Sign in &amp; Open Panel</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ADMIN SHELL -->
+  <div class="shell" id="adminShell">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">ADM</div>
+        <div class="sidebar-title">AutoCare<span>Admin Dashboard</span></div>
+      </div>
+
+      <div class="nav-section-label" style="padding-top: 0; padding-bottom: 4px;">Management</div>
+      <div style="display: flex; flex-direction: column; gap: 2px; margin-bottom: 16px;">
+        <button class="nav-item active" data-page="dashboard">
+          <span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg></span> Dashboard
+        </button>
+        <button class="nav-item" data-page="kb">
+          <span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg></span> FAQ Knowledge Base
+        </button>
+        <button class="nav-item" data-page="gaps">
+          <span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></span> Knowledge Gaps
+        </button>
+        <button class="nav-item" data-page="tickets">
+          <span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg></span> Support Tickets
+        </button>
+        <button class="nav-item" data-page="pdf">
+          <span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></span> PDF Auto-Ingestion
+        </button>
+        <button class="nav-item" data-page="controls">
+          <span class="icon">⚙</span> Admin Controls
+        </button>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="theme-control" role="group" aria-label="Color theme">
+          <button class="theme-option" type="button" data-theme-choice="light">Light</button>
+          <button class="theme-option" type="button" data-theme-choice="dark">Tinted</button>
+          <button class="theme-option" type="button" data-theme-choice="system">System</button>
+        </div>
+        <a href="index.html" class="btn-outline-danger" style="text-decoration: none; border-color: var(--blue-200); color: var(--blue-700); margin-bottom: 4px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg> Public Chatbot
+        </a>
+        <button id="logoutBtn" class="btn-outline-danger">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg> Log Out
+        </button>
+      </div>
+    </aside>
+
+    <main class="main">
+      
+      <!-- DASHBOARD PAGE -->
+      <section class="page active" id="page-dashboard">
+        <div class="page-header">
+          <h1>Admin Dashboard</h1>
+          <p>Key analytics on chatbot performance and knowledge status.</p>
+        </div>
+
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div class="label">Total FAQ Entries</div>
+            <div class="value" id="statKbSize">-</div>
+            <div class="desc">Active database articles</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Unanswered Gaps logged</div>
+            <div class="value" id="statGapsCount">-</div>
+            <div class="desc">Questions awaiting answers</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Support Tickets</div>
+            <div class="value" id="statTicketsCount">-</div>
+            <div class="desc">Active escalated queries</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">AutoCare Status</div>
+            <div class="value" style="color: var(--success);">Online</div>
+            <div class="desc">FastAPI server connected</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Knowledge Distribution by Department</h3>
+          <div id="deptDistribution" style="display: flex; flex-direction: column; gap: 14px;">
+            <!-- Render department breakdown dynamically -->
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ KNOWLEDGE BASE PAGE -->
+      <section class="page" id="page-kb">
+        <div class="page-header">
+          <h1>FAQ Knowledge Base</h1>
+          <p>Search, review, add, or remove items from the FAQ dataset.</p>
+        </div>
+
+        <!-- Add FAQ Form -->
+        <div class="panel">
+          <h3>Add New FAQ Entry</h3>
+          <form id="addFaqForm">
+            <div class="grid-2">
+              <div class="form-group" style="margin-bottom: 0;">
+                <label for="faqQuestion">Question</label>
+                <input type="text" id="faqQuestion" class="form-control" placeholder="e.g. How do I request roadside assistance?" required>
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label for="faqDeptSelect">Department</label>
+                <select id="faqDeptSelect" class="form-control" style="background: white;" required>
+                  <option value="General">General</option>
+                  <option value="Service & Maintenance">Service &amp; Maintenance</option>
+                  <option value="Insurance & Claims">Insurance &amp; Claims</option>
+                  <option value="Spare Parts">Spare Parts</option>
+                  <option value="Roadside Assistance">Roadside Assistance</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="faqAnswer">Answer</label>
+              <textarea id="faqAnswer" class="form-control" style="min-height: 80px; resize: vertical;" placeholder="Provide the precise response for the chatbot..." required></textarea>
+            </div>
+            <button type="submit" class="btn-primary">Add Entry to KB</button>
+          </form>
+        </div>
+
+        <!-- Filter & Search Toolbar -->
+        <div style="display: flex; gap: 12px; margin-bottom: 20px;">
+          <input type="text" id="searchFaqInput" class="form-control" style="flex: 2;" placeholder="Search existing FAQs by keywords...">
+          <select id="filterFaqDept" class="form-control" style="flex: 1; background: white;">
+            <option value="all">All Departments</option>
+            <option value="General">General</option>
+            <option value="Service & Maintenance">Service &amp; Maintenance</option>
+            <option value="Insurance & Claims">Insurance &amp; Claims</option>
+            <option value="Spare Parts">Spare Parts</option>
+            <option value="Roadside Assistance">Roadside Assistance</option>
+          </select>
+        </div>
+
+        <!-- FAQ List Container -->
+        <div id="faqList"></div>
+      </section>
+
+      <!-- KNOWLEDGE GAPS PAGE -->
+      <section class="page" id="page-gaps">
+        <div class="page-header">
+          <h1>Knowledge Gaps Analyzer</h1>
+          <p>Unanswered queries and negative customer feedback parsed from system logs. Instantly resolve gaps by clicking "+" next to any item.</p>
+        </div>
+
+        <div id="gapsList"></div>
+      </section>
+
+      <!-- PDF AUTO-INGESTION PAGE -->
+      <section class="page" id="page-pdf">
+        <div class="page-header">
+          <h1>PDF Auto-Ingestion</h1>
+          <p>Upload files (like customer service manuals) to automatically extract and embed Q&A pairs.</p>
+        </div>
+
+        <div class="upload-box" id="pdfUploadBox">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--blue-600); margin-bottom: 8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+          <span>Drag &amp; Drop a PDF manual here</span>
+          <p>Supports files up to 15MB. The backend will use heuristic patterns to parse Questions &amp; Answers dynamically.</p>
+          <button class="btn-primary" style="pointer-events: none; margin-top: 10px;">Select PDF File</button>
+        </div>
+
+        <div id="pdfUploadResults" class="panel" style="display: none; margin-top: 24px;">
+          <h3>Extracted Q&amp;A Pairs</h3>
+          <div id="extractedList" style="display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto;">
+            <!-- Extracted pairs listed here -->
+          </div>
+        </div>
+      </section>
+
+      <!-- SUPPORT TICKETS PAGE -->
+      <section class="page" id="page-tickets">
+        <div class="page-header">
+          <h1>Support Tickets</h1>
+          <p>Manage human-escalated chatbot queries. View customer contact details and update ticket progress.</p>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-bottom: 20px;">
+          <input type="text" id="searchTicketInput" class="form-control" style="flex: 2;" placeholder="Search tickets by user name, email, or query...">
+          <select id="filterTicketStatus" class="form-control" style="flex: 1; background: white;">
+            <option value="all">All Statuses</option>
+            <option value="New">New</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Resolved">Resolved</option>
+          </select>
+        </div>
+
+        <div id="ticketsList"></div>
+      </section>
+
+      <section class="page" id="page-controls">
+        <div class="page-header"><h1>Admin Controls</h1><p>Manage access, document structure, approval policy, retention, and audit history.</p></div>
+        <div class="admin-control-tabs" role="tablist">
+          <button class="active" type="button" data-control-tab="users">Users &amp; roles</button>
+          <button type="button" data-control-tab="configuration">Configuration</button>
+          <button type="button" data-control-tab="approval">Approval &amp; retention</button>
+          <button type="button" data-control-tab="audit">Audit log</button>
+        </div>
+        <div id="adminControlsContent"></div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    // ---------- Configuration & State ----------
+    const BACKEND_RENDER_URL = window.RENDER_BACKEND_URL || "https://autocare-backend.onrender.com";
+    const API_BASE = (window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost") 
+      ? "http://127.0.0.1:8005" 
+      : (window.location.origin.includes("onrender.com") && !window.location.origin.includes("-backend") ? BACKEND_RENDER_URL : window.location.origin);
+
+    let adminToken = sessionStorage.getItem("admin_api_token") || "";
+    let faqs = [];
+    let gapLogs = [];
+    let tickets = [];
+
+    // ---------- App Initialization ----------
+    async function init() {
+      // Check auth status
+      if (adminToken) {
+        const isValid = await checkTokenValidity(adminToken);
+        if (isValid) {
+          showAdminPanel();
+          return;
+        }
+      }
+      showLoginGate();
+    }
+
+    // ---------- Authentication & Token Handling ----------
+    async function checkTokenValidity(token) {
+      try {
+        const res = await fetch(`${API_BASE}/api/verify`, {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+        return res.ok;
+      } catch (err) {
+        console.error("Token verification failed:", err);
+        return false;
+      }
+    }
+
+    function showLoginGate() {
+      document.getElementById("loginContainer").style.display = "flex";
+      document.getElementById("adminShell").style.display = "none";
+    }
+
+    function showAdminPanel() {
+      document.getElementById("loginContainer").style.display = "none";
+      document.getElementById("adminShell").style.display = "flex";
+      loadAdminData();
+    }
+
+    // Login Form Submit handler
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const errEl = document.getElementById("loginError");
+      const keyInput = document.getElementById("apiKeyInput");
+      const emergencyKey = keyInput.value.trim();
+
+      errEl.style.display = "none";
+
+      try {
+        let token = emergencyKey;
+        if (!token) {
+          const response = await fetch(`${API_BASE}/api/auth/login`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+              username: document.getElementById("adminUsernameInput").value,
+              password: document.getElementById("adminPasswordInput").value
+            })
+          });
+          const data = await response.json();
+          if (!response.ok) throw new Error(data.detail || "Sign-in failed.");
+          token = data.token;
+        }
+        if (!await checkTokenValidity(token)) throw new Error("This account does not have QA Administrator access.");
+        adminToken = token;
+        sessionStorage.setItem("admin_api_token", token);
+        showAdminPanel();
+        keyInput.value = "";
+        document.getElementById("adminPasswordInput").value = "";
+      } catch (error) {
+        errEl.textContent = error.message;
+        errEl.style.display = "block";
+      }
+    });
+
+    // Logout click handler
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      adminToken = "";
+      sessionStorage.removeItem("admin_api_token");
+      showLoginGate();
+    });
+
+    // ---------- Navigation ----------
+    document.querySelectorAll(".nav-item").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".nav-item").forEach(b => b.classList.remove("active"));
+        document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+        
+        btn.classList.add("active");
+        
+        const pageId = "page-" + btn.dataset.page;
+        const pageEl = document.getElementById(pageId);
+        if (pageEl) {
+          pageEl.classList.add("active");
+        }
+      });
+    });
+
+    // ---------- API Calls ----------
+    async function loadAdminData() {
+      await fetchFaqs();
+      await fetchGapLogs();
+      await fetchTickets();
+      renderDashboard();
+      renderFaqs();
+      renderGapLogs();
+      renderTickets();
+      initPdfUpload();
+    }
+
+    async function fetchFaqs() {
+      try {
+        const res = await fetch(`${API_BASE}/api/qa`, {
+          headers: { "Authorization": `Bearer ${adminToken}` }
+        });
+        if (!res.ok) throw new Error("Failed to fetch FAQs");
+        const data = await res.json();
+        faqs = data.faqs || [];
+      } catch (err) {
+        console.error("Error loading FAQs:", err);
+      }
+    }
+
+    async function fetchGapLogs() {
+      try {
+        const res = await fetch(`${API_BASE}/api/unanswered`, {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${adminToken}`
+          }
+        });
+        if (!res.ok) throw new Error("Failed to fetch unanswered queries logs");
+        const data = await res.json();
+        gapLogs = data.queries || [];
+      } catch (err) {
+        console.error("Error loading unanswered logs:", err);
+      }
+    }
+
+    async function fetchTickets() {
+      try {
+        const res = await fetch(`${API_BASE}/api/escalation`, {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${adminToken}`
+          }
+        });
+        if (!res.ok) throw new Error("Failed to fetch tickets");
+        const data = await res.json();
+        tickets = data.escalations || [];
+      } catch (err) {
+        console.error("Error loading tickets:", err);
+      }
+    }
+
+    window.handleUpdateTicketStatus = async function(ticketId, newStatus) {
+      try {
+        const res = await fetch(`${API_BASE}/api/escalation`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${adminToken}`
+          },
+          body: JSON.stringify({
+            ticket_id: ticketId,
+            status: newStatus
+          })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "Failed to update ticket status");
+
+        await loadAdminData();
+      } catch (err) {
+        alert("Error updating ticket status: " + err.message);
+      }
+    };
+
+    // ---------- Render Modules ----------
+
+    // 1. Dashboard
+    function renderDashboard() {
+      document.getElementById("statKbSize").textContent = faqs.length;
+      document.getElementById("statGapsCount").textContent = gapLogs.length;
+      document.getElementById("statTicketsCount").textContent = tickets.filter(t => t.status !== "Resolved").length;
+
+      // Group FAQs by department
+      const depts = {
+        "General": 0,
+        "Service & Maintenance": 0,
+        "Insurance & Claims": 0,
+        "Spare Parts": 0,
+        "Roadside Assistance": 0
+      };
+
+      faqs.forEach(faq => {
+        const dept = faq.department || "General";
+        if (depts[dept] !== undefined) {
+          depts[dept]++;
+        } else {
+          depts[dept] = 1;
+        }
+      });
+
+      const container = document.getElementById("deptDistribution");
+      container.innerHTML = Object.entries(depts).map(([dept, count]) => {
+        const pct = faqs.length > 0 ? (count / faqs.length * 100).toFixed(0) : 0;
+        
+        let barColor = "#2563eb"; // blue
+        if (dept === "Service & Maintenance") barColor = "#2e7d32"; // green
+        if (dept === "Insurance & Claims") barColor = "#1565c0"; // darker blue
+        if (dept === "Spare Parts") barColor = "#7b1fa2"; // purple
+        if (dept === "Roadside Assistance") barColor = "#e65100"; // orange
+
+        return `
+          <div>
+            <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; margin-bottom: 4px;">
+              <span>${escapeHtml(dept)}</span>
+              <span>${count} (${pct}%)</span>
+            </div>
+            <div style="background: var(--blue-50); height: 8px; border-radius: 999px; overflow: hidden; border: 1px solid var(--border);">
+              <div style="background: ${barColor}; height: 100%; width: ${pct}%;"></div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    // 2. FAQ List & Manager
+    function renderFaqs() {
+      const searchVal = document.getElementById("searchFaqInput").value.toLowerCase().trim();
+      const deptFilter = document.getElementById("filterFaqDept").value;
+
+      const filtered = faqs.filter(faq => {
+        const matchesSearch = faq.question.toLowerCase().includes(searchVal) || faq.answer.toLowerCase().includes(searchVal);
+        const matchesDept = deptFilter === "all" || (faq.department || "General") === deptFilter;
+        return matchesSearch && matchesDept;
+      });
+
+      const listContainer = document.getElementById("faqList");
+      if (filtered.length === 0) {
+        listContainer.innerHTML = `<div class="panel" style="color: var(--grey-text); text-align: center;">No FAQs match your search filters.</div>`;
+        return;
+      }
+
+      listContainer.innerHTML = filtered.map(faq => {
+        const dept = faq.department || "General";
+        
+        let tagStyle = "background: #f5f5f5; color: #424242; border: 1px solid #e0e0e0;";
+        if (dept === "Service & Maintenance") tagStyle = "background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9;";
+        if (dept === "Insurance & Claims") tagStyle = "background: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb;";
+        if (dept === "Spare Parts") tagStyle = "background: #f3e5f5; color: #6a1b9a; border: 1px solid #e1bee7;";
+        if (dept === "Roadside Assistance") tagStyle = "background: #fff3e0; color: #e65100; border: 1px solid #ffe0b2;";
+
+        return `
+          <div class="kb-item">
+            <div style="flex: 1;">
+              <div class="q">${escapeHtml(faq.question)}</div>
+              <div class="a">${escapeHtml(faq.answer)}</div>
+              <span class="tag" style="${tagStyle}">${escapeHtml(dept)}</span>
+            </div>
+            <button class="delete-btn" onclick="handleDeleteFaq('${escapeHtml(faq.question)}')">Delete</button>
+          </div>
+        `;
+      }).join("");
+    }
+
+    // ---------- Toast Notification System ----------
+    function showToast(message, type = "success", durationMs = 4000) {
+      const container = document.getElementById("toastContainer");
+      const icons = { success: "✅", warning: "⚠️", error: "❌" };
+      const toast = document.createElement("div");
+      toast.className = `toast ${type}`;
+      toast.innerHTML = `<span class="toast-icon">${icons[type] || "ℹ️"}</span><span class="toast-msg">${message}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.animation = "toast-out 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards";
+        setTimeout(() => toast.remove(), 320);
+      }, durationMs);
+    }
+
+    // Add FAQ Submit Handler
+    document.getElementById("addFaqForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const qInput = document.getElementById("faqQuestion");
+      const aInput = document.getElementById("faqAnswer");
+      const deptSelect = document.getElementById("faqDeptSelect");
+      const submitBtn = e.target.querySelector("button[type='submit']");
+
+      const question = qInput.value.trim();
+      const answer = aInput.value.trim();
+      const department = deptSelect.value;
+
+      if (!question || !answer) return;
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Adding...";
+
+      try {
+        const res = await fetch(`${API_BASE}/api/qa`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${adminToken}`
+          },
+          body: JSON.stringify({ question, answer, department })
+        });
+
+        const data = await res.json();
+
+        if (res.status === 400 && data.detail && data.detail.toLowerCase().includes("already exists")) {
+          showToast("This question is already in the Knowledge Base.", "warning");
+        } else if (!res.ok) {
+          throw new Error(data.detail || "Failed to add FAQ pair");
+        } else {
+          showToast("FAQ entry added to the Knowledge Base successfully!", "success");
+          qInput.value = "";
+          aInput.value = "";
+          await loadAdminData();
+        }
+      } catch (err) {
+        showToast("Error: " + err.message, "error");
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Add Entry to KB";
+      }
+    });
+
+    // Delete FAQ Action Handler
+    window.handleDeleteFaq = async function(question) {
+      if (!confirm(`Are you sure you want to delete the following FAQ?\n\n"${question}"`)) {
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/api/qa`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${adminToken}`
+          },
+          body: JSON.stringify({ question })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "Failed to delete FAQ");
+
+        showToast("FAQ entry deleted.", "success", 3000);
+        await loadAdminData();
+      } catch (err) {
+        showToast("Error deleting FAQ: " + err.message, "error");
+      }
+    };
+
+
+    // Filter event listeners
+    document.getElementById("searchFaqInput").addEventListener("input", renderFaqs);
+    document.getElementById("filterFaqDept").addEventListener("change", renderFaqs);
+
+    document.getElementById("searchTicketInput").addEventListener("input", renderTickets);
+    document.getElementById("filterTicketStatus").addEventListener("change", renderTickets);
+
+    function renderTickets() {
+      const searchVal = document.getElementById("searchTicketInput").value.toLowerCase().trim();
+      const statusFilter = document.getElementById("filterTicketStatus").value;
+
+      const filtered = tickets.filter(t => {
+        const matchesSearch = t.name.toLowerCase().includes(searchVal) || 
+                              t.email.toLowerCase().includes(searchVal) || 
+                              t.phone.toLowerCase().includes(searchVal) || 
+                              t.query.toLowerCase().includes(searchVal) || 
+                              t.id.toLowerCase().includes(searchVal);
+        const matchesStatus = statusFilter === "all" || t.status === statusFilter;
+        return matchesSearch && matchesStatus;
+      });
+
+      const listContainer = document.getElementById("ticketsList");
+      if (filtered.length === 0) {
+        listContainer.innerHTML = `<div class="panel" style="color: var(--grey-text); text-align: center;">No support tickets match your search filters.</div>`;
+        return;
+      }
+
+      listContainer.innerHTML = filtered.map(t => {
+        const statusColor = t.status === 'Resolved' ? '#166534' : t.status === 'In Progress' ? '#92400e' : '#1e40af';
+        const statusBg = t.status === 'Resolved' ? '#dcfce7' : t.status === 'In Progress' ? '#fef3c7' : '#dbeafe';
+        const statusBorder = t.status === 'Resolved' ? '#bbf7d0' : t.status === 'In Progress' ? '#fde68a' : '#bfdbfe';
+        return `
+          <div class="gap-card" style="border-left-color: var(--blue-600); align-items: flex-start; flex-direction: column; gap: 12px; border-left-width: 4px;">
+            <div style="display: flex; justify-content: space-between; width: 100%; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 8px;">
+              <div style="font-weight: 700; color: var(--blue-900);">Ticket ID: ${t.id}</div>
+              <div style="font-size: 12px; color: var(--grey-text);">${t.timestamp}</div>
+            </div>
+            <div style="width: 100%;">
+              <div style="font-size: 13.5px; font-weight: 600; color: #1e293b; margin-bottom: 4px;">User Query:</div>
+              <div style="background: var(--blue-50); padding: 10px; border-radius: var(--radius-sm); font-size: 13px; font-style: italic; color: #475569; border-left: 3px solid var(--blue-200); margin-bottom: 12px;">&quot;${escapeHtml(t.query)}&quot;</div>
+              
+              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; font-size: 12.5px; margin-bottom: 12px; background: #fafbfc; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                <div><strong>Customer:</strong> ${escapeHtml(t.name)}</div>
+                <div><strong>Email:</strong> <a href="mailto:${escapeHtml(t.email)}" style="color: var(--blue-600);">${escapeHtml(t.email)}</a></div>
+                <div><strong>Phone:</strong> <a href="tel:${escapeHtml(t.phone)}" style="color: var(--blue-600);">${escapeHtml(t.phone)}</a></div>
+              </div>
+              
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="font-size: 12px; color: var(--grey-text);">Department: <span class="tag" style="background: var(--blue-100); color: var(--blue-700); border: 1px solid var(--blue-200); margin-top: 0;">${escapeHtml(t.department)}</span></div>
+                
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-size: 12px; color: ${statusColor}; background: ${statusBg}; border: 1px solid ${statusBorder}; border-radius: 99px; padding: 3px 10px; font-weight: 700;">${escapeHtml(t.status)}</span>
+                  ${t.status !== 'Resolved' ? `
+                  <select onchange="handleTicketStatusChange('${t.id}', this.value, this)" style="padding: 4px 8px; font-size: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); outline: none; background: white; font-weight: 600;">
+                    <option value="" disabled selected>Change status…</option>
+                    <option value="New">New</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Resolved">Resolve…</option>
+                  </select>` : `<button onclick="handleDeleteTicket('${t.id}')" style="padding: 4px 10px; font-size: 12px; border-radius: var(--radius-sm); border: 1px solid #fecaca; color: var(--danger); background: transparent; cursor: pointer; font-weight: 600; font-family: inherit;">Remove</button>`}
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+    }
+
+    // 3. Knowledge Gaps (Logs)
+    function renderGapLogs() {
+      const container = document.getElementById("gapsList");
+      if (gapLogs.length === 0) {
+        container.innerHTML = `<div class="panel" style="color: var(--grey-text); text-align: center;">No knowledge gaps logged. Good job! All queries are answered with high confidence.</div>`;
+        return;
+      }
+
+      container.innerHTML = gapLogs.map((log, index) => {
+        if (log.type === "unanswered") {
+          return `
+            <div class="gap-card">
+              <div class="gap-info">
+                <div class="gap-query">"${escapeHtml(log.query)}"</div>
+                <div class="gap-meta">
+                  <span class="gap-meta-item"><span class="badge-unanswered">Unanswered</span></span>
+                  <span class="gap-meta-item">Time: ${escapeHtml(log.timestamp)}</span>
+                  <span class="gap-meta-item">Closest Match: <em>"${escapeHtml(log.closest_match)}"</em></span>
+                  <span class="gap-meta-item">Confidence: ${(log.confidence * 100).toFixed(0)}%</span>
+                </div>
+              </div>
+              <button class="resolve-btn" onclick="handleResolveGap(${index})">Resolve</button>
+            </div>
+          `;
+        } else if (log.type === "negative_feedback") {
+          return `
+            <div class="gap-card negative-feedback">
+              <div class="gap-info">
+                <div class="gap-query">"${escapeHtml(log.query)}"</div>
+                <div class="gap-meta">
+                  <span class="gap-meta-item"><span class="badge-negative">Downvoted</span></span>
+                  <span class="gap-meta-item">Time: ${escapeHtml(log.timestamp)}</span>
+                  <span class="gap-meta-item">Matched Q: <em>"${escapeHtml(log.matched_question)}"</em></span>
+                  <span class="gap-meta-item">Provided Answer: <em>"${escapeHtml(log.answer)}"</em></span>
+                </div>
+              </div>
+              <button class="resolve-btn" onclick="handleResolveGap(${index})">Resolve</button>
+            </div>
+          `;
+        } else {
+          return `
+            <div class="gap-card" style="border-left-color: var(--grey-light);">
+              <div class="gap-info">
+                <div class="gap-query" style="font-weight: 500; font-size: 13px;">${escapeHtml(log.content)}</div>
+              </div>
+            </div>
+          `;
+        }
+      }).join("");
+    }
+
+    // ---------- Knowledge Gaps Resolve Modal ----------
+    let _pendingGapIndex = null;
+
+    window.handleResolveGap = function(index) {
+      const log = gapLogs[index];
+      if (!log) return;
+      _pendingGapIndex = index;
+      document.getElementById("resolveGapQuery").textContent = `"${log.query}"`;
+      document.getElementById("resolveGapModal").classList.add("open");
+    };
+
+    async function removeGapFromLog(log) {
+      try {
+        await fetch(`${API_BASE}/api/unanswered/remove`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${adminToken}` },
+          body: JSON.stringify({ query: log.query, timestamp: log.timestamp })
+        });
+      } catch(e) {
+        console.warn("Could not remove gap from log:", e);
+      }
+    }
+
+    function closeGapModal() {
+      document.getElementById("resolveGapModal").classList.remove("open");
+      _pendingGapIndex = null;
+    }
+
+    document.getElementById("resolveGapCancel").addEventListener("click", closeGapModal);
+    document.getElementById("resolveGapModal").addEventListener("click", (e) => {
+      if (e.target === e.currentTarget) closeGapModal();
+    });
+
+    document.getElementById("resolveGapRemove").addEventListener("click", async () => {
+      const log = gapLogs[_pendingGapIndex];
+      closeGapModal();
+      if (!log) return;
+      await removeGapFromLog(log);
+      showToast("Gap entry removed from log.", "success", 3000);
+      await fetchGapLogs();
+      renderGapLogs();
+      renderDashboard();
+    });
+
+    document.getElementById("resolveGapAddKb").addEventListener("click", async () => {
+      const log = gapLogs[_pendingGapIndex];
+      closeGapModal();
+      if (!log) return;
+
+      // Pre-fill KB form
+      document.getElementById("faqQuestion").value = log.query;
+      document.getElementById("faqAnswer").value = log.type === "negative_feedback" ? `Corrected answer: ${log.answer}` : "";
+
+      // Auto-classify department
+      const queryLower = log.query.toLowerCase();
+      let department = "General";
+      if (queryLower.includes("warranty") || queryLower.includes("service") || queryLower.includes("maintenance")) department = "Service & Maintenance";
+      else if (queryLower.includes("insurance") || queryLower.includes("claim")) department = "Insurance & Claims";
+      else if (queryLower.includes("parts") || queryLower.includes("accessory")) department = "Spare Parts";
+      else if (queryLower.includes("roadside") || queryLower.includes("assistance") || queryLower.includes("breakdown")) department = "Roadside Assistance";
+      document.getElementById("faqDeptSelect").value = department;
+
+      // Remove from log then navigate
+      await removeGapFromLog(log);
+      await fetchGapLogs();
+      renderGapLogs();
+      renderDashboard();
+
+      document.querySelector('.nav-item[data-page="kb"]').click();
+      document.getElementById("faqAnswer").focus();
+      showToast('Form pre-filled. Fill in the answer and click "Add Entry to KB".', "warning", 7000);
+    });
+
+    // ---------- Support Tickets Resolve Modal ----------
+    let _pendingTicketId = null;
+    let _pendingTicketSelectEl = null;
+
+    window.handleTicketStatusChange = function(ticketId, newStatus, selectEl) {
+      if (newStatus === "Resolved") {
+        const ticket = tickets.find(t => t.id === ticketId);
+        document.getElementById("resolveTicketQuery").textContent =
+          ticket ? `"${ticket.query}"` : `Ticket ID: ${ticketId}`;
+        _pendingTicketId = ticketId;
+        _pendingTicketSelectEl = selectEl;
+        document.getElementById("resolveTicketModal").classList.add("open");
+      } else {
+        handleUpdateTicketStatus(ticketId, newStatus);
+      }
+    };
+
+    function closeTicketModal(revertSelect) {
+      document.getElementById("resolveTicketModal").classList.remove("open");
+      if (revertSelect && _pendingTicketSelectEl) {
+        _pendingTicketSelectEl.value = "";
+      }
+      _pendingTicketId = null;
+      _pendingTicketSelectEl = null;
+    }
+
+    document.getElementById("resolveTicketCancel").addEventListener("click", () => closeTicketModal(true));
+    document.getElementById("resolveTicketModal").addEventListener("click", (e) => {
+      if (e.target === e.currentTarget) closeTicketModal(true);
+    });
+
+    document.getElementById("resolveTicketKeep").addEventListener("click", async () => {
+      const id = _pendingTicketId;
+      closeTicketModal(false);
+      await handleUpdateTicketStatus(id, "Resolved");
+      showToast("Ticket marked as Resolved.", "success", 3000);
+    });
+
+    document.getElementById("resolveTicketRemove").addEventListener("click", async () => {
+      const id = _pendingTicketId;
+      closeTicketModal(false);
+      try {
+        await fetch(`${API_BASE}/api/escalation`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${adminToken}` },
+          body: JSON.stringify({ ticket_id: id, status: "Resolved" })
+        });
+        const res = await fetch(`${API_BASE}/api/escalation/${id}`, {
+          method: "DELETE",
+          headers: { "Authorization": `Bearer ${adminToken}` }
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "Failed to delete ticket");
+        showToast("Ticket resolved and permanently removed.", "success", 3000);
+        await loadAdminData();
+      } catch (err) {
+        showToast("Error: " + err.message, "error");
+      }
+    });
+
+    window.handleDeleteTicket = async function(ticketId) {
+      if (!confirm("Permanently delete this resolved ticket?")) return;
+      try {
+        const res = await fetch(`${API_BASE}/api/escalation/${ticketId}`, {
+          method: "DELETE",
+          headers: { "Authorization": `Bearer ${adminToken}` }
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "Failed to delete ticket");
+        showToast("Ticket removed.", "success", 3000);
+        await loadAdminData();
+      } catch (err) {
+        showToast("Error: " + err.message, "error");
+      }
+    };
+
+    // 4. PDF Auto-Ingestion
+
+    function initPdfUpload() {
+      const box = document.getElementById("pdfUploadBox");
+      if (!box) return;
+
+      // Reset handlers to prevent duplicates
+      const newBox = box.cloneNode(true);
+      box.parentNode.replaceChild(newBox, box);
+
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(evt => {
+        newBox.addEventListener(evt, e => {
+          e.preventDefault();
+          e.stopPropagation();
+        }, false);
+      });
+
+      ['dragenter', 'dragover'].forEach(evt => {
+        newBox.addEventListener(evt, () => {
+          newBox.style.background = "var(--blue-50)";
+          newBox.style.borderColor = "var(--blue-500)";
+        }, false);
+      });
+
+      ['dragleave', 'drop'].forEach(evt => {
+        newBox.addEventListener(evt, () => {
+          newBox.style.background = "var(--white)";
+          newBox.style.borderColor = "var(--blue-200)";
+        }, false);
+      });
+
+      newBox.addEventListener('drop', e => {
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+          handlePdfUpload(files[0]);
+        }
+      });
+
+      newBox.addEventListener('click', () => {
+        const fileInput = document.createElement("input");
+        fileInput.type = "file";
+        fileInput.accept = ".pdf";
+        fileInput.onchange = e => {
+          if (e.target.files.length > 0) {
+            handlePdfUpload(e.target.files[0]);
+          }
+        };
+        fileInput.click();
+      });
+    }
+
+    async function handlePdfUpload(file) {
+      const box = document.getElementById("pdfUploadBox");
+      const resultsEl = document.getElementById("pdfUploadResults");
+      const listEl = document.getElementById("extractedList");
+      
+      if (!file.name.toLowerCase().endsWith(".pdf")) {
+        alert("Please upload a PDF file.");
+        return;
+      }
+
+      box.innerHTML = `
+        <span style="font-weight: bold; color: var(--blue-600); margin-bottom: 8px;">Processing...</span>
+        <span>Extracting Q&As from <strong>${escapeHtml(file.name)}</strong>...</span>
+        <p>This may take up to a minute depending on file length. Please stay on this tab.</p>
+      `;
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      try {
+        const res = await fetch(`${API_BASE}/api/upload-pdf`, {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${adminToken}`
+          },
+          body: formData
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "PDF extraction service error");
+
+        box.innerHTML = `
+          <span style="color: var(--success); font-weight: 700; font-size: 16px;">Extraction Success!</span>
+          <p>Extracted <strong>${data.extracted}</strong> FAQ pairs, and loaded <strong>${data.added}</strong> new entries into the KB database.</p>
+        `;
+
+        // Render extracted list
+        if (data.pairs && data.pairs.length > 0) {
+          resultsEl.style.display = "block";
+          listEl.innerHTML = data.pairs.map(pair => `
+            <div style="background: var(--blue-50); border: 1px solid var(--border); padding: 12px; border-radius: var(--radius-sm);">
+              <div style="font-weight: 600; font-size: 13px; color: var(--blue-900); margin-bottom: 4px;">Q: "${escapeHtml(pair.question)}"</div>
+              <div style="font-size: 12px; color: var(--grey-text);">A: ${escapeHtml(pair.answer)}</div>
+            </div>
+          `).join("");
+        }
+
+        // Reload data
+        await loadAdminData();
+
+        setTimeout(() => {
+          resultsEl.style.display = "none";
+          box.innerHTML = `
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--blue-600); margin-bottom: 8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+            <span>Drag &amp; Drop a PDF manual here</span>
+            <p>Supports files up to 15MB. The backend will use heuristic patterns to parse Questions &amp; Answers dynamically.</p>
+            <button class="btn-primary" style="pointer-events: none; margin-top: 10px;">Select PDF File</button>
+          `;
+          initPdfUpload();
+        }, 8000);
+
+      } catch (err) {
+        console.error("PDF upload failure:", err);
+        box.innerHTML = `
+          <span style="color: var(--danger); font-weight: 700; font-size: 16px;">Extraction Failed</span>
+          <p>Error details: ${escapeHtml(err.message)}</p>
+        `;
+        setTimeout(() => {
+          box.innerHTML = `
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--blue-600); margin-bottom: 8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+            <span>Drag &amp; Drop a PDF manual here</span>
+            <p>Supports files up to 15MB. The backend will use heuristic patterns to parse Questions &amp; Answers dynamically.</p>
+            <button class="btn-primary" style="pointer-events: none; margin-top: 10px;">Select PDF File</button>
+          `;
+          initPdfUpload();
+        }, 5000);
+      }
+    }
+
+    // ---------- Utils ----------
+    function escapeHtml(str) {
+      if (!str) return "";
+      const div = document.createElement("div");
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    // Run on page load
+    init();
+  </script>
+  <style>
+    .admin-control-tabs { display:flex;gap:6px;margin-bottom:14px;padding:4px;border:1px solid var(--app-separator);border-radius:11px;background:rgba(127,156,198,.07);overflow-x:auto; }
+    .admin-control-tabs button { flex:0 0 auto;padding:8px 11px;border:0;border-radius:8px;background:transparent;color:var(--app-secondary);font:700 10px inherit;cursor:pointer; }
+    .admin-control-tabs button.active { background:var(--app-glass-strong);color:var(--app-accent);box-shadow:inset 0 1px var(--app-highlight),0 2px 7px rgba(20,45,80,.1); }
+    .control-panel { padding:18px;border:1px solid var(--app-separator);border-radius:var(--radius-lg);background:var(--app-elevated); }
+    .control-heading { display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px; }.control-heading h3 { color:var(--app-text);font-size:14px; }.control-heading p { margin-top:4px;color:var(--app-secondary);font-size:10px; }
+    .user-admin-list { display:grid;gap:8px; }.user-admin-row { display:grid;grid-template-columns:minmax(160px,1fr) 150px 130px auto;align-items:center;gap:10px;padding:11px;border:1px solid var(--app-separator);border-radius:10px;background:rgba(127,156,198,.05); }
+    .user-admin-name { color:var(--app-text);font-size:10.5px;font-weight:750; }.user-admin-meta { margin-top:3px;color:var(--app-secondary);font-size:8.5px; }
+    .user-admin-row select { padding:8px;border-radius:8px;font-size:9.5px; }.user-status-toggle { display:flex;align-items:center;gap:6px;color:var(--app-secondary);font-size:9px; }
+    .small-control-button { padding:7px 9px;border:1px solid var(--app-separator);border-radius:8px;background:var(--app-glass-strong);color:var(--app-text);font:700 9px inherit;cursor:pointer; }
+    .settings-grid { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px; }.settings-grid .span-2 { grid-column:1/-1; }
+    .settings-field label { display:block;margin-bottom:6px;color:var(--app-secondary);font-size:9.5px;font-weight:750; }.settings-field textarea { width:100%;min-height:90px;padding:10px;border:1px solid var(--app-separator);border-radius:9px;resize:vertical; }
+    .rule-row { display:flex;align-items:flex-start;gap:9px;padding:11px 0;border-bottom:1px solid var(--app-separator); }.rule-row:last-child { border-bottom:0; }.rule-row input { margin-top:2px;accent-color:var(--app-accent); }.rule-row strong { display:block;color:var(--app-text);font-size:10.5px; }.rule-row span { display:block;margin-top:3px;color:var(--app-secondary);font-size:9px; }
+    .approval-admin-row,.audit-row { display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;padding:11px 0;border-bottom:1px solid var(--app-separator); }.approval-admin-row:last-child,.audit-row:last-child { border-bottom:0; }
+    .audit-action { color:var(--app-text);font-size:10px;font-weight:750; }.audit-meta { margin-top:4px;color:var(--app-secondary);font-size:8.5px;line-height:1.45; }.audit-time { color:var(--app-secondary);font-size:8.5px;white-space:nowrap; }
+    @media(max-width:760px){.user-admin-row{grid-template-columns:1fr}.settings-grid{grid-template-columns:1fr}.settings-grid .span-2{grid-column:1}.audit-row{grid-template-columns:1fr}}
+
+    .doc-admin-row { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; padding:14px 0; border-bottom:1px solid var(--border); }
+    .doc-admin-row:last-child { border-bottom:0; }
+    .doc-admin-name { font-size:13.5px; font-weight:700; color:var(--blue-900); }
+    .doc-admin-meta { font-size:12px; color:var(--grey-text); margin-top:5px; line-height:1.5; }
+
+    /* Apple-inspired adaptive tinted material system */
+    :root {
+      --app-base:#f3f7fd;
+      --app-elevated:rgba(255,255,255,.80);
+      --app-glass:rgba(255,255,255,.64);
+      --app-glass-strong:rgba(255,255,255,.88);
+      --app-text:#10233f;
+      --app-secondary:#65758b;
+      --app-separator:rgba(75,103,139,.16);
+      --app-highlight:rgba(255,255,255,.68);
+      --app-shadow:0 16px 48px rgba(39,74,123,.10);
+      --app-accent:#1677ff;
+      --app-accent-soft:rgba(22,119,255,.12);
+    }
+    html[data-theme="dark"] {
+      --app-base:#070d18;
+      --app-elevated:rgba(24,35,53,.78);
+      --app-glass:rgba(17,27,43,.60);
+      --app-glass-strong:rgba(24,35,53,.90);
+      --app-text:#f4f8ff;
+      --app-secondary:#9eacc0;
+      --app-separator:rgba(157,190,231,.16);
+      --app-highlight:rgba(255,255,255,.08);
+      --app-shadow:0 22px 60px rgba(0,0,0,.32);
+      --app-accent:#4da3ff;
+      --app-accent-soft:rgba(77,163,255,.17);
+    }
+    body {
+      background:
+        radial-gradient(900px 600px at 78% -18%,rgba(68,146,255,.16),transparent 65%),
+        radial-gradient(700px 500px at 18% 110%,rgba(111,91,255,.10),transparent 70%),
+        var(--app-base);
+      color:var(--app-text);
+    }
+    html[data-theme="dark"] body {
+      background:
+        radial-gradient(1000px 680px at 78% -20%,rgba(45,132,255,.22),transparent 64%),
+        radial-gradient(760px 560px at 12% 112%,rgba(103,83,255,.15),transparent 70%),
+        #070d18;
+    }
+    .sidebar {
+      background:var(--app-glass) !important;
+      border-color:var(--app-separator) !important;
+      box-shadow:inset -1px 0 var(--app-highlight),8px 0 36px rgba(25,58,103,.06) !important;
+      backdrop-filter:blur(28px) saturate(145%);
+      -webkit-backdrop-filter:blur(28px) saturate(145%);
+    }
+    .sidebar-header { border-color:var(--app-separator) !important; }
+    .sidebar-title,.page-header h1,.panel h3,.stat-card .value,.kb-item .q,.doc-admin-name { color:var(--app-text) !important; }
+    .sidebar-title span,.page-header p,.doc-admin-meta { color:var(--app-secondary) !important; }
+    .nav-item { color:var(--app-secondary) !important; }
+    .nav-item:hover { color:var(--app-text) !important; background:rgba(127,156,198,.09) !important; }
+    .nav-item.active {
+      color:var(--app-accent) !important;
+      background:var(--app-accent-soft) !important;
+      box-shadow:inset 0 1px var(--app-highlight);
+    }
+    .nav-item.active::before { display:none; }
+    .panel,.stat-card,.kb-item,.ticket-item,.modal-card,.upload-box,.pdf-upload-box {
+      background:var(--app-elevated) !important;
+      border-color:var(--app-separator) !important;
+      box-shadow:inset 0 1px var(--app-highlight),var(--app-shadow);
+      backdrop-filter:blur(22px) saturate(135%);
+      -webkit-backdrop-filter:blur(22px) saturate(135%);
+    }
+    .kb-item,.ticket-item { box-shadow:inset 0 1px var(--app-highlight),0 8px 24px rgba(26,61,108,.055); }
+    .btn-primary {
+      background:linear-gradient(180deg,color-mix(in srgb,var(--app-accent),white 9%),var(--app-accent)) !important;
+      color:#fff !important;
+      border:1px solid rgba(255,255,255,.16) !important;
+      box-shadow:inset 0 1px rgba(255,255,255,.28),0 7px 18px color-mix(in srgb,var(--app-accent),transparent 70%);
+    }
+    input,textarea,select,.form-control {
+      color:var(--app-text) !important;
+      background:var(--app-glass) !important;
+      border-color:var(--app-separator) !important;
+      box-shadow:inset 0 1px var(--app-highlight);
+    }
+    input::placeholder,textarea::placeholder { color:var(--app-secondary); opacity:.86; }
+    input:focus,textarea:focus,select:focus,.form-control:focus {
+      border-color:var(--app-accent) !important;
+      box-shadow:0 0 0 4px var(--app-accent-soft),inset 0 1px var(--app-highlight) !important;
+    }
+    .tag,.badge,.ticket-status {
+      background:var(--app-glass-strong) !important;
+      border-color:var(--app-separator) !important;
+      color:var(--app-text) !important;
+      box-shadow:inset 0 1px var(--app-highlight);
+    }
+    .theme-control { background:rgba(127,156,198,.09) !important; border-color:var(--app-separator) !important; border-radius:11px; }
+    .theme-option { color:var(--app-secondary) !important; }
+    .theme-option.active {
+      background:var(--app-glass-strong) !important;
+      color:var(--app-accent) !important;
+      box-shadow:inset 0 1px var(--app-highlight),0 3px 10px rgba(10,31,60,.12) !important;
+    }
+    html[data-theme="dark"] .login-container {
+      background:
+        radial-gradient(700px 500px at 70% 15%,rgba(45,132,255,.30),transparent 65%),
+        #070d18;
+    }
+    html[data-theme="dark"] .login-card { background:var(--app-glass-strong) !important; border-color:var(--app-separator) !important; }
+    html[data-theme="dark"] [style*="background: #fafbfc"],
+    html[data-theme="dark"] [style*="background: white"],
+    html[data-theme="dark"] [style*="background: #fff"] { background:var(--app-glass) !important; color:var(--app-text) !important; }
+    .main,.page,.panel,.kb-item,.form-group,.grid-2 { min-width:0; }
+    .kb-item .q,.kb-item .a,.doc-admin-name,.doc-admin-meta { overflow-wrap:anywhere; }
+    iframe,img { max-width:100%; }
+
+    @media(max-width:900px) {
+      body { overflow:auto; }
+      .shell { min-height:100dvh; height:auto; flex-direction:column; }
+      .sidebar { width:100%; padding:12px; position:sticky; top:0; z-index:40; }
+      .sidebar-header { padding:2px 4px 10px; margin-bottom:8px; }
+      .sidebar-header + .nav-section-label { display:none; }
+      .sidebar .nav-section-label + div { flex-direction:row !important; overflow-x:auto; margin-bottom:0 !important; padding-bottom:2px; scrollbar-width:none; }
+      .sidebar .nav-section-label + div .nav-item { width:auto; flex:0 0 auto; margin:0; padding:9px 11px; }
+      .sidebar-footer { flex-direction:row; align-items:center; gap:8px; padding:8px 4px 0; }
+      .sidebar-footer .theme-control { flex:1; margin:0; }
+      .sidebar-footer .btn-outline-danger { width:auto; min-width:max-content; margin:0 !important; }
+      .main { overflow:visible; padding:22px 18px 34px; }
+      .stat-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .grid-2 { grid-template-columns:1fr; }
+      .page > div[style*="display: flex"] { flex-wrap:wrap; }
+      .page > div[style*="display: flex"] > .form-control { flex:1 1 220px !important; }
+    }
+    @media(max-width:620px) {
+      .stat-grid { grid-template-columns:1fr; }
+      .page-header { margin-bottom:18px; }
+      .kb-item,.doc-admin-row { flex-direction:column; }
+      .kb-item > div:last-child,.doc-admin-row > div:last-child { width:100%; justify-content:flex-start !important; }
+      .sidebar-footer > a { display:none !important; }
+      #toastContainer { left:12px; right:12px; top:12px; }
+      .toast { min-width:0; max-width:none; width:100%; }
+    }
+  </style>
+  <script>
+    let adminDocuments = [];
+    let activeDocTab = "pending";
+
+    const faqQuestionField = document.getElementById("faqQuestion");
+    const faqAnswerField = document.getElementById("faqAnswer");
+    if (faqQuestionField) faqQuestionField.placeholder = "e.g. What evidence is required before QA approves a new part?";
+    if (faqAnswerField) faqAnswerField.placeholder = "Provide the approved AutoCare QA response...";
+    ["faqDeptSelect", "filterFaqDept"].forEach(id => {
+      const select = document.getElementById(id);
+      if (!select) return;
+      const all = id === "filterFaqDept" ? '<option value="all">All Departments</option>' : "";
+      select.innerHTML = `${all}<option value="QA">QA</option><option value="Engineering">Engineering</option><option value="Production">Production</option><option value="Parts Quality">Parts Quality</option>`;
+    });
+
+    const mzPdfPage = document.getElementById("page-pdf");
+    if (mzPdfPage) mzPdfPage.innerHTML = `
+      <div class="page-header"><h1>PDF Auto-Ingestion</h1><p>Upload a AutoCare file. The system reads its content, identifies its placement, and publishes it for team search and AI answers.</p></div>
+      <div class="panel"><h3>Document Placement</h3>
+        <div class="grid-2">
+          <div class="form-group"><label for="docModel">Model</label><select id="docModel" class="form-control"><option value="">Auto-detect</option><option>Model 1</option><option>Model 2</option><option>Model 3</option><option>Model 4</option></select></div>
+          <div class="form-group"><label for="docTeam">Engineering Team</label><select id="docTeam" class="form-control"><option value="">Auto-detect</option><option>Engineering Team 1</option><option>Engineering Team 2</option><option>Engineering Team 3</option><option>Engineering Team 4</option></select></div>
+        </div>
+        <div class="form-group"><label for="docCategory">Category</label><select id="docCategory" class="form-control"><option value="">Auto-detect from content</option><option>New Parts Details</option><option>Approval of Part Details</option><option>Design Review of New Parts</option></select></div>
+      </div>
+      <div class="upload-box" id="mzPdfUploadBox"><span>Drag &amp; drop a AutoCare PDF here</span><p>Up to 15 MB. Select placement above or leave it on Auto-detect.</p><button class="btn-primary" style="pointer-events:none;margin-top:10px">Select PDF File</button></div>
+      <div id="mzUploadResult" class="panel" style="display:none;margin-top:20px"></div>
+      <div class="panel" style="margin-top:20px">
+        <h3>Document Library</h3>
+        <div class="admin-control-tabs" role="tablist" style="margin-top: 14px; margin-bottom: 14px;">
+          <button class="doc-tab-btn active" type="button" data-doc-tab="pending">Pending QA Approval (<span id="countPending">0</span>)</button>
+          <button class="doc-tab-btn" type="button" data-doc-tab="approved">Approved (<span id="countApproved">0</span>)</button>
+          <button class="doc-tab-btn" type="button" data-doc-tab="draft">Drafts (<span id="countDraft">0</span>)</button>
+        </div>
+        <div id="adminDocumentList"></div>
+      </div>`;
+
+    async function loadAdminDocuments() {
+      try {
+        const headers={ "Authorization":`Bearer ${adminToken}` };
+        const [res,configRes] = await Promise.all([
+          fetch(`${API_BASE}/api/documents`, {headers}),
+          fetch(`${API_BASE}/api/config`, {headers})
+        ]);
+        if (!res.ok) throw new Error("Failed to load documents");
+        adminDocuments = (await res.json()).documents || [];
+        if (configRes.ok) {
+          const config=await configRes.json();
+          [["docModel",config.models],["docTeam",config.teams],["docCategory",config.categories]].forEach(([id,values])=>{
+            const select=document.getElementById(id);
+            if(select)select.innerHTML=`<option value="">Auto-detect</option>${values.map(value=>`<option>${escapeHtml(value)}</option>`).join("")}`;
+          });
+        }
+        
+        // Update document count badges
+        const pendingCount = adminDocuments.filter(d => d.approval_state === "Pending QA Approval").length;
+        const approvedCount = adminDocuments.filter(d => !d.approval_state || d.approval_state === "Approved").length;
+        const draftCount = adminDocuments.filter(d => d.approval_state === "Draft").length;
+        
+        document.getElementById("countPending").textContent = pendingCount;
+        document.getElementById("countApproved").textContent = approvedCount;
+        document.getElementById("countDraft").textContent = draftCount;
+
+        renderAdminDocuments();
+
+        // Wire sub-tab button click listeners
+        document.querySelectorAll(".doc-tab-btn").forEach(btn => {
+          btn.onclick = () => {
+            document.querySelectorAll(".doc-tab-btn").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            activeDocTab = btn.dataset.docTab;
+            renderAdminDocuments();
+          };
+        });
+
+      } catch (err) {
+        const list = document.getElementById("adminDocumentList");
+        if (list) list.innerHTML = `<div style="color:var(--danger);font-size:13px">${escapeHtml(err.message)}</div>`;
+      }
+    }
+
+    function renderAdminDocuments() {
+      const list = document.getElementById("adminDocumentList");
+      if (!list) return;
+
+      const filtered = adminDocuments.filter(doc => {
+        const state = doc.approval_state || "Approved";
+        if (activeDocTab === "pending") return state === "Pending QA Approval";
+        if (activeDocTab === "approved") return state === "Approved";
+        if (activeDocTab === "draft") return state === "Draft";
+        return false;
+      });
+
+      list.innerHTML = filtered.length ? filtered.map(doc => {
+        const state = doc.approval_state || "Approved";
+        let badgeClass = "approved";
+        if (state === "Draft") badgeClass = "draft";
+        if (state === "Pending QA Approval") badgeClass = "pending";
+
+        const approveBtn = state === "Pending QA Approval"
+          ? `<button class="approve-btn" data-approve-id="${escapeHtml(doc.id)}">Approve</button>`
+          : "";
+
+        return `
+          <div class="doc-admin-row" style="background: var(--white); padding: 16px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+            <div style="flex: 1; min-width: 0;">
+              <div class="doc-admin-name" style="font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <span style="font-size: 18px;">📄</span>
+                <span style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 320px;" title="${escapeHtml(doc.name)}">${escapeHtml(doc.name)}</span>
+                <span class="badge-status ${badgeClass}" style="margin-left: 0;">${escapeHtml(state)}</span>
+              </div>
+              <div class="doc-admin-meta" style="margin-top: 6px; font-size: 12.2px; color: var(--grey-text); line-height: 1.5;">
+                <strong style="color: var(--blue-700)">${escapeHtml(doc.model)}</strong> &bull; 
+                <strong>${escapeHtml(doc.team)}</strong> &bull; 
+                <span>${escapeHtml(doc.category)}</span>
+                <div style="margin-top: 4px; font-size: 11.2px; opacity: 0.85;">
+                  Size: ${Math.max(1, Math.round((doc.size || 0) / 1024))} KB | Uploaded: ${escapeHtml(doc.uploaded_at || "")}
+                </div>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
+              ${approveBtn}
+              <button class="delete-btn" data-doc-id="${escapeHtml(doc.id)}">Delete</button>
+            </div>
+          </div>`;
+      }).join("") : `<div style="text-align: center; padding: 40px 20px; color: var(--grey-text); font-size: 13.5px; background: var(--white); border-radius: 12px; border: 1px dashed var(--blue-200);">No documents found in this section.</div>`;
+
+      // Wire delete buttons
+      list.querySelectorAll("[data-doc-id]").forEach(btn => btn.addEventListener("click", async () => {
+        if (!confirm("Delete this file from Documents and the AI knowledge index?")) return;
+        const res = await fetch(`${API_BASE}/api/documents/${encodeURIComponent(btn.dataset.docId)}`, { method:"DELETE", headers:{ "Authorization":`Bearer ${adminToken}` } });
+        const data = await res.json();
+        if (!res.ok) return showToast(data.detail || "Delete failed", "error");
+        showToast("Document removed from the library.", "success");
+        await loadAdminDocuments();
+      }));
+
+      // Wire approve buttons
+      list.querySelectorAll("[data-approve-id]").forEach(btn => btn.addEventListener("click", async () => {
+        const docId = btn.dataset.approveId;
+        btn.disabled = true;
+        btn.textContent = "Approving…";
+        try {
+          const res = await fetch(`${API_BASE}/api/admin/documents/${encodeURIComponent(docId)}/approval`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${adminToken}`
+            },
+            body: JSON.stringify({
+              approval_state: "Approved",
+              comment: "Approved via Admin Dashboard"
+            })
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.detail || "Approval failed");
+          showToast("Document successfully approved and published.", "success");
+          await loadAdminDocuments();
+        } catch (err) {
+          showToast(err.message, "error");
+          btn.disabled = false;
+          btn.textContent = "Approve";
+        }
+      }));
+    }
+
+    async function uploadAutoCarePdf(file) {
+      const box = document.getElementById("mzPdfUploadBox");
+      const result = document.getElementById("mzUploadResult");
+      if (!file || !file.name.toLowerCase().endsWith(".pdf")) return showToast("Please select a PDF file.", "warning");
+      box.style.pointerEvents = "none";
+      box.innerHTML = `<span style="color:var(--blue-600);font-weight:700">Reading and classifying ${escapeHtml(file.name)}…</span><p>The file will be indexed for QA answers.</p>`;
+      const body = new FormData();
+      body.append("file", file);
+      body.append("model", document.getElementById("docModel").value);
+      body.append("team", document.getElementById("docTeam").value);
+      body.append("category", document.getElementById("docCategory").value);
+      try {
+        const res = await fetch(`${API_BASE}/api/documents/upload`, { method:"POST", headers:{ "Authorization":`Bearer ${adminToken}` }, body });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "Upload failed");
+        result.style.display = "block";
+        result.innerHTML = `<h3>Document published</h3><p style="font-size:13px;color:var(--grey-text);line-height:1.6"><strong>${escapeHtml(data.document.name)}</strong> was classified as ${escapeHtml(data.classification.model)} → ${escapeHtml(data.classification.team)} → ${escapeHtml(data.classification.category)}. ${data.characters_indexed} characters are now available to the AutoCare Assistant.</p>`;
+        showToast("Document added to the AutoCare library.", "success");
+        await loadAdminDocuments();
+      } catch (err) {
+        result.style.display = "block";
+        result.innerHTML = `<h3 style="color:var(--danger)">Upload failed</h3><p style="font-size:13px">${escapeHtml(err.message)}</p>`;
+      } finally {
+        box.style.pointerEvents = "";
+        box.innerHTML = `<span>Drag &amp; drop another AutoCare PDF here</span><p>Up to 15 MB. Select placement above or leave it on Auto-detect.</p><button class="btn-primary" style="pointer-events:none;margin-top:10px">Select PDF File</button>`;
+      }
+    }
+
+    const mzUploadBox = document.getElementById("mzPdfUploadBox");
+    if (mzUploadBox) {
+      ["dragenter","dragover","dragleave","drop"].forEach(name => mzUploadBox.addEventListener(name, e => { e.preventDefault(); e.stopPropagation(); }));
+      mzUploadBox.addEventListener("drop", e => uploadAutoCarePdf(e.dataTransfer.files[0]));
+      mzUploadBox.addEventListener("click", () => {
+        const input = document.createElement("input");
+        input.type = "file"; input.accept = ".pdf";
+        input.onchange = () => uploadAutoCarePdf(input.files[0]);
+        input.click();
+      });
+    }
+    document.querySelectorAll('.nav-item[data-page="pdf"]').forEach(btn => btn.addEventListener("click", loadAdminDocuments));
+  </script>
+<script>
+  (() => {
+    const media = matchMedia("(prefers-color-scheme: dark)");
+    const applyTheme = preference => {
+      const dark = preference === "dark" || (preference === "system" && media.matches);
+      document.documentElement.dataset.theme = dark ? "dark" : "light";
+      document.documentElement.dataset.themePreference = preference;
+      document.querySelectorAll("[data-theme-choice]").forEach(button => {
+        const active = button.dataset.themeChoice === preference;
+        button.classList.toggle("active", active);
+        button.setAttribute("aria-pressed", String(active));
+      });
+    };
+    document.querySelectorAll("[data-theme-choice]").forEach(button => {
+      button.addEventListener("click", () => {
+        localStorage.setItem("autocare_theme", button.dataset.themeChoice);
+        applyTheme(button.dataset.themeChoice);
+      });
+    });
+    media.addEventListener?.("change", () => {
+      if ((localStorage.getItem("autocare_theme") || "system") === "system") applyTheme("system");
+    });
+    window.addEventListener("storage", event => {
+      if (event.key === "autocare_theme") applyTheme(event.newValue || "system");
+    });
+    applyTheme(localStorage.getItem("autocare_theme") || "system");
+  })();
+</script>
+<style>
+  .sidebar-collapse { margin-left:auto;width:30px;height:30px;display:grid;place-items:center;flex:0 0 30px;border:1px solid var(--app-separator);border-radius:9px;background:var(--app-glass-strong);color:var(--app-secondary);cursor:pointer;font:700 16px inherit; }
+  .shell.sidebar-collapsed .sidebar { width:82px;padding-left:12px;padding-right:12px; }
+  .shell.sidebar-collapsed .sidebar-title,.shell.sidebar-collapsed .nav-section-label,.shell.sidebar-collapsed .sidebar-footer .theme-control,.shell.sidebar-collapsed .sidebar-footer a,.shell.sidebar-collapsed .sidebar-footer button,.shell.sidebar-collapsed .admin-profile .profile-copy { display:none!important; }
+  .shell.sidebar-collapsed .sidebar-header { justify-content:center;padding-inline:0; }
+  .shell.sidebar-collapsed .sidebar-collapse { position:absolute;left:66px;background:var(--app-elevated); }
+  .shell.sidebar-collapsed .nav-item { justify-content:center;gap:0;font-size:0;padding-inline:10px; }
+  .shell.sidebar-collapsed .nav-item .icon { width:22px; }
+  .nav-badge { margin-left:auto;min-width:20px;height:20px;padding:0 6px;display:grid;place-items:center;border-radius:999px;background:#ff453a;color:#fff;font-size:10px;font-weight:800;box-shadow:0 0 0 2px var(--app-glass); }
+  .admin-profile { display:flex;align-items:center;gap:9px;padding:9px;border:1px solid var(--app-separator);border-radius:12px;background:rgba(127,156,198,.07); }
+  .profile-avatar { width:32px;height:32px;display:grid;place-items:center;border-radius:50%;background:var(--app-accent-soft);color:var(--app-accent);font-size:10px;font-weight:800; }
+  .profile-name { color:var(--app-text);font-size:11.5px;font-weight:750; }.profile-role { color:var(--app-secondary);font-size:9.5px;margin-top:2px; }
+  .breadcrumb { display:flex;align-items:center;gap:7px;margin-bottom:10px;color:var(--app-secondary);font-size:11px;font-weight:650; }
+  .breadcrumb button { border:0;background:none;color:var(--app-secondary);font:inherit;cursor:pointer;padding:0; }.breadcrumb button:hover { color:var(--app-accent); }.breadcrumb-current { color:var(--app-text); }
+  .command-overlay { position:fixed;inset:0;z-index:2600;display:none;align-items:flex-start;justify-content:center;padding:12vh 20px;background:rgba(6,15,28,.36);backdrop-filter:blur(10px); }
+  .command-overlay.open { display:flex; }.command-dialog { width:min(620px,100%);overflow:hidden;border:1px solid var(--app-separator);border-radius:18px;background:var(--app-glass-strong);box-shadow:0 30px 90px rgba(7,20,40,.28);backdrop-filter:blur(30px) saturate(150%); }
+  .command-search { display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--app-separator); }.command-search input { flex:1;border:0!important;background:transparent!important;box-shadow:none!important;font-size:14px;outline:none; }
+  .command-key { padding:3px 7px;border:1px solid var(--app-separator);border-radius:6px;color:var(--app-secondary);font-size:9px; }.command-results { max-height:360px;overflow:auto;padding:8px; }
+  .command-trigger .command-key{margin-left:auto}.shell.sidebar-collapsed .command-trigger .command-key{display:none}
+  .command-item { width:100%;display:flex;align-items:center;gap:11px;padding:11px;border:0;border-radius:11px;background:transparent;color:var(--app-text);font:600 12px inherit;text-align:left;cursor:pointer; }.command-item:hover,.command-item.active { background:var(--app-accent-soft);color:var(--app-accent); }.command-type { margin-left:auto;color:var(--app-secondary);font-size:9px;text-transform:uppercase;letter-spacing:.05em; }
+  @media(max-width:900px){.sidebar-collapse,.admin-profile{display:none}}
+</style>
+<script>
+(() => {
+  const shell=document.getElementById("adminShell"), sidebar=shell?.querySelector(".sidebar"), header=sidebar?.querySelector(".sidebar-header");
+  if(!shell||!sidebar||!header)return;
+  const collapse=document.createElement("button");
+  collapse.className="sidebar-collapse";collapse.type="button";collapse.setAttribute("aria-label","Collapse sidebar");header.appendChild(collapse);
+  const setCollapsed=value=>{shell.classList.toggle("sidebar-collapsed",value);collapse.textContent=value?"›":"‹";collapse.title=value?"Expand sidebar":"Collapse sidebar";localStorage.setItem("autocare_admin_sidebar_collapsed",String(value));};
+  setCollapsed(localStorage.getItem("autocare_admin_sidebar_collapsed")==="true");
+  collapse.addEventListener("click",()=>setCollapsed(!shell.classList.contains("sidebar-collapsed")));
+  const footer=sidebar.querySelector(".sidebar-footer");
+  footer?.insertAdjacentHTML("afterbegin",`<div class="admin-profile"><div class="profile-avatar">QA</div><div class="profile-copy"><div class="profile-name">QA Administrator</div><div class="profile-role">Knowledge Owner · Admin</div></div></div>`);
+  const labels={dashboard:"Dashboard",kb:"FAQ Knowledge Base",gaps:"Knowledge Gaps",tickets:"Support Tickets",pdf:"PDF Auto-Ingestion",controls:"Admin Controls"};
+  Object.entries(labels).forEach(([page,label])=>{
+    const section=document.getElementById(`page-${page}`), pageHeader=section?.querySelector(".page-header");
+    pageHeader?.insertAdjacentHTML("afterbegin",`<nav class="breadcrumb" aria-label="Breadcrumb"><button type="button" data-admin-home>Admin</button><span>›</span><span class="breadcrumb-current">${label}</span></nav>`);
+  });
+  document.querySelectorAll("[data-admin-home]").forEach(button=>button.addEventListener("click",()=>sidebar.querySelector('.nav-item[data-page="dashboard"]')?.click()));
+})();
+</script>
+<script>
+(() => {
+  let controlTab="users",controlUsers=[],controlRoles=[],controlSettings=null,controlAudit=[];
+  const api=async(path,options={})=>{
+    const response=await fetch(`${API_BASE}${path}`,{...options,headers:{"Authorization":`Bearer ${adminToken}`,...(options.headers||{})}});
+    const data=await response.json();if(!response.ok)throw new Error(data.detail||"Request failed.");return data;
+  };
+  const renderUsers=()=>{
+    const target=document.getElementById("adminControlsContent");
+    target.innerHTML=`<div class="control-panel"><div class="control-heading"><div><h3>User and role management</h3><p>Engineering and QA can contribute documents; Production and Parts Quality are view-only.</p></div><button class="btn-primary" id="addAdminUser" type="button" style="padding:8px 11px;border-radius:8px">Add user</button></div><div class="user-admin-list">${controlUsers.map(user=>`<div class="user-admin-row"><div><div class="user-admin-name">${escapeHtml(user.name)}</div><div class="user-admin-meta">${escapeHtml(user.username)} · ${escapeHtml(user.department)}</div></div><select data-user-role="${escapeHtml(user.id)}">${controlRoles.map(role=>`<option ${role===user.role?"selected":""}>${escapeHtml(role)}</option>`).join("")}</select><label class="user-status-toggle"><input type="checkbox" data-user-active="${escapeHtml(user.id)}" ${user.active?"checked":""}> Active</label><button class="small-control-button" data-reset-user="${escapeHtml(user.id)}" type="button">Reset password</button></div>`).join("")}</div></div>`;
+    target.querySelectorAll("[data-user-role]").forEach(select=>select.onchange=()=>updateControlUser(select.dataset.userRole,{role:select.value,department:select.value==="QA Admin"||select.value==="QA"?"QA":select.value}));
+    target.querySelectorAll("[data-user-active]").forEach(input=>input.onchange=()=>updateControlUser(input.dataset.userActive,{active:input.checked}));
+    target.querySelectorAll("[data-reset-user]").forEach(button=>button.onclick=async()=>{const password=prompt("Enter a new password of at least 8 characters.");if(password)await updateControlUser(button.dataset.resetUser,{password})});
+    document.getElementById("addAdminUser").onclick=async()=>{
+      const username=prompt("Username for the new user:");if(!username)return;
+      const name=prompt("Display name:");if(!name)return;
+      const role=prompt(`Role (${controlRoles.join(", ")}):`,"Engineering");if(!controlRoles.includes(role))return showToast("Choose a valid role.","error");
+      const password=prompt("Temporary password (at least 8 characters):");if(!password)return;
+      try{await api("/api/admin/users",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username,name,role,department:role==="QA Admin"||role==="QA"?"QA":role,password})});showToast("User created.","success");await loadAdminControls()}catch(err){showToast(err.message,"error")}
+    };
+  };
+  const updateControlUser=async(id,updates)=>{try{await api(`/api/admin/users/${encodeURIComponent(id)}`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(updates)});showToast("User updated.","success");await loadAdminControls()}catch(err){showToast(err.message,"error")}};
+  const renderConfiguration=()=>{
+    const target=document.getElementById("adminControlsContent");
+    target.innerHTML=`<form class="control-panel" id="configurationForm"><div class="control-heading"><div><h3>Document structure</h3><p>These values control upload classification in both portals.</p></div></div><div class="settings-grid"><div class="settings-field"><label>Models · one per line</label><textarea id="settingModels">${escapeHtml(controlSettings.models.join("\\n"))}</textarea></div><div class="settings-field"><label>Engineering teams · one per line</label><textarea id="settingTeams">${escapeHtml(controlSettings.teams.join("\\n"))}</textarea></div><div class="settings-field span-2"><label>Document categories · one per line</label><textarea id="settingCategories">${escapeHtml(controlSettings.categories.join("\\n"))}</textarea></div></div><button class="btn-primary" style="margin-top:14px;padding:9px 13px;border-radius:8px">Save configuration</button></form>`;
+    document.getElementById("configurationForm").onsubmit=event=>{event.preventDefault();saveSettings({...controlSettings,models:lines("settingModels"),teams:lines("settingTeams"),categories:lines("settingCategories")})};
+  };
+  const lines=id=>document.getElementById(id).value.split("\\n").map(value=>value.trim()).filter(Boolean);
+  const renderApproval=async()=>{
+    const docs=(await api("/api/documents")).documents||[];
+    const pending=docs.filter(doc=>doc.approval_state!=="Approved");
+    const target=document.getElementById("adminControlsContent");
+    target.innerHTML=`<div class="control-panel" style="margin-bottom:12px"><div class="control-heading"><div><h3>Approval queue</h3><p>Engineering submissions remain unavailable to read-only teams until QA approval.</p></div></div>${pending.length?pending.map(doc=>`<div class="approval-admin-row"><div><div class="user-admin-name">${escapeHtml(doc.name)}</div><div class="user-admin-meta">${escapeHtml(doc.model)} · ${escapeHtml(doc.team)} · ${escapeHtml(doc.uploaded_by_name||"Engineering")} · ${escapeHtml(doc.approval_state)}</div></div><div><button class="small-control-button" data-document-approval="${escapeHtml(doc.id)}" data-state="Approved">Approve</button> <button class="small-control-button" data-document-approval="${escapeHtml(doc.id)}" data-state="Changes Requested">Request changes</button></div></div>`).join(""):`<div style="color:var(--app-secondary);font-size:10px">No documents are awaiting QA approval.</div>`}</div><form class="control-panel" id="retentionForm"><div class="control-heading"><div><h3>Approval rules and retention</h3><p>Control publication gates and document lifecycle policy.</p></div></div><label class="rule-row"><input id="engineeringApproval" type="checkbox" ${controlSettings.engineering_upload_requires_qa_approval?"checked":""}><span><strong>Require QA approval for Engineering uploads</strong><span>New Engineering documents remain pending until approved.</span></span></label><label class="rule-row"><input id="qaAutoApproval" type="checkbox" ${controlSettings.qa_upload_auto_approves?"checked":""}><span><strong>Automatically approve QA uploads</strong><span>QA-owned submissions publish immediately.</span></span></label><label class="rule-row"><input id="retainRevisions" type="checkbox" ${controlSettings.retain_superseded_revisions?"checked":""}><span><strong>Retain superseded revisions</strong><span>Preserve older document versions for traceability.</span></span></label><div class="settings-field" style="margin-top:12px"><label>Document retention period in days</label><input class="form-control" id="retentionDays" type="number" min="30" max="3650" value="${controlSettings.retention_days}"></div><button class="btn-primary" style="margin-top:14px;padding:9px 13px;border-radius:8px">Save policy</button></form>`;
+    target.querySelectorAll("[data-document-approval]").forEach(button=>button.onclick=async()=>{try{await api(`/api/admin/documents/${encodeURIComponent(button.dataset.documentApproval)}/approval`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({approval_state:button.dataset.state,comment:"Updated from QA Admin Controls"})});showToast("Approval state updated.","success");await renderApproval()}catch(err){showToast(err.message,"error")}});
+    document.getElementById("retentionForm").onsubmit=event=>{event.preventDefault();saveSettings({...controlSettings,engineering_upload_requires_qa_approval:document.getElementById("engineeringApproval").checked,qa_upload_auto_approves:document.getElementById("qaAutoApproval").checked,retain_superseded_revisions:document.getElementById("retainRevisions").checked,retention_days:Number(document.getElementById("retentionDays").value)})};
+  };
+  const renderAudit=()=>{
+    document.getElementById("adminControlsContent").innerHTML=`<div class="control-panel"><div class="control-heading"><div><h3>Complete audit log</h3><p>Authentication, user, configuration, upload, approval, and deletion activity.</p></div></div>${controlAudit.length?controlAudit.map(item=>`<div class="audit-row"><div><div class="audit-action">${escapeHtml(item.action)}</div><div class="audit-meta">${escapeHtml(item.actor)} · ${escapeHtml(item.role)}${item.target?` · ${escapeHtml(item.target)}`:""}</div></div><div class="audit-time">${escapeHtml(new Date(item.timestamp).toLocaleString())}</div></div>`).join(""):`<div style="color:var(--app-secondary);font-size:10px">No audit activity has been recorded yet.</div>`}</div>`;
+  };
+  const saveSettings=async settings=>{try{const data=await api("/api/admin/settings",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(settings)});controlSettings=data.settings;showToast("Admin settings saved.","success");renderCurrentTab()}catch(err){showToast(err.message,"error")}};
+  const renderCurrentTab=()=>{if(controlTab==="users")renderUsers();if(controlTab==="configuration")renderConfiguration();if(controlTab==="approval")renderApproval();if(controlTab==="audit")renderAudit()};
+  window.loadAdminControls=async()=>{
+    try{
+      const [usersData,settingsData,auditData]=await Promise.all([api("/api/admin/users"),api("/api/admin/settings"),api("/api/admin/audit")]);
+      controlUsers=usersData.users;controlRoles=usersData.roles;controlSettings=settingsData.settings;controlAudit=auditData.audit;renderCurrentTab();
+    }catch(err){document.getElementById("adminControlsContent").innerHTML=`<div class="panel" style="color:var(--danger)">${escapeHtml(err.message)}</div>`}
+  };
+  document.querySelectorAll("[data-control-tab]").forEach(button=>button.onclick=()=>{controlTab=button.dataset.controlTab;document.querySelectorAll("[data-control-tab]").forEach(item=>item.classList.toggle("active",item===button));renderCurrentTab()});
+  document.querySelector('.nav-item[data-page="controls"]')?.addEventListener("click",loadAdminControls);
+})();
+</script>
+</body>
+</html>
+
