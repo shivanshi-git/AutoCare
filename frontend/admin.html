@@ -1445,6 +1445,7 @@
             <div style="width: 100%;">
               <div style="font-size: 13.5px; font-weight: 600; color: #1e293b; margin-bottom: 4px;">User Query:</div>
               <div style="background: var(--blue-50); padding: 10px; border-radius: var(--radius-sm); font-size: 13px; font-style: italic; color: #475569; border-left: 3px solid var(--blue-200); margin-bottom: 12px;">&quot;${escapeHtml(t.query)}&quot;</div>
+              <div style="margin-top: 8px; margin-bottom: 12px; padding: 10px; background: #fef3c7; border-left: 3px solid #f59e0b; font-size: 12.5px; color: #92400e; border-radius: var(--radius-sm);"><strong>Reason for Escalation:</strong> ${t.reason ? escapeHtml(t.reason) : 'Not provided'}</div>
               
               <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; font-size: 12.5px; margin-bottom: 12px; background: #fafbfc; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
                 <div><strong>Customer:</strong> ${escapeHtml(t.name)}</div>

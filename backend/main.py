@@ -707,6 +707,7 @@ class EscalationRequest(BaseModel):
     phone: str
     query: str
     department: str
+    reason: str = None
 
 
 class EscalationStatusRequest(BaseModel):
@@ -836,7 +837,8 @@ def create_user(req: UserCreateRequest, principal: dict = Depends(require_permis
         "username": username,
         "name": req.name.strip(),
         "role": req.role,
-        "department": req.department.strip(),
+        "department": req.department,
+        "reason": req.reason.strip(),
         "password_hash": password_hash(req.password),
         "active": True,
         "created_at": datetime.now().isoformat(timespec="seconds"),
@@ -1677,7 +1679,8 @@ def submit_escalation(req: EscalationRequest):
         "email": req.email.strip(),
         "phone": req.phone.strip(),
         "query": req.query.strip(),
-        "department": req.department.strip(),
+        "department": req.department,
+        "reason": req.reason.strip(),
         "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "status": "New"
     }
