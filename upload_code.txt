@@ -1,0 +1,20 @@
+const uploadPortalDocument=async file=>{
+    const resultEl=document.getElementById("portalUploadResult");
+    if(!portalUser?.permissions.includes("upload"))return;
+    if(!file||!file.name.toLowerCase().endsWith(".pdf")){resultEl.innerHTML=`<div class="score-card" style="padding:18px 24px"><p style="margin:0;color:#ff453a;font-weight:600;font-size:12px">Please select a PDF file.</p></div>`;return}
+    uploadZone.style.pointerEvents="none";uploadZone.innerHTML=`<strong>Reading ${escapeHtml(file.name)}…</strong><span>Classifying and indexing the document.</span>`;
+    const body=new FormData();body.append("file",file);body.append("model",document.getElementById("portalDocModel").value);body.append("team",document.getElementById("portalDocTeam").value);body.append("category",document.getElementById("portalDocCategory").value);
+    // If we have a current draft, auto-replace it
+    const replaceId = currentUploadDraftId || document.getElementById("portalReplaceDoc")?.value;
+    if(replaceId) body.append("replace_document_id",replaceId);
+    try{
+      const response=await fetch(`${API_BASE}/api/documents/upload`,{method:"POST",headers:portalAuthHeaders(),body});
+      const data=await response.json();if(!response.ok)throw new Error(data.detail||"Upload failed.");
+      // Track the draft ID for subsequent re-uploads
+      if (data.document?.id) currentUploadDraftId = data.document.id;
+      // Render the score card
+      resultEl.innerHTML = buildScoreCard(data);
+      animateScoreCard();
+      wireScoreCardButtons();
+      await loadKb();
+    }catch(err){resultEl.innerHTML=`<div class="score-card" style="padding:18px 24px"><p style="margin:0;color:#ff453a;font-weight:600;font-size:12px">${escapeHtml(err.message)}</p></div>`}finally

@@ -12,7 +12,9 @@
       const drafts = documents.filter(doc => doc.status === 'Draft');
       const select = document.getElementById('portalReplaceDoc');
       if (select) {
+        const currentVal = select.value;
         select.innerHTML = '<option value="">New Document</option>' + drafts.map(d => `<option value="${d.id}">${d.id} - ${d.category || 'Draft'}</option>`).join('');
+        if (currentVal && drafts.find(d => d.id === currentVal)) select.value = currentVal;
         const group = document.getElementById('replaceDraftGroup');
         if (group) group.style.display = 'block';
       }
@@ -61,6 +63,9 @@
   const uploadZone=document.getElementById("portalUploadZone");
   let currentUploadDraftId = null;
   const chooseFile=()=>{const input=document.createElement("input");input.type="file";input.accept=".pdf";input.onchange=()=>uploadPortalDocument(input.files[0]);input.click()};
+  document.getElementById('portalReplaceDoc')?.addEventListener('change', (e) => {
+    currentUploadDraftId = e.target.value || null;
+  });
   window.startDraftReplacement = (draftId) => {
     currentUploadDraftId = draftId;
     document.querySelector('.nav-item[data-page="data-entry"]')?.click();
@@ -68,7 +73,7 @@
   };
 
   /* ── Build Confidence Score Card HTML ── */
-  function buildScoreCard(data) {
+  function buildScoreCard(data, isReplacement = false) {
     const score = typeof data.score === 'number' ? data.score : 0;
     const docName = data.document?.name || 'Document';
     const docId = data.document?.id || '';
@@ -119,7 +124,9 @@
       </div>
       ${pointersHtml}
       <div class="score-card-actions">
-        <button class="score-btn score-btn-draft" id="scoreCardDraftBtn" data-doc-id="${escapeHtml(docId)}">Save as Draft</button>
+        ${isReplacement 
+          ? `<button class="score-btn score-btn-draft" id="scoreCardReplaceBtn" type="button" onclick="if(window.startDraftReplacement) window.startDraftReplacement('${escapeHtml(docId)}')">Replace Draft</button>` 
+          : `<button class="score-btn score-btn-draft" id="scoreCardDraftBtn" data-doc-id="${escapeHtml(docId)}">Save as Draft</button>`}
         <button class="score-btn score-btn-submit" id="scoreCardSubmitBtn" data-doc-id="${escapeHtml(docId)}" ${isPass ? '' : 'disabled'}>Submit for Approval</button>
         <span class="score-card-toast" id="scoreCardToast"></span>
       </div>
@@ -207,9 +214,17 @@
       const response=await fetch(`${API_BASE}/api/documents/upload`,{method:"POST",headers:portalAuthHeaders(),body});
       const data=await response.json();if(!response.ok)throw new Error(data.detail||"Upload failed.");
       // Track the draft ID for subsequent re-uploads
-      if (data.document?.id) currentUploadDraftId = data.document.id;
+      if (data.document?.id) {
+        currentUploadDraftId = data.document.id;
+        const select = document.getElementById('portalReplaceDoc');
+        if (select) {
+          const exists = Array.from(select.options).some(opt => opt.value === currentUploadDraftId);
+          if (!exists) select.insertAdjacentHTML('beforeend', `<option value="${currentUploadDraftId}">${currentUploadDraftId} - Just Uploaded</option>`);
+          select.value = currentUploadDraftId;
+        }
+      }
       // Render the score card
-      resultEl.innerHTML = buildScoreCard(data);
+      resultEl.innerHTML = buildScoreCard(data, !!replaceId);
       animateScoreCard();
       wireScoreCardButtons();
       await loadKb();
