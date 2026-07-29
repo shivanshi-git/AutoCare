@@ -1042,7 +1042,7 @@
     // ---------- Configuration & State ----------
     const BACKEND_RENDER_URL = window.RENDER_BACKEND_URL || "https://autocare-backend.onrender.com";
     const API_BASE = (window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost") 
-      ? "http://127.0.0.1:8005" 
+      ? "http://127.0.0.1:8000" 
       : (window.location.origin.includes("onrender.com") && !window.location.origin.includes("-backend") ? BACKEND_RENDER_URL : window.location.origin);
 
     let adminToken = sessionStorage.getItem("admin_api_token") || "";
@@ -2207,28 +2207,7 @@
     applyTheme(localStorage.getItem("autocare_theme") || "system");
   })();
 </script>
-<style>
-  .sidebar-collapse { margin-left:auto;width:30px;height:30px;display:grid;place-items:center;flex:0 0 30px;border:1px solid var(--app-separator);border-radius:9px;background:var(--app-glass-strong);color:var(--app-secondary);cursor:pointer;font:700 16px inherit; }
-  .shell.sidebar-collapsed .sidebar { width:82px;padding-left:12px;padding-right:12px; }
-  .shell.sidebar-collapsed .sidebar-title,.shell.sidebar-collapsed .nav-section-label,.shell.sidebar-collapsed .sidebar-footer .theme-control,.shell.sidebar-collapsed .sidebar-footer a,.shell.sidebar-collapsed .sidebar-footer button,.shell.sidebar-collapsed .admin-profile .profile-copy { display:none!important; }
-  .shell.sidebar-collapsed .sidebar-header { justify-content:center;padding-inline:0; }
-  .shell.sidebar-collapsed .sidebar-collapse { position:absolute;left:66px;background:var(--app-elevated); }
-  .shell.sidebar-collapsed .nav-item { justify-content:center;gap:0;font-size:0;padding-inline:10px; }
-  .shell.sidebar-collapsed .nav-item .icon { width:22px; }
-  .nav-badge { margin-left:auto;min-width:20px;height:20px;padding:0 6px;display:grid;place-items:center;border-radius:999px;background:#ff453a;color:#fff;font-size:10px;font-weight:800;box-shadow:0 0 0 2px var(--app-glass); }
-  .admin-profile { display:flex;align-items:center;gap:9px;padding:9px;border:1px solid var(--app-separator);border-radius:12px;background:rgba(127,156,198,.07); }
-  .profile-avatar { width:32px;height:32px;display:grid;place-items:center;border-radius:50%;background:var(--app-accent-soft);color:var(--app-accent);font-size:10px;font-weight:800; }
-  .profile-name { color:var(--app-text);font-size:11.5px;font-weight:750; }.profile-role { color:var(--app-secondary);font-size:9.5px;margin-top:2px; }
-  .breadcrumb { display:flex;align-items:center;gap:7px;margin-bottom:10px;color:var(--app-secondary);font-size:11px;font-weight:650; }
-  .breadcrumb button { border:0;background:none;color:var(--app-secondary);font:inherit;cursor:pointer;padding:0; }.breadcrumb button:hover { color:var(--app-accent); }.breadcrumb-current { color:var(--app-text); }
-  .command-overlay { position:fixed;inset:0;z-index:2600;display:none;align-items:flex-start;justify-content:center;padding:12vh 20px;background:rgba(6,15,28,.36);backdrop-filter:blur(10px); }
-  .command-overlay.open { display:flex; }.command-dialog { width:min(620px,100%);overflow:hidden;border:1px solid var(--app-separator);border-radius:18px;background:var(--app-glass-strong);box-shadow:0 30px 90px rgba(7,20,40,.28);backdrop-filter:blur(30px) saturate(150%); }
-  .command-search { display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--app-separator); }.command-search input { flex:1;border:0!important;background:transparent!important;box-shadow:none!important;font-size:14px;outline:none; }
-  .command-key { padding:3px 7px;border:1px solid var(--app-separator);border-radius:6px;color:var(--app-secondary);font-size:9px; }.command-results { max-height:360px;overflow:auto;padding:8px; }
-  .command-trigger .command-key{margin-left:auto}.shell.sidebar-collapsed .command-trigger .command-key{display:none}
-  .command-item { width:100%;display:flex;align-items:center;gap:11px;padding:11px;border:0;border-radius:11px;background:transparent;color:var(--app-text);font:600 12px inherit;text-align:left;cursor:pointer; }.command-item:hover,.command-item.active { background:var(--app-accent-soft);color:var(--app-accent); }.command-type { margin-left:auto;color:var(--app-secondary);font-size:9px;text-transform:uppercase;letter-spacing:.05em; }
-  @media(max-width:900px){.sidebar-collapse,.admin-profile{display:none}}
-</style>
+<link rel="stylesheet" href="admin.css">
 <script>
 (() => {
   const shell=document.getElementById("adminShell"), sidebar=shell?.querySelector(".sidebar"), header=sidebar?.querySelector(".sidebar-header");
@@ -2248,57 +2227,7 @@
   document.querySelectorAll("[data-admin-home]").forEach(button=>button.addEventListener("click",()=>sidebar.querySelector('.nav-item[data-page="dashboard"]')?.click()));
 })();
 </script>
-<script>
-(() => {
-  let controlTab="users",controlUsers=[],controlRoles=[],controlSettings=null,controlAudit=[];
-  const api=async(path,options={})=>{
-    const response=await fetch(`${API_BASE}${path}`,{...options,headers:{"Authorization":`Bearer ${adminToken}`,...(options.headers||{})}});
-    const data=await response.json();if(!response.ok)throw new Error(data.detail||"Request failed.");return data;
-  };
-  const renderUsers=()=>{
-    const target=document.getElementById("adminControlsContent");
-    target.innerHTML=`<div class="control-panel"><div class="control-heading"><div><h3>User and role management</h3><p>Engineering and QA can contribute documents; Production and Parts Quality are view-only.</p></div><button class="btn-primary" id="addAdminUser" type="button" style="padding:8px 11px;border-radius:8px">Add user</button></div><div class="user-admin-list">${controlUsers.map(user=>`<div class="user-admin-row"><div><div class="user-admin-name">${escapeHtml(user.name)}</div><div class="user-admin-meta">${escapeHtml(user.username)} · ${escapeHtml(user.department)}</div></div><select data-user-role="${escapeHtml(user.id)}">${controlRoles.map(role=>`<option ${role===user.role?"selected":""}>${escapeHtml(role)}</option>`).join("")}</select><label class="user-status-toggle"><input type="checkbox" data-user-active="${escapeHtml(user.id)}" ${user.active?"checked":""}> Active</label><button class="small-control-button" data-reset-user="${escapeHtml(user.id)}" type="button">Reset password</button></div>`).join("")}</div></div>`;
-    target.querySelectorAll("[data-user-role]").forEach(select=>select.onchange=()=>updateControlUser(select.dataset.userRole,{role:select.value,department:select.value==="QA Admin"||select.value==="QA"?"QA":select.value}));
-    target.querySelectorAll("[data-user-active]").forEach(input=>input.onchange=()=>updateControlUser(input.dataset.userActive,{active:input.checked}));
-    target.querySelectorAll("[data-reset-user]").forEach(button=>button.onclick=async()=>{const password=prompt("Enter a new password of at least 8 characters.");if(password)await updateControlUser(button.dataset.resetUser,{password})});
-    document.getElementById("addAdminUser").onclick=async()=>{
-      const username=prompt("Username for the new user:");if(!username)return;
-      const name=prompt("Display name:");if(!name)return;
-      const role=prompt(`Role (${controlRoles.join(", ")}):`,"Engineering");if(!controlRoles.includes(role))return showToast("Choose a valid role.","error");
-      const password=prompt("Temporary password (at least 8 characters):");if(!password)return;
-      try{await api("/api/admin/users",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username,name,role,department:role==="QA Admin"||role==="QA"?"QA":role,password})});showToast("User created.","success");await loadAdminControls()}catch(err){showToast(err.message,"error")}
-    };
-  };
-  const updateControlUser=async(id,updates)=>{try{await api(`/api/admin/users/${encodeURIComponent(id)}`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(updates)});showToast("User updated.","success");await loadAdminControls()}catch(err){showToast(err.message,"error")}};
-  const renderConfiguration=()=>{
-    const target=document.getElementById("adminControlsContent");
-    target.innerHTML=`<form class="control-panel" id="configurationForm"><div class="control-heading"><div><h3>Document structure</h3><p>These values control upload classification in both portals.</p></div></div><div class="settings-grid"><div class="settings-field"><label>Models · one per line</label><textarea id="settingModels">${escapeHtml(controlSettings.models.join("\\n"))}</textarea></div><div class="settings-field"><label>Engineering teams · one per line</label><textarea id="settingTeams">${escapeHtml(controlSettings.teams.join("\\n"))}</textarea></div><div class="settings-field span-2"><label>Document categories · one per line</label><textarea id="settingCategories">${escapeHtml(controlSettings.categories.join("\\n"))}</textarea></div></div><button class="btn-primary" style="margin-top:14px;padding:9px 13px;border-radius:8px">Save configuration</button></form>`;
-    document.getElementById("configurationForm").onsubmit=event=>{event.preventDefault();saveSettings({...controlSettings,models:lines("settingModels"),teams:lines("settingTeams"),categories:lines("settingCategories")})};
-  };
-  const lines=id=>document.getElementById(id).value.split("\\n").map(value=>value.trim()).filter(Boolean);
-  const renderApproval=async()=>{
-    const docs=(await api("/api/documents")).documents||[];
-    const pending=docs.filter(doc=>doc.approval_state!=="Approved");
-    const target=document.getElementById("adminControlsContent");
-    target.innerHTML=`<div class="control-panel" style="margin-bottom:12px"><div class="control-heading"><div><h3>Approval queue</h3><p>Engineering submissions remain unavailable to read-only teams until QA approval.</p></div></div>${pending.length?pending.map(doc=>`<div class="approval-admin-row"><div><div class="user-admin-name">${escapeHtml(doc.name)}</div><div class="user-admin-meta">${escapeHtml(doc.model)} · ${escapeHtml(doc.team)} · ${escapeHtml(doc.uploaded_by_name||"Engineering")} · ${escapeHtml(doc.approval_state)}</div></div><div><button class="small-control-button" data-document-approval="${escapeHtml(doc.id)}" data-state="Approved">Approve</button> <button class="small-control-button" data-document-approval="${escapeHtml(doc.id)}" data-state="Changes Requested">Request changes</button></div></div>`).join(""):`<div style="color:var(--app-secondary);font-size:10px">No documents are awaiting QA approval.</div>`}</div><form class="control-panel" id="retentionForm"><div class="control-heading"><div><h3>Approval rules and retention</h3><p>Control publication gates and document lifecycle policy.</p></div></div><label class="rule-row"><input id="engineeringApproval" type="checkbox" ${controlSettings.engineering_upload_requires_qa_approval?"checked":""}><span><strong>Require QA approval for Engineering uploads</strong><span>New Engineering documents remain pending until approved.</span></span></label><label class="rule-row"><input id="qaAutoApproval" type="checkbox" ${controlSettings.qa_upload_auto_approves?"checked":""}><span><strong>Automatically approve QA uploads</strong><span>QA-owned submissions publish immediately.</span></span></label><label class="rule-row"><input id="retainRevisions" type="checkbox" ${controlSettings.retain_superseded_revisions?"checked":""}><span><strong>Retain superseded revisions</strong><span>Preserve older document versions for traceability.</span></span></label><div class="settings-field" style="margin-top:12px"><label>Document retention period in days</label><input class="form-control" id="retentionDays" type="number" min="30" max="3650" value="${controlSettings.retention_days}"></div><button class="btn-primary" style="margin-top:14px;padding:9px 13px;border-radius:8px">Save policy</button></form>`;
-    target.querySelectorAll("[data-document-approval]").forEach(button=>button.onclick=async()=>{try{await api(`/api/admin/documents/${encodeURIComponent(button.dataset.documentApproval)}/approval`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({approval_state:button.dataset.state,comment:"Updated from QA Admin Controls"})});showToast("Approval state updated.","success");await renderApproval()}catch(err){showToast(err.message,"error")}});
-    document.getElementById("retentionForm").onsubmit=event=>{event.preventDefault();saveSettings({...controlSettings,engineering_upload_requires_qa_approval:document.getElementById("engineeringApproval").checked,qa_upload_auto_approves:document.getElementById("qaAutoApproval").checked,retain_superseded_revisions:document.getElementById("retainRevisions").checked,retention_days:Number(document.getElementById("retentionDays").value)})};
-  };
-  const renderAudit=()=>{
-    document.getElementById("adminControlsContent").innerHTML=`<div class="control-panel"><div class="control-heading"><div><h3>Complete audit log</h3><p>Authentication, user, configuration, upload, approval, and deletion activity.</p></div></div>${controlAudit.length?controlAudit.map(item=>`<div class="audit-row"><div><div class="audit-action">${escapeHtml(item.action)}</div><div class="audit-meta">${escapeHtml(item.actor)} · ${escapeHtml(item.role)}${item.target?` · ${escapeHtml(item.target)}`:""}</div></div><div class="audit-time">${escapeHtml(new Date(item.timestamp).toLocaleString())}</div></div>`).join(""):`<div style="color:var(--app-secondary);font-size:10px">No audit activity has been recorded yet.</div>`}</div>`;
-  };
-  const saveSettings=async settings=>{try{const data=await api("/api/admin/settings",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(settings)});controlSettings=data.settings;showToast("Admin settings saved.","success");renderCurrentTab()}catch(err){showToast(err.message,"error")}};
-  const renderCurrentTab=()=>{if(controlTab==="users")renderUsers();if(controlTab==="configuration")renderConfiguration();if(controlTab==="approval")renderApproval();if(controlTab==="audit")renderAudit()};
-  window.loadAdminControls=async()=>{
-    try{
-      const [usersData,settingsData,auditData]=await Promise.all([api("/api/admin/users"),api("/api/admin/settings"),api("/api/admin/audit")]);
-      controlUsers=usersData.users;controlRoles=usersData.roles;controlSettings=settingsData.settings;controlAudit=auditData.audit;renderCurrentTab();
-    }catch(err){document.getElementById("adminControlsContent").innerHTML=`<div class="panel" style="color:var(--danger)">${escapeHtml(err.message)}</div>`}
-  };
-  document.querySelectorAll("[data-control-tab]").forEach(button=>button.onclick=()=>{controlTab=button.dataset.controlTab;document.querySelectorAll("[data-control-tab]").forEach(item=>item.classList.toggle("active",item===button));renderCurrentTab()});
-  document.querySelector('.nav-item[data-page="controls"]')?.addEventListener("click",loadAdminControls);
-})();
-</script>
+<script src="admin.js"></script>
 </body>
 </html>
 

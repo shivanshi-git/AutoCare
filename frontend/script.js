@@ -1,7 +1,7 @@
 // ---------- Configuration ----------
 const BACKEND_RENDER_URL = window.RENDER_BACKEND_URL || "https://autocare-backend.onrender.com";
 const API_BASE = (window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost")
-  ? "http://127.0.0.1:8005"
+  ? "http://127.0.0.1:8000"
   : (window.location.origin.includes("onrender.com") && !window.location.origin.includes("-backend") ? BACKEND_RENDER_URL : window.location.origin);
 const API_KEY = "admin-secret-key"; // Default API key used in development
 
@@ -13,13 +13,13 @@ document.querySelectorAll(".nav-item").forEach(btn => {
     document.querySelectorAll(".nav-item").forEach(b => b.classList.remove("active"));
     document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
     btn.classList.add("active");
-    
+
     const pageId = "page-" + btn.dataset.page;
     const pageEl = document.getElementById(pageId);
     if (pageEl) {
       pageEl.classList.add("active");
     }
-    
+
     // Refresh data depending on page target
     if (btn.dataset.page === "documents") {
       loadKb();
@@ -74,13 +74,13 @@ function getTagsForQuestion(q) {
 function renderKb() {
   const list = document.getElementById("kbList");
   const sizeStat = document.getElementById("kbSizeStat");
-  
+
   if (sizeStat) {
     sizeStat.textContent = kb.length;
   }
-  
+
   if (!list) return;
-  
+
   if (kb.length === 0) {
     list.innerHTML = '<div class="panel">No entries found in the knowledge base. Add some below!</div>';
     return;
@@ -118,12 +118,12 @@ document.getElementById("kbAddBtn")?.addEventListener("click", async () => {
   const aInput = document.getElementById("kbAnswer");
   const q = qInput.value.trim();
   const a = aInput.value.trim();
-  
+
   if (!q || !a) {
     alert("Please fill in both the Question and the Answer fields.");
     return;
   }
-  
+
   try {
     const res = await fetch(`${API_BASE}/api/qa`, {
       method: "POST",
@@ -133,12 +133,12 @@ document.getElementById("kbAddBtn")?.addEventListener("click", async () => {
       },
       body: JSON.stringify({ question: q, answer: a })
     });
-    
+
     const data = await res.json();
     if (!res.ok) {
       throw new Error(data.detail || "Failed to add FAQ pair");
     }
-    
+
     // Clear inputs and reload
     qInput.value = "";
     aInput.value = "";
@@ -160,12 +160,12 @@ async function deleteKbEntry(question) {
       },
       body: JSON.stringify({ question: question })
     });
-    
+
     const data = await res.json();
     if (!res.ok) {
       throw new Error(data.detail || "Failed to delete FAQ pair");
     }
-    
+
     await loadKb();
   } catch (err) {
     console.error("Error deleting QA entry:", err);
@@ -200,13 +200,13 @@ function renderCitationCards(citations) {
 
 function addMessage(text, sender, meta, citations) {
   if (!chatWindow) return;
-  
+
   const msg = document.createElement("div");
   msg.className = "message " + sender;
-  
+
   const avatarText = sender === 'user' ? 'You' : 'AC';
   const avatarClass = sender === 'user' ? 'user-avatar' : 'bot-avatar';
-  
+
   msg.innerHTML = `
     <div class="avatar ${avatarClass}">${avatarText}</div>
     <div class="bubble">
@@ -222,29 +222,29 @@ function addMessage(text, sender, meta, citations) {
 async function sendMessage(text) {
   const query = text.trim();
   if (!query) return;
-  
+
   addMessage(query, "user");
   if (chatInput) {
     chatInput.value = "";
   }
-  
+
   try {
     const res = await fetch(`${API_BASE}/chat`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ query: query })
     });
-    
+
     if (!res.ok) throw new Error("Network response not ok");
     const data = await res.json();
-    
+
     let metaInfo = "";
     if (data.matched_question) {
       metaInfo = `Matched: "${data.matched_question}" (confidence: ${(data.confidence * 100).toFixed(0)}%)`;
     } else {
       metaInfo = `Confidence: ${(data.confidence * 100).toFixed(0)}%`;
     }
-    
+
     addMessage(data.answer, "bot", metaInfo, data.citations);
   } catch (err) {
     console.error("API call failed:", err);
@@ -253,8 +253,8 @@ async function sendMessage(text) {
 }
 
 document.getElementById("sendBtn")?.addEventListener("click", () => sendMessage(chatInput.value));
-chatInput?.addEventListener("keydown", e => { 
-  if (e.key === "Enter") sendMessage(chatInput.value); 
+chatInput?.addEventListener("keydown", e => {
+  if (e.key === "Enter") sendMessage(chatInput.value);
 });
 
 // Bind quick chip buttons
@@ -266,17 +266,17 @@ document.querySelectorAll(".chip").forEach(c => {
 function renderSearch(query) {
   const results = document.getElementById("searchResults");
   if (!results) return;
-  
+
   const qn = query.toLowerCase().trim();
-  const filtered = qn 
-    ? kb.filter(i => i.question.toLowerCase().includes(qn) || i.answer.toLowerCase().includes(qn)) 
+  const filtered = qn
+    ? kb.filter(i => i.question.toLowerCase().includes(qn) || i.answer.toLowerCase().includes(qn))
     : kb;
-    
+
   if (filtered.length === 0) {
     results.innerHTML = `<div class="panel">No results found matching "${query}".</div>`;
     return;
   }
-  
+
   results.innerHTML = filtered.map(item => `
     <div class="kb-item">
       <div>

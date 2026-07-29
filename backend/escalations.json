@@ -8,5 +8,25 @@
     "department": "Spare Parts",
     "timestamp": "2026-07-28 15:44:53",
     "status": "Resolved"
+  },
+  {
+    "id": "tkt_1785361425891",
+    "name": "Shivanshi Sharma",
+    "email": "shi.vanshi.00626@gmail.com",
+    "phone": "08882555387",
+    "query": "Comprehensive details and guidelines regarding: Where can Engineering Team 1 find the new systems document?",
+    "department": "Service & Maintenance",
+    "timestamp": "2026-07-30 03:13:45",
+    "status": "New"
+  },
+  {
+    "id": "tkt_1785362170967",
+    "name": "ss",
+    "email": "shi.vanshi.00626@gmail.com",
+    "phone": "2732948",
+    "query": "Comprehensive details and guidelines regarding: Comprehensive details and guidelines regarding: What is included in a design review of new parts?",
+    "department": "Service & Maintenance",
+    "timestamp": "2026-07-30 03:26:10",
+    "status": "New"
   }
 ]

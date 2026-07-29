@@ -223,5 +223,45 @@
     "timestamp": "2026-07-28T15:44:38",
     "query": "Comprehensive details and guidelines regarding: What is included in a design review of new parts?",
     "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-30T03:13:33",
+    "query": "Where can Engineering Team 1 find the new systems document?",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-30T03:13:41",
+    "query": "Comprehensive details and guidelines regarding: Where can Engineering Team 1 find the new systems document?",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-30T03:13:52",
+    "query": "Where can Engineering Team 1 find the new systems document?",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-30T03:13:54",
+    "query": "Comprehensive details and guidelines regarding: Where can Engineering Team 1 find the new systems document?",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-30T03:20:51",
+    "query": "What is included in a design review of new parts?",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-30T03:20:57",
+    "query": "Comprehensive details and guidelines regarding: What is included in a design review of new parts?",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-30T03:23:46",
+    "query": "Comprehensive details and guidelines regarding: What is included in a design review of new parts?",
+    "document_grounded": true
+  },
+  {
+    "timestamp": "2026-07-30T03:23:49",
+    "query": "Comprehensive details and guidelines regarding: Comprehensive details and guidelines regarding: What is included in a design review of new parts?",
+    "document_grounded": true
   }
 ]
