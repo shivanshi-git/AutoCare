@@ -3,11 +3,28 @@
   const gate=document.getElementById("portalAuthGate"),form=document.getElementById("portalLoginForm"),error=document.getElementById("portalLoginError");
   const showGate=message=>{document.documentElement.classList.add("portal-auth-pending");gate.classList.add("open");if(message){error.textContent=message;error.style.display="block"}};
   const hideGate=()=>{gate.classList.remove("open");document.documentElement.classList.remove("portal-auth-pending");error.style.display="none"};
+  
+  const loadDrafts = async () => {
+    try {
+      const response = await fetch(`${API_BASE}/api/documents`);
+      if (!response.ok) return;
+      const documents = await response.json();
+      const drafts = documents.filter(doc => doc.status === 'Draft');
+      const select = document.getElementById('portalReplaceDoc');
+      if (select) {
+        select.innerHTML = '<option value="">New Document</option>' + drafts.map(d => `<option value="${d.id}">${d.id} - ${d.category || 'Draft'}</option>`).join('');
+        const group = document.getElementById('replaceDraftGroup');
+        if (group) group.style.display = 'block';
+      }
+    } catch(e) { console.error("Failed to load drafts", e); }
+  };
+
   const populatePortalConfig=async()=>{
     const response=await fetch(`${API_BASE}/api/config`,{headers:portalAuthHeaders()});if(!response.ok)return;
     const config=await response.json();
     [["portalDocModel",config.models],["portalDocTeam",config.teams],["portalDocCategory",config.categories]].forEach(([id,values])=>{const select=document.getElementById(id);select.innerHTML=values.map(value=>`<option>${escapeHtml(value)}</option>`).join("")});
     document.getElementById("dataEntryRoleCopy").textContent=portalUser.role==="Engineering"&&config.engineering_upload_requires_qa_approval?"Engineering uploads are submitted to QA for approval before publication.":"Your upload permission allows documents to be added to the QA library.";
+    await loadDrafts();
   };
   const applyUser=user=>{
     portalUser=user;
@@ -44,6 +61,11 @@
   const uploadZone=document.getElementById("portalUploadZone");
   let currentUploadDraftId = null;
   const chooseFile=()=>{const input=document.createElement("input");input.type="file";input.accept=".pdf";input.onchange=()=>uploadPortalDocument(input.files[0]);input.click()};
+  window.startDraftReplacement = (draftId) => {
+    currentUploadDraftId = draftId;
+    document.querySelector('.nav-item[data-page="data-entry"]')?.click();
+    setTimeout(chooseFile, 100);
+  };
 
   /* ── Build Confidence Score Card HTML ── */
   function buildScoreCard(data) {

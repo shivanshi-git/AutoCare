@@ -328,9 +328,9 @@
     "owner": "QA",
     "uploaded_by": "usr_627740e0fb24",
     "uploaded_by_name": "QA Administrator",
-    "last_reviewed": "2026-07-28 15:46:26",
+    "last_reviewed": "2026-07-30 04:01:08",
     "size": 848373,
-    "stored_name": "7d2143d7c37c4b35b0ebeda4b57ad491_s12911-023-02134-2.pdf",
+    "stored_name": "77523afd9ecc42eca048f4b72895aa3a_s12911-023-02134-2.pdf",
     "score": 60,
     "missing_pointers": [
       "Methodology",
@@ -481,7 +481,69 @@
     ]
   },
   {
-    "id": "doc_9c807653574a4edfa0acb675051ccffb",
+    "id": "doc_f0ec70a8f1e84ea59c9f329329a2294c",
+    "name": "functionalsample.pdf",
+    "model": "Model 1",
+    "team": "Engineering Team 1",
+    "category": "New Parts Details",
+    "content": "Functional Resume Sample John W. Smith 2002 Front Range Way Fort Collins, CO 80525 jwsmith@colostate.edu Career Summary Four years experience in early childhood development with a diverse background in the care of special needs children and adults. Adult Care Experience • Determined work placement for 150 special needs adult clients. • Maintained client databases and records. • Coordinated client contact with local health care professionals on a monthly basis. • Managed 25 volunteer workers. Childcare Experience • Coordinated service assignments for 20 part-time counselors and 100 client families. • Oversaw daily activity and outing planning for 100 clients. • Assisted families of special needs clients with researching financial assistance and healthcare. • Assisted teachers with managing daily classroom activities. • Oversaw daily and special student activities. Employment History 1999-2002 Counseling Supervisor, The Wesley Center, Little Rock, Arkansas. 1997-1999 Client Specialist, Rainbow Special Care Center, Little Rock, Arkansas 1996-1997 Teacher’s Assistant, Cowell Elem entary, Conway, Arkansas Education University of Arkansas at Little Rock, Little Rock, AR • BS in Early Childhood Development (1999) • BA in Elementary Education (1998) • GPA (4.0 Scale): Early Childhood Development – 3.8, Elementary Education – 3.5, Overall 3.4. • Dean’s List, Chancellor’s List",
+    "pages": [
+      {
+        "page": 1,
+        "text": "Functional Resume Sample John W. Smith 2002 Front Range Way Fort Collins, CO 80525 jwsmith@colostate.edu Career Summary Four years experience in early childhood development with a diverse background in the care of special needs children and adults. Adult Care Experience • Determined work placement for 150 special needs adult clients. • Maintained client databases and records. • Coordinated client contact with local health care professionals on a monthly basis. • Managed 25 volunteer workers. Childcare Experience • Coordinated service assignments for 20 part-time counselors and 100 client families. • Oversaw daily activity and outing planning for 100 clients. • Assisted families of special needs clients with researching financial assistance and healthcare. • Assisted teachers with managing daily classroom activities. • Oversaw daily and special student activities. Employment History 1999-2002 Counseling Supervisor, The Wesley Center, Little Rock, Arkansas. 1997-1999 Client Specialist, Rainbow Special Care Center, Little Rock, Arkansas 1996-1997 Teacher’s Assistant, Cowell Elem entary, Conway, Arkansas Education University of Arkansas at Little Rock, Little Rock, AR • BS in Early Childhood Development (1999) • BA in Elementary Education (1998) • GPA (4.0 Scale): Early Childhood Development – 3.8, Elementary Education – 3.5, Overall 3.4. • Dean’s List, Chancellor’s List"
+      }
+    ],
+    "uploaded_at": "2026-07-30 03:34:41",
+    "revision": "R1",
+    "approval_state": "Draft",
+    "owner": "QA",
+    "uploaded_by": "usr_627740e0fb24",
+    "uploaded_by_name": "QA Administrator",
+    "last_reviewed": "2026-07-30 03:34:41",
+    "size": 98553,
+    "stored_name": "c4c718a816cb467abc503b4bd45ab4e2_functionalsample.pdf",
+    "score": 0,
+    "missing_pointers": [
+      "Introduction",
+      "Methodology",
+      "Results",
+      "Conclusion",
+      "Safety Warning"
+    ]
+  },
+  {
+    "id": "doc_5d5d50e72c9f4a69bc5e7d86709d077c",
+    "name": "functionalsample.pdf",
+    "model": "Model 1",
+    "team": "Engineering Team 1",
+    "category": "New Parts Details",
+    "content": "Functional Resume Sample John W. Smith 2002 Front Range Way Fort Collins, CO 80525 jwsmith@colostate.edu Career Summary Four years experience in early childhood development with a diverse background in the care of special needs children and adults. Adult Care Experience • Determined work placement for 150 special needs adult clients. • Maintained client databases and records. • Coordinated client contact with local health care professionals on a monthly basis. • Managed 25 volunteer workers. Childcare Experience • Coordinated service assignments for 20 part-time counselors and 100 client families. • Oversaw daily activity and outing planning for 100 clients. • Assisted families of special needs clients with researching financial assistance and healthcare. • Assisted teachers with managing daily classroom activities. • Oversaw daily and special student activities. Employment History 1999-2002 Counseling Supervisor, The Wesley Center, Little Rock, Arkansas. 1997-1999 Client Specialist, Rainbow Special Care Center, Little Rock, Arkansas 1996-1997 Teacher’s Assistant, Cowell Elem entary, Conway, Arkansas Education University of Arkansas at Little Rock, Little Rock, AR • BS in Early Childhood Development (1999) • BA in Elementary Education (1998) • GPA (4.0 Scale): Early Childhood Development – 3.8, Elementary Education – 3.5, Overall 3.4. • Dean’s List, Chancellor’s List",
+    "pages": [
+      {
+        "page": 1,
+        "text": "Functional Resume Sample John W. Smith 2002 Front Range Way Fort Collins, CO 80525 jwsmith@colostate.edu Career Summary Four years experience in early childhood development with a diverse background in the care of special needs children and adults. Adult Care Experience • Determined work placement for 150 special needs adult clients. • Maintained client databases and records. • Coordinated client contact with local health care professionals on a monthly basis. • Managed 25 volunteer workers. Childcare Experience • Coordinated service assignments for 20 part-time counselors and 100 client families. • Oversaw daily activity and outing planning for 100 clients. • Assisted families of special needs clients with researching financial assistance and healthcare. • Assisted teachers with managing daily classroom activities. • Oversaw daily and special student activities. Employment History 1999-2002 Counseling Supervisor, The Wesley Center, Little Rock, Arkansas. 1997-1999 Client Specialist, Rainbow Special Care Center, Little Rock, Arkansas 1996-1997 Teacher’s Assistant, Cowell Elem entary, Conway, Arkansas Education University of Arkansas at Little Rock, Little Rock, AR • BS in Early Childhood Development (1999) • BA in Elementary Education (1998) • GPA (4.0 Scale): Early Childhood Development – 3.8, Elementary Education – 3.5, Overall 3.4. • Dean’s List, Chancellor’s List"
+      }
+    ],
+    "uploaded_at": "2026-07-30 03:49:02",
+    "revision": "R1",
+    "approval_state": "Draft",
+    "owner": "QA",
+    "uploaded_by": "usr_627740e0fb24",
+    "uploaded_by_name": "QA Administrator",
+    "last_reviewed": "2026-07-30 03:49:02",
+    "size": 98553,
+    "stored_name": "0f48badc05594a56a7576957e474dfaa_functionalsample.pdf",
+    "score": 0,
+    "missing_pointers": [
+      "Introduction",
+      "Methodology",
+      "Results",
+      "Conclusion",
+      "Safety Warning"
+    ]
+  },
+  {
+    "id": "doc_1eb163d3fd74480196a00adb19efcfdf",
     "name": "717940eb-b78d-433f-9bfe-a9fc41b9dd20.pdf",
     "model": "Model 1",
     "team": "Engineering Team 1",
@@ -521,18 +583,150 @@
         "text": "Page 8 of 8Forster et al. BMC Medical Informatics and Decision Making (2021) 21:383 • fast, convenient online submission • thorough peer review by experienced researchers in your ﬁeld • rapid publication on acceptance • support for research data, including large and complex data types • gold Open Access which fosters wider collaboration and increased citations maximum visibility for your research: over 100M website views per year • At BMC, research is always in progress. Learn more biomedcentral.com/submissions Ready to submit y our researc hReady to submit y our researc h ? Choose BMC and benefit fr om: ? Choose BMC and benefit fr om: Declarations Ethics approval and consent to participate Not applicable. This is a commentary article and did not involve the use of human subjects. Consent to publication Not applicable. Competing interests The authors (AJF, HAP , CGC, WAG) do not have competing interests to declare. Received: 11 May 2021 Accepted: 6 February 2023 References 1. Shojania KG, Thomas EJ. Trends in adverse events over time: why are we not improving? BMJ Qual Saf. 2013;22:273–7. 2. McIsaac DI, Hamilton GM, Abdulla K, Lavallée LT, Moloo H, Pysyk C, et al. Validation of new ICD-10-based patient safety indicators for identification of in-hospital complications in surgical patients: a study of diagnostic accuracy. BMJ Qual Saf. 2020;29:209–16. 3. Ghali WA, Pincus HA, Southern DA, Brien SE, Romano PS, Burnand B, et al. ICD-11 for quality and safety: overview of the WHO quality and safety topic advisory group. Int J Qual Heal Care. 2013;25:621–5. 4. Sauro K, Ghali WA, Stelfox HT. Measuring safety of healthcare: an exercise in futility? BMJ Qual Saf. 2020;29:341–4. 5. Forster AJ, Bernard B, Drösler SE, Gurevich Y, Harrison J, Januel JM, et al. A World Health Organization field trial assessing a proposed ICD-11 framework for classifying patient safety events. Int J Qual Heal Care. 2017;29:548–56. 6. Pham JC, Gianci S, Battles J, Beard P , Clarke JR, Coates H, et al. Establishing a global learning community for incident-reporting systems. Qual Saf Heal Care. 2010;19:446. 7. World Health Organization. Classifications. 2021. https:// www. who. int/ stand ards/ class ifica tions 8. Bates DW, Kuperman GJ, Wang S, Gandhi T, Kittler A, Volk L, et al. Ten com- mandments for effective clinical decision support: making the practice of evidence-based medicine a reality. J Am Med Inf Assoc. 2003;10:523–30. 9. Burns EM, Rigby E, Mamidanna R, Bottle A, Aylin P , Ziprin P , et al. Systematic review of discharge coding accuracy. J Public Heal (Oxf ). 2012;34:138–48. 10. Al-Hablani B. The use of automated SNOMED CT clinical coding in clinical decision support systems for preventive care. Perspect Heal Inf Manag. 2017;14:1f. 11. Southern DA, Pincus HA, Romano PS, Burnand B, Harrison JE, Forster AJ, et al. Enhanced capture of healthcare-related harms and injuries in the 11th revision of the international classification of diseases (ICD-11). Int J Qual Heal Care. 2016;28:136. 12. Kruse CS, Stein A, Thomas H, Kaur H. The use of electronic health records to support population health: a systematic review of the literature. J Med Syst. 2018;42:214–1075. 13. Rajkomar A, Dean J, Kohane I. Machine learning in medicine. N Engl J Med. 2019;380:1347–58. 14. Weber V, Joshi MS. Effecting and leading change in health care organiza- tions. Jt Comm J Qual Improv. 2000;26:388–99. 15. Taitz JM, Lee TH, Sequist TD. A framework for engaging physicians in qual- ity and safety. BMJ Qual Saf. 2012;21:722–8. 16. Austin JM, Jha AK, Romano PS, Singer SJ, Vogus TJ, Wachter RM, et al. National hospital ratings systems share few common scores and may generate confusion instead of clarity. Health Aff. 2015;34:423–30. 17. Sturkenboom M, Bahri P , Chiucchiuini A, Grove Krause T, HahnAc S, Khro- mava A, et al. Why we need more collaboration in Europe to enhance post-marketing surveillance of vaccines. Vaccine. 2020;38:B1-7. Publisher’s Note Springer Nature remains neutral with regard to jurisdictional claims in pub- lished maps and institutional affiliations."
       }
     ],
-    "uploaded_at": "2026-07-30 03:29:49",
+    "uploaded_at": "2026-07-30 03:51:43",
     "revision": "R1",
     "approval_state": "Draft",
     "owner": "QA",
     "uploaded_by": "usr_627740e0fb24",
     "uploaded_by_name": "QA Administrator",
-    "last_reviewed": "2026-07-30 03:29:49",
+    "last_reviewed": "2026-07-30 03:51:49",
     "size": 848373,
-    "stored_name": "330aa7aabefa4323a012d61f78320923_717940eb-b78d-433f-9bfe-a9fc41b9dd20.pdf",
+    "stored_name": "c2354106e1444d2b9d1012fca62a8a73_717940eb-b78d-433f-9bfe-a9fc41b9dd20.pdf",
     "score": 60,
     "missing_pointers": [
       "Methodology",
+      "Safety Warning"
+    ]
+  },
+  {
+    "id": "doc_c1c41cd225ac4d5d946a7130b041ed7c",
+    "name": "sample-local-pdf.pdf",
+    "model": "Model 1",
+    "team": "Engineering Team 1",
+    "category": "New Parts Details",
+    "content": "1 Sample PDF Created for testing PDFObject This PDF is three pages long. Three long pages. Or three short pages if you’re optimistic. Is it the same as saying “three long minutes”, knowing that all minutes are the same duration, and one cannot possibly be longer than the other? If these pages are all the same size, can one possibly be longer than the other? I digress. Here’s some Latin. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Curabitur sodales ligula in libero. Sed dignissim lacinia nunc. Curabitur tortor. Pellentesque nibh. Aenean quam. In scelerisque sem at dolor. Maecenas mattis. Sed convallis tristique sem. Proin ut ligula vel nunc egestas porttitor. Morbi lectus risus, iaculis vel, suscipit quis, luctus non, massa. Fusce ac turpis quis ligula lacinia aliquet. Mauris ipsum. Nulla metus metus, ullamcorper vel, tincidunt sed, euismod in, nibh. Quisque volutpat condimentum velit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nam nec ante. Sed lacinia, urna non tincidunt mattis, tortor neque adipiscing diam, a cursus ipsum ante quis turpis. Nulla facilisi. Ut fringilla. Suspendisse potenti. Nunc feugiat mi a tellus consequat imperdiet. Vestibulum sapien. Proin quam. Etiam ultrices. Suspendisse in justo eu magna luctus suscipit. Sed lectus. Integer euismod lacus luctus magna. Quisque cursus, metus vitae pharetra auctor, sem massa mattis sem, at interdum magna augue eget diam. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Morbi lacinia molestie dui. Praesent blandit dolor. Sed non quam. In vel mi sit amet augue congue elementum. Morbi in ipsum sit amet pede facilisis laoreet. Donec lacus nunc, viverra nec, blandit vel, egestas et, augue. Vestibulum tincidunt malesuada tellus. Ut ultrices ultrices enim. Curabitur sit amet mauris. Morbi in dui quis est pulvinar ullamcorper. Nulla facilisi. Integer lacinia sollicitudin massa. Cras metus. Sed aliquet risus a tortor. Integer id quam. Morbi mi. Quisque nisl felis, venenatis tristique, dignissim in, ultrices sit amet, augue. Proin sodales libero eget ante. Nulla quam. Aenean laoreet. Vestibulum nisi lectus, commodo ac, facilisis ac, ultricies eu, pede. Ut orci risus, accumsan porttitor, cursus quis, aliquet eget, justo. Sed pretium blandit orci. Ut eu diam at pede suscipit sodales. Aenean lectus elit, fermentum non, convallis id, sagittis at, neque. Nullam mauris orci, aliquet et, iaculis et, viverra vitae, ligula. Nulla ut felis in purus aliquam imperdiet. Maecenas aliquet mollis lectus. Vivamus consectetuer risus et tortor. Lorem 2 ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Curabitur sodales ligula in libero. Sed dignissim lacinia nunc. Curabitur tortor. Pellentesque nibh. Aenean quam. In scelerisque sem at dolor. Maecenas mattis. Sed convallis tristique sem. Proin ut ligula vel nunc egestas porttitor. Morbi lectus risus, iaculis vel, suscipit quis, luctus non, massa. Fusce ac turpis quis ligula lacinia aliquet. Mauris ipsum. Nulla metus metus, ullamcorper vel, tincidunt sed, euismod in, nibh. Quisque volutpat condimentum velit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nam nec ante. Sed lacinia, urna non tincidunt mattis, tortor neque adipiscing diam, a cursus ipsum ante quis turpis. Nulla facilisi. Ut fringilla. Suspendisse potenti. Nunc feugiat mi a tellus consequat imperdiet. Vestibulum sapien. Proin quam. Etiam ultrices. Suspendisse in justo eu magna luctus suscipit. Sed lectus. Integer euismod lacus luctus magna. Quisque cursus, metus vitae pharetra auctor, sem massa mattis sem, at interdum magna augue eget diam. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Morbi lacinia molestie dui. Praesent blandit dolor. Sed non quam. In vel mi sit amet augue congue elementum. Morbi in ipsum sit amet pede facilisis laoreet. Donec lacus nunc, viverra nec, blandit vel, egestas et, augue. Vestibulum tincidunt malesuada tellus. Ut ultrices ultrices enim. Curabitur sit amet mauris. Morbi in dui quis est pulvinar ullamcorper. Nulla facilisi. Integer lacinia sollicitudin massa. Cras metus. Sed aliquet risus a tortor. Integer id quam. Morbi mi. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Curabitur sodales ligula in libero. Sed dignissim lacinia nunc. Curabitur tortor. Pellentesque nibh. Aenean quam. In scelerisque sem at dolor. Maecenas mattis. Sed convallis tristique sem. Proin ut ligula vel nunc egestas porttitor. Morbi lectus risus, iaculis vel, suscipit quis, luctus non, massa. Fusce ac turpis quis ligula lacinia aliquet. Mauris ipsum. Nulla metus metus, ullamcorper vel, tincidunt sed, euismod in, nibh. Quisque volutpat condimentum velit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nam nec ante. Sed lacinia, urna non tincidunt mattis, tortor neque adipiscing diam, a cursus ipsum ante quis turpis. Nulla facilisi. Ut fringilla. Suspendisse potenti. Nunc feugiat mi a tellus consequat imperdiet. Vestibulum sapien. Proin quam. Etiam ultrices. Suspendisse in justo eu magna luctus suscipit. Sed lectus. Integer euismod lacus luctus magna. Quisque cursus, metus vitae pharetra auctor, sem massa mattis sem, at interdum magna augue eget diam. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Morbi lacinia molestie dui. Praesent blandit dolor. Sed non quam. In vel mi sit amet augue congue 3 elementum. Morbi in ipsum sit amet pede facilisis laoreet. Donec lacus nunc, viverra nec, blandit vel, egestas et, augue. Vestibulum tincidunt malesuada tellus. Ut ultrices ultrices enim. Curabitur sit amet mauris. Morbi in dui quis est pulvinar ullamcorper. Nulla facilisi. Integer lacinia sollicitudin massa. Cras metus. Sed aliquet risus a tortor. Integer id quam. Morbi mi. Quisque nisl felis, venenatis tristique, dignissim in, ultrices sit amet, augue. Proin sodales libero eget ante. Nulla quam. Aenean laoreet. Vestibulum nisi lectus, commodo ac, facilisis ac, ultricies eu, pede. Ut orci risus, accumsan porttitor, cursus quis, aliquet eget, justo. Sed pretium blandit orci. Ut eu diam at pede suscipit sodales. Aenean lectus elit, fermentum non, convallis id, sagittis at, neque. Nullam mauris orci, aliquet et, iaculis et, viverra vitae, ligula. Nulla ut felis in purus aliquam imperdiet. Maecenas aliquet mollis lectus. Vivamus consectetuer risus et tortor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Curabitur sodales ligula in libero. Sed dignissim lacinia nunc. Curabitur tortor. Pellentesque nibh. Aenean quam. In scelerisque sem at dolor. Maecenas mattis. Sed convallis tristique sem. Proin ut ligula vel nunc egestas porttitor. Morbi lectus risus, iaculis vel, suscipit quis, luctus non, massa. Fusce ac turpis quis ligula lacinia aliquet. Mauris ipsum. Nulla metus metus, ullamcorper vel, tincidunt sed, euismod in, nibh. Quisque volutpat condimentum velit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nam nec ante. Sed lacinia, urna non tincidunt mattis, tortor neque adipiscing diam, a cursus ipsum ante quis turpis. Nulla facilisi. Ut fringilla. Suspendisse potenti. Nunc feugiat mi a tellus consequat imperdiet. Vestibulum sapien. Proin quam. Etiam ultrices. Suspendisse in justo eu magna luctus suscipit. Sed lectus. Integer euismod lacus luctus magna. Quisque cursus, metus vitae pharetra auctor, sem massa mattis sem, at interdum magna augue eget diam. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Morbi lacinia molestie dui. Praesent blandit dolor. Sed non quam. In vel mi sit amet augue congue elementum. Morbi in ipsum sit amet pede facilisis laoreet.",
+    "pages": [
+      {
+        "page": 1,
+        "text": "1 Sample PDF Created for testing PDFObject This PDF is three pages long. Three long pages. Or three short pages if you’re optimistic. Is it the same as saying “three long minutes”, knowing that all minutes are the same duration, and one cannot possibly be longer than the other? If these pages are all the same size, can one possibly be longer than the other? I digress. Here’s some Latin. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Curabitur sodales ligula in libero. Sed dignissim lacinia nunc. Curabitur tortor. Pellentesque nibh. Aenean quam. In scelerisque sem at dolor. Maecenas mattis. Sed convallis tristique sem. Proin ut ligula vel nunc egestas porttitor. Morbi lectus risus, iaculis vel, suscipit quis, luctus non, massa. Fusce ac turpis quis ligula lacinia aliquet. Mauris ipsum. Nulla metus metus, ullamcorper vel, tincidunt sed, euismod in, nibh. Quisque volutpat condimentum velit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nam nec ante. Sed lacinia, urna non tincidunt mattis, tortor neque adipiscing diam, a cursus ipsum ante quis turpis. Nulla facilisi. Ut fringilla. Suspendisse potenti. Nunc feugiat mi a tellus consequat imperdiet. Vestibulum sapien. Proin quam. Etiam ultrices. Suspendisse in justo eu magna luctus suscipit. Sed lectus. Integer euismod lacus luctus magna. Quisque cursus, metus vitae pharetra auctor, sem massa mattis sem, at interdum magna augue eget diam. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Morbi lacinia molestie dui. Praesent blandit dolor. Sed non quam. In vel mi sit amet augue congue elementum. Morbi in ipsum sit amet pede facilisis laoreet. Donec lacus nunc, viverra nec, blandit vel, egestas et, augue. Vestibulum tincidunt malesuada tellus. Ut ultrices ultrices enim. Curabitur sit amet mauris. Morbi in dui quis est pulvinar ullamcorper. Nulla facilisi. Integer lacinia sollicitudin massa. Cras metus. Sed aliquet risus a tortor. Integer id quam. Morbi mi. Quisque nisl felis, venenatis tristique, dignissim in, ultrices sit amet, augue. Proin sodales libero eget ante. Nulla quam. Aenean laoreet. Vestibulum nisi lectus, commodo ac, facilisis ac, ultricies eu, pede. Ut orci risus, accumsan porttitor, cursus quis, aliquet eget, justo. Sed pretium blandit orci. Ut eu diam at pede suscipit sodales. Aenean lectus elit, fermentum non, convallis id, sagittis at, neque. Nullam mauris orci, aliquet et, iaculis et, viverra vitae, ligula. Nulla ut felis in purus aliquam imperdiet. Maecenas aliquet mollis lectus. Vivamus consectetuer risus et tortor. Lorem"
+      },
+      {
+        "page": 2,
+        "text": "2 ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Curabitur sodales ligula in libero. Sed dignissim lacinia nunc. Curabitur tortor. Pellentesque nibh. Aenean quam. In scelerisque sem at dolor. Maecenas mattis. Sed convallis tristique sem. Proin ut ligula vel nunc egestas porttitor. Morbi lectus risus, iaculis vel, suscipit quis, luctus non, massa. Fusce ac turpis quis ligula lacinia aliquet. Mauris ipsum. Nulla metus metus, ullamcorper vel, tincidunt sed, euismod in, nibh. Quisque volutpat condimentum velit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nam nec ante. Sed lacinia, urna non tincidunt mattis, tortor neque adipiscing diam, a cursus ipsum ante quis turpis. Nulla facilisi. Ut fringilla. Suspendisse potenti. Nunc feugiat mi a tellus consequat imperdiet. Vestibulum sapien. Proin quam. Etiam ultrices. Suspendisse in justo eu magna luctus suscipit. Sed lectus. Integer euismod lacus luctus magna. Quisque cursus, metus vitae pharetra auctor, sem massa mattis sem, at interdum magna augue eget diam. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Morbi lacinia molestie dui. Praesent blandit dolor. Sed non quam. In vel mi sit amet augue congue elementum. Morbi in ipsum sit amet pede facilisis laoreet. Donec lacus nunc, viverra nec, blandit vel, egestas et, augue. Vestibulum tincidunt malesuada tellus. Ut ultrices ultrices enim. Curabitur sit amet mauris. Morbi in dui quis est pulvinar ullamcorper. Nulla facilisi. Integer lacinia sollicitudin massa. Cras metus. Sed aliquet risus a tortor. Integer id quam. Morbi mi. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Curabitur sodales ligula in libero. Sed dignissim lacinia nunc. Curabitur tortor. Pellentesque nibh. Aenean quam. In scelerisque sem at dolor. Maecenas mattis. Sed convallis tristique sem. Proin ut ligula vel nunc egestas porttitor. Morbi lectus risus, iaculis vel, suscipit quis, luctus non, massa. Fusce ac turpis quis ligula lacinia aliquet. Mauris ipsum. Nulla metus metus, ullamcorper vel, tincidunt sed, euismod in, nibh. Quisque volutpat condimentum velit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nam nec ante. Sed lacinia, urna non tincidunt mattis, tortor neque adipiscing diam, a cursus ipsum ante quis turpis. Nulla facilisi. Ut fringilla. Suspendisse potenti. Nunc feugiat mi a tellus consequat imperdiet. Vestibulum sapien. Proin quam. Etiam ultrices. Suspendisse in justo eu magna luctus suscipit. Sed lectus. Integer euismod lacus luctus magna. Quisque cursus, metus vitae pharetra auctor, sem massa mattis sem, at interdum magna augue eget diam. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Morbi lacinia molestie dui. Praesent blandit dolor. Sed non quam. In vel mi sit amet augue congue"
+      },
+      {
+        "page": 3,
+        "text": "3 elementum. Morbi in ipsum sit amet pede facilisis laoreet. Donec lacus nunc, viverra nec, blandit vel, egestas et, augue. Vestibulum tincidunt malesuada tellus. Ut ultrices ultrices enim. Curabitur sit amet mauris. Morbi in dui quis est pulvinar ullamcorper. Nulla facilisi. Integer lacinia sollicitudin massa. Cras metus. Sed aliquet risus a tortor. Integer id quam. Morbi mi. Quisque nisl felis, venenatis tristique, dignissim in, ultrices sit amet, augue. Proin sodales libero eget ante. Nulla quam. Aenean laoreet. Vestibulum nisi lectus, commodo ac, facilisis ac, ultricies eu, pede. Ut orci risus, accumsan porttitor, cursus quis, aliquet eget, justo. Sed pretium blandit orci. Ut eu diam at pede suscipit sodales. Aenean lectus elit, fermentum non, convallis id, sagittis at, neque. Nullam mauris orci, aliquet et, iaculis et, viverra vitae, ligula. Nulla ut felis in purus aliquam imperdiet. Maecenas aliquet mollis lectus. Vivamus consectetuer risus et tortor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Curabitur sodales ligula in libero. Sed dignissim lacinia nunc. Curabitur tortor. Pellentesque nibh. Aenean quam. In scelerisque sem at dolor. Maecenas mattis. Sed convallis tristique sem. Proin ut ligula vel nunc egestas porttitor. Morbi lectus risus, iaculis vel, suscipit quis, luctus non, massa. Fusce ac turpis quis ligula lacinia aliquet. Mauris ipsum. Nulla metus metus, ullamcorper vel, tincidunt sed, euismod in, nibh. Quisque volutpat condimentum velit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nam nec ante. Sed lacinia, urna non tincidunt mattis, tortor neque adipiscing diam, a cursus ipsum ante quis turpis. Nulla facilisi. Ut fringilla. Suspendisse potenti. Nunc feugiat mi a tellus consequat imperdiet. Vestibulum sapien. Proin quam. Etiam ultrices. Suspendisse in justo eu magna luctus suscipit. Sed lectus. Integer euismod lacus luctus magna. Quisque cursus, metus vitae pharetra auctor, sem massa mattis sem, at interdum magna augue eget diam. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Morbi lacinia molestie dui. Praesent blandit dolor. Sed non quam. In vel mi sit amet augue congue elementum. Morbi in ipsum sit amet pede facilisis laoreet."
+      }
+    ],
+    "uploaded_at": "2026-07-30 03:52:19",
+    "revision": "R1",
+    "approval_state": "Draft",
+    "owner": "QA",
+    "uploaded_by": "usr_627740e0fb24",
+    "uploaded_by_name": "QA Administrator",
+    "last_reviewed": "2026-07-30 03:52:27",
+    "size": 49672,
+    "stored_name": "04fd92465d954c24bffa3af1f0eaee7a_sample-local-pdf.pdf",
+    "score": 0,
+    "missing_pointers": [
+      "Introduction",
+      "Methodology",
+      "Results",
+      "Conclusion",
+      "Safety Warning"
+    ]
+  },
+  {
+    "id": "doc_466bd8398d2246219d17d01f690438cc",
+    "name": "Engineering details.pdf",
+    "model": "Model 1",
+    "team": "Engineering Team 1",
+    "category": "New Parts Details",
+    "content": "Sample Document This document contains placeholder information only. All values are fictitious and are intended solely for testing document upload, preview, search, and AI classification features. Field Sample Value Document Title Sample Design Review Document ID SAMPLE-001 Department Sample Department Category Sample Category Version 1.0 Created By Sample User Reviewed By Sample Reviewer Status Draft Date 01-Jan-2026 Sample Notes  Lorem ipsum placeholder text for testing purposes.  This section contains dummy content only.  No real product, project, model, or customer information is included.  Use this document to validate upload and document processing workflows.  Replace this content with actual data in production.",
+    "pages": [
+      {
+        "page": 1,
+        "text": "Sample Document This document contains placeholder information only. All values are fictitious and are intended solely for testing document upload, preview, search, and AI classification features. Field Sample Value Document Title Sample Design Review Document ID SAMPLE-001 Department Sample Department Category Sample Category Version 1.0 Created By Sample User Reviewed By Sample Reviewer Status Draft Date 01-Jan-2026 Sample Notes  Lorem ipsum placeholder text for testing purposes.  This section contains dummy content only.  No real product, project, model, or customer information is included.  Use this document to validate upload and document processing workflows.  Replace this content with actual data in production."
+      }
+    ],
+    "uploaded_at": "2026-07-30 03:54:02",
+    "revision": "R1",
+    "approval_state": "Draft",
+    "owner": "QA",
+    "uploaded_by": "usr_627740e0fb24",
+    "uploaded_by_name": "QA Administrator",
+    "last_reviewed": "2026-07-30 03:54:02",
+    "size": 2594,
+    "stored_name": "096a9a593aef4a16800524fc5bdee49c_Engineering_details.pdf",
+    "score": 0,
+    "missing_pointers": [
+      "Introduction",
+      "Methodology",
+      "Results",
+      "Conclusion",
+      "Safety Warning"
+    ]
+  },
+  {
+    "id": "doc_5ec9356ee1054371a638e269adcfe934",
+    "name": "6eba3391-bf8b-4841-a3a2-245755724443.pdf",
+    "model": "Model 1",
+    "team": "Engineering Team 1",
+    "category": "New Parts Details",
+    "content": "Sample Document This document contains placeholder information only. All values are fictitious and are intended solely for testing document upload, preview, search, and AI classification features. Field Sample Value Document Title Sample Design Review Document ID SAMPLE-001 Department Sample Department Category Sample Category Version 1.0 Created By Sample User Reviewed By Sample Reviewer Status Draft Date 01-Jan-2026 Sample Notes  Lorem ipsum placeholder text for testing purposes.  This section contains dummy content only.  No real product, project, model, or customer information is included.  Use this document to validate upload and document processing workflows.  Replace this content with actual data in production.",
+    "pages": [
+      {
+        "page": 1,
+        "text": "Sample Document This document contains placeholder information only. All values are fictitious and are intended solely for testing document upload, preview, search, and AI classification features. Field Sample Value Document Title Sample Design Review Document ID SAMPLE-001 Department Sample Department Category Sample Category Version 1.0 Created By Sample User Reviewed By Sample Reviewer Status Draft Date 01-Jan-2026 Sample Notes  Lorem ipsum placeholder text for testing purposes.  This section contains dummy content only.  No real product, project, model, or customer information is included.  Use this document to validate upload and document processing workflows.  Replace this content with actual data in production."
+      }
+    ],
+    "uploaded_at": "2026-07-30 03:55:58",
+    "revision": "R1",
+    "approval_state": "Draft",
+    "owner": "QA",
+    "uploaded_by": "usr_627740e0fb24",
+    "uploaded_by_name": "QA Administrator",
+    "last_reviewed": "2026-07-30 03:55:58",
+    "size": 2594,
+    "stored_name": "7dad0866b3104592aadb1630e30e0809_6eba3391-bf8b-4841-a3a2-245755724443.pdf",
+    "score": 0,
+    "missing_pointers": [
+      "Introduction",
+      "Methodology",
+      "Results",
+      "Conclusion",
+      "Safety Warning"
+    ]
+  },
+  {
+    "id": "doc_b1355537bcd9444885a3ad90255e01b7",
+    "name": "functionalsample.pdf",
+    "model": "Model 1",
+    "team": "Engineering Team 1",
+    "category": "New Parts Details",
+    "content": "Functional Resume Sample John W. Smith 2002 Front Range Way Fort Collins, CO 80525 jwsmith@colostate.edu Career Summary Four years experience in early childhood development with a diverse background in the care of special needs children and adults. Adult Care Experience • Determined work placement for 150 special needs adult clients. • Maintained client databases and records. • Coordinated client contact with local health care professionals on a monthly basis. • Managed 25 volunteer workers. Childcare Experience • Coordinated service assignments for 20 part-time counselors and 100 client families. • Oversaw daily activity and outing planning for 100 clients. • Assisted families of special needs clients with researching financial assistance and healthcare. • Assisted teachers with managing daily classroom activities. • Oversaw daily and special student activities. Employment History 1999-2002 Counseling Supervisor, The Wesley Center, Little Rock, Arkansas. 1997-1999 Client Specialist, Rainbow Special Care Center, Little Rock, Arkansas 1996-1997 Teacher’s Assistant, Cowell Elem entary, Conway, Arkansas Education University of Arkansas at Little Rock, Little Rock, AR • BS in Early Childhood Development (1999) • BA in Elementary Education (1998) • GPA (4.0 Scale): Early Childhood Development – 3.8, Elementary Education – 3.5, Overall 3.4. • Dean’s List, Chancellor’s List",
+    "pages": [
+      {
+        "page": 1,
+        "text": "Functional Resume Sample John W. Smith 2002 Front Range Way Fort Collins, CO 80525 jwsmith@colostate.edu Career Summary Four years experience in early childhood development with a diverse background in the care of special needs children and adults. Adult Care Experience • Determined work placement for 150 special needs adult clients. • Maintained client databases and records. • Coordinated client contact with local health care professionals on a monthly basis. • Managed 25 volunteer workers. Childcare Experience • Coordinated service assignments for 20 part-time counselors and 100 client families. • Oversaw daily activity and outing planning for 100 clients. • Assisted families of special needs clients with researching financial assistance and healthcare. • Assisted teachers with managing daily classroom activities. • Oversaw daily and special student activities. Employment History 1999-2002 Counseling Supervisor, The Wesley Center, Little Rock, Arkansas. 1997-1999 Client Specialist, Rainbow Special Care Center, Little Rock, Arkansas 1996-1997 Teacher’s Assistant, Cowell Elem entary, Conway, Arkansas Education University of Arkansas at Little Rock, Little Rock, AR • BS in Early Childhood Development (1999) • BA in Elementary Education (1998) • GPA (4.0 Scale): Early Childhood Development – 3.8, Elementary Education – 3.5, Overall 3.4. • Dean’s List, Chancellor’s List"
+      }
+    ],
+    "uploaded_at": "2026-07-30 04:11:15",
+    "revision": "R1",
+    "approval_state": "Draft",
+    "owner": "QA",
+    "uploaded_by": "usr_627740e0fb24",
+    "uploaded_by_name": "QA Administrator",
+    "last_reviewed": "2026-07-30 04:11:15",
+    "size": 98553,
+    "stored_name": "5a3fa4b9ab39479a81d997e8b6bb2934_functionalsample.pdf",
+    "score": 0,
+    "missing_pointers": [
+      "Introduction",
+      "Methodology",
+      "Results",
+      "Conclusion",
       "Safety Warning"
     ]
   }

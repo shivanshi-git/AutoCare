@@ -28,5 +28,16 @@
     "department": "Service & Maintenance",
     "timestamp": "2026-07-30 03:26:10",
     "status": "New"
+  },
+  {
+    "id": "tkt_1785362715092",
+    "name": "nwcwjon",
+    "email": "shi.vanshi.00626@gmail.com",
+    "phone": "94-384",
+    "query": "Comprehensive details and guidelines regarding: What is included in a design review of new parts?",
+    "department": "General Inquiry",
+    "reason": "hscf",
+    "timestamp": "2026-07-30 03:35:15",
+    "status": "New"
   }
 ]
