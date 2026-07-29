@@ -1373,6 +1373,7 @@ async def upload_document(
             raise HTTPException(status_code=403, detail="You can only replace your own drafts.")
             
     if existing_doc:
+        old_stored_name = existing_doc.get("stored_name")
         document = existing_doc
         document.update({
             "name": Path(file.filename).name,
@@ -1414,6 +1415,11 @@ async def upload_document(
         file_path.write_bytes(contents)
         if not existing_doc:
             DOCUMENTS.append(document)
+        else:
+            if old_stored_name:
+                old_file_path = UPLOADS_PATH / old_stored_name
+                if old_file_path.exists() and old_file_path != file_path:
+                    old_file_path.unlink(missing_ok=True)
         persist_documents()
         rebuild_document_index()
         audit("document.uploaded", principal, document["id"], {

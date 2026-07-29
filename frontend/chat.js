@@ -1,9 +1,9 @@
 (() => {
-  document.body.insertAdjacentHTML("beforeend",`<div class="portal-auth-gate" id="portalAuthGate"><form class="portal-login-card" id="portalLoginForm"><div class="portal-login-mark">M</div><h2>Sign in to AutoCare</h2><p>Your role controls document contribution and review access.</p><label>Username<input id="portalUsername" autocomplete="username" required></label><label>Password<input id="portalPassword" type="password" autocomplete="current-password" required></label><button type="submit">Sign in</button><div class="portal-login-error" id="portalLoginError"></div><p class="portal-role-note">Engineering and QA can submit documents. Production and Parts Quality have read-only access.</p></form></div>`);
-  const gate=document.getElementById("portalAuthGate"),form=document.getElementById("portalLoginForm"),error=document.getElementById("portalLoginError");
-  const showGate=message=>{document.documentElement.classList.add("portal-auth-pending");gate.classList.add("open");if(message){error.textContent=message;error.style.display="block"}};
-  const hideGate=()=>{gate.classList.remove("open");document.documentElement.classList.remove("portal-auth-pending");error.style.display="none"};
-  
+  document.body.insertAdjacentHTML("beforeend", `<div class="portal-auth-gate" id="portalAuthGate"><form class="portal-login-card" id="portalLoginForm"><div class="portal-login-mark">M</div><h2>Sign in to AutoCare</h2><p>Your role controls document contribution and review access.</p><label>Username<input id="portalUsername" autocomplete="username" required></label><label>Password<input id="portalPassword" type="password" autocomplete="current-password" required></label><button type="submit">Sign in</button><div class="portal-login-error" id="portalLoginError"></div><p class="portal-role-note">Engineering and QA can submit documents. Production and Parts Quality have read-only access.</p></form></div>`);
+  const gate = document.getElementById("portalAuthGate"), form = document.getElementById("portalLoginForm"), error = document.getElementById("portalLoginError");
+  const showGate = message => { document.documentElement.classList.add("portal-auth-pending"); gate.classList.add("open"); if (message) { error.textContent = message; error.style.display = "block" } };
+  const hideGate = () => { gate.classList.remove("open"); document.documentElement.classList.remove("portal-auth-pending"); error.style.display = "none" };
+
   const loadDrafts = async () => {
     try {
       const response = await fetch(`${API_BASE}/api/documents`);
@@ -18,51 +18,51 @@
         const group = document.getElementById('replaceDraftGroup');
         if (group) group.style.display = 'block';
       }
-    } catch(e) { console.error("Failed to load drafts", e); }
+    } catch (e) { console.error("Failed to load drafts", e); }
   };
 
-  const populatePortalConfig=async()=>{
-    const response=await fetch(`${API_BASE}/api/config`,{headers:portalAuthHeaders()});if(!response.ok)return;
-    const config=await response.json();
-    [["portalDocModel",config.models],["portalDocTeam",config.teams],["portalDocCategory",config.categories]].forEach(([id,values])=>{const select=document.getElementById(id);select.innerHTML=values.map(value=>`<option>${escapeHtml(value)}</option>`).join("")});
-    document.getElementById("dataEntryRoleCopy").textContent=portalUser.role==="Engineering"&&config.engineering_upload_requires_qa_approval?"Engineering uploads are submitted to QA for approval before publication.":"Your upload permission allows documents to be added to the QA library.";
+  const populatePortalConfig = async () => {
+    const response = await fetch(`${API_BASE}/api/config`, { headers: portalAuthHeaders() }); if (!response.ok) return;
+    const config = await response.json();
+    [["portalDocModel", config.models], ["portalDocTeam", config.teams], ["portalDocCategory", config.categories]].forEach(([id, values]) => { const select = document.getElementById(id); select.innerHTML = values.map(value => `<option>${escapeHtml(value)}</option>`).join("") });
+    document.getElementById("dataEntryRoleCopy").textContent = portalUser.role === "Engineering" && config.engineering_upload_requires_qa_approval ? "Engineering uploads are submitted to QA for approval before publication." : "Your upload permission allows documents to be added to the QA library.";
     await loadDrafts();
   };
-  const applyUser=user=>{
-    portalUser=user;
-    document.querySelectorAll(".role-upload-only").forEach(element=>element.hidden=!user.permissions.includes("upload"));
-    const profile=document.querySelector(".user-profile");
-    if(profile){
-      profile.querySelector(".profile-avatar").textContent=user.department==="Parts Quality"?"PQ":user.department.slice(0,2).toUpperCase();
-      profile.querySelector(".profile-name").textContent=user.name;
-      profile.querySelector(".profile-role").textContent=`${user.department} · ${user.role}`;
-      if(!profile.querySelector(".profile-signout"))profile.insertAdjacentHTML("beforeend",`<button class="profile-signout" type="button" title="Sign out">↪</button>`);
-      profile.querySelector(".profile-signout").onclick=()=>{sessionStorage.removeItem("autocare_portal_token");portalToken="";portalUser=null;showGate()};
+  const applyUser = user => {
+    portalUser = user;
+    document.querySelectorAll(".role-upload-only").forEach(element => element.hidden = !user.permissions.includes("upload"));
+    const profile = document.querySelector(".user-profile");
+    if (profile) {
+      profile.querySelector(".profile-avatar").textContent = user.department === "Parts Quality" ? "PQ" : user.department.slice(0, 2).toUpperCase();
+      profile.querySelector(".profile-name").textContent = user.name;
+      profile.querySelector(".profile-role").textContent = `${user.department} · ${user.role}`;
+      if (!profile.querySelector(".profile-signout")) profile.insertAdjacentHTML("beforeend", `<button class="profile-signout" type="button" title="Sign out">↪</button>`);
+      profile.querySelector(".profile-signout").onclick = () => { sessionStorage.removeItem("autocare_portal_token"); portalToken = ""; portalUser = null; showGate() };
     }
-    const adminLink=document.querySelector('.sidebar-footer a[href="admin.html"]');
-    if(adminLink)adminLink.style.display=user.role==="QA Admin"?"flex":"none";
+    const adminLink = document.querySelector('.sidebar-footer a[href="admin.html"]');
+    if (adminLink) adminLink.style.display = user.role === "QA Admin" ? "flex" : "none";
     populatePortalConfig();
   };
-  const verify=async()=>{
-    if(!portalToken){showGate();return}
-    try{
-      const response=await fetch(`${API_BASE}/api/auth/me`,{headers:portalAuthHeaders()});
-      if(!response.ok)throw new Error();
-      const data=await response.json();applyUser(data.user);hideGate();await loadKb();window.renderWorkspace?.();
-    }catch{sessionStorage.removeItem("autocare_portal_token");portalToken="";showGate("Your session expired. Please sign in again.")}
+  const verify = async () => {
+    if (!portalToken) { showGate(); return }
+    try {
+      const response = await fetch(`${API_BASE}/api/auth/me`, { headers: portalAuthHeaders() });
+      if (!response.ok) throw new Error();
+      const data = await response.json(); applyUser(data.user); hideGate(); await loadKb(); window.renderWorkspace?.();
+    } catch { sessionStorage.removeItem("autocare_portal_token"); portalToken = ""; showGate("Your session expired. Please sign in again.") }
   };
-  form.addEventListener("submit",async event=>{
-    event.preventDefault();error.style.display="none";
-    const button=form.querySelector("button");button.disabled=true;button.textContent="Signing in…";
-    try{
-      const response=await fetch(`${API_BASE}/api/auth/login`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username:document.getElementById("portalUsername").value,password:document.getElementById("portalPassword").value})});
-      const data=await response.json();if(!response.ok)throw new Error(data.detail||"Sign-in failed.");
-      portalToken=data.token;sessionStorage.setItem("autocare_portal_token",portalToken);applyUser(data.user);hideGate();form.reset();await loadKb();
-    }catch(err){error.textContent=err.message;error.style.display="block"}finally{button.disabled=false;button.textContent="Sign in"}
+  form.addEventListener("submit", async event => {
+    event.preventDefault(); error.style.display = "none";
+    const button = form.querySelector("button"); button.disabled = true; button.textContent = "Signing in…";
+    try {
+      const response = await fetch(`${API_BASE}/api/auth/login`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username: document.getElementById("portalUsername").value, password: document.getElementById("portalPassword").value }) });
+      const data = await response.json(); if (!response.ok) throw new Error(data.detail || "Sign-in failed.");
+      portalToken = data.token; sessionStorage.setItem("autocare_portal_token", portalToken); applyUser(data.user); hideGate(); form.reset(); await loadKb();
+    } catch (err) { error.textContent = err.message; error.style.display = "block" } finally { button.disabled = false; button.textContent = "Sign in" }
   });
-  const uploadZone=document.getElementById("portalUploadZone");
+  const uploadZone = document.getElementById("portalUploadZone");
   let currentUploadDraftId = null;
-  const chooseFile=()=>{const input=document.createElement("input");input.type="file";input.accept=".pdf";input.onchange=()=>uploadPortalDocument(input.files[0]);input.click()};
+  const chooseFile = () => { const input = document.createElement("input"); input.type = "file"; input.accept = ".pdf"; input.onchange = () => uploadPortalDocument(input.files[0]); input.click() };
   document.getElementById('portalReplaceDoc')?.addEventListener('change', (e) => {
     currentUploadDraftId = e.target.value || null;
   });
@@ -124,9 +124,9 @@
       </div>
       ${pointersHtml}
       <div class="score-card-actions">
-        ${isReplacement 
-          ? `<button class="score-btn score-btn-draft" id="scoreCardReplaceBtn" type="button" onclick="if(window.startDraftReplacement) window.startDraftReplacement('${escapeHtml(docId)}')">Replace Draft</button>` 
-          : `<button class="score-btn score-btn-draft" id="scoreCardDraftBtn" data-doc-id="${escapeHtml(docId)}">Save as Draft</button>`}
+        ${isReplacement
+        ? `<button class="score-btn score-btn-draft" id="scoreCardReplaceBtn" type="button" data-doc-id="${escapeHtml(docId)}">Replace Draft</button>`
+        : `<button class="score-btn score-btn-draft" id="scoreCardDraftBtn" data-doc-id="${escapeHtml(docId)}">Save as Draft</button>`}
         <button class="score-btn score-btn-submit" id="scoreCardSubmitBtn" data-doc-id="${escapeHtml(docId)}" ${isPass ? '' : 'disabled'}>Submit for Approval</button>
         <span class="score-card-toast" id="scoreCardToast"></span>
       </div>
@@ -157,11 +157,18 @@
   /* ── Wire score card action buttons ── */
   function wireScoreCardButtons() {
     const draftBtn = document.getElementById('scoreCardDraftBtn');
+    const replaceBtn = document.getElementById('scoreCardReplaceBtn');
     const submitBtn = document.getElementById('scoreCardSubmitBtn');
     const toast = document.getElementById('scoreCardToast');
 
     draftBtn?.addEventListener('click', () => {
       toast.textContent = '✓ Saved as draft';
+      toast.classList.add('visible');
+      setTimeout(() => toast.classList.remove('visible'), 3000);
+    });
+
+    replaceBtn?.addEventListener('click', () => {
+      toast.textContent = '✓ Draft replaced';
       toast.classList.add('visible');
       setTimeout(() => toast.classList.remove('visible'), 3000);
     });
@@ -201,37 +208,42 @@
   }
 
   /* ── Upload handler ── */
-  const uploadPortalDocument=async file=>{
-    const resultEl=document.getElementById("portalUploadResult");
-    if(!portalUser?.permissions.includes("upload"))return;
-    if(!file||!file.name.toLowerCase().endsWith(".pdf")){resultEl.innerHTML=`<div class="score-card" style="padding:18px 24px"><p style="margin:0;color:#ff453a;font-weight:600;font-size:12px">Please select a PDF file.</p></div>`;return}
-    uploadZone.style.pointerEvents="none";uploadZone.innerHTML=`<strong>Reading ${escapeHtml(file.name)}…</strong><span>Classifying and indexing the document.</span>`;
-    const body=new FormData();body.append("file",file);body.append("model",document.getElementById("portalDocModel").value);body.append("team",document.getElementById("portalDocTeam").value);body.append("category",document.getElementById("portalDocCategory").value);
+  const uploadPortalDocument = async file => {
+    const resultEl = document.getElementById("portalUploadResult");
+    if (!portalUser?.permissions.includes("upload")) return;
+    if (!file || !file.name.toLowerCase().endsWith(".pdf")) { resultEl.innerHTML = `<div class="score-card" style="padding:18px 24px"><p style="margin:0;color:#ff453a;font-weight:600;font-size:12px">Please select a PDF file.</p></div>`; return }
+    uploadZone.style.pointerEvents = "none"; uploadZone.innerHTML = `<strong>Reading ${escapeHtml(file.name)}…</strong><span>Classifying and indexing the document.</span>`;
+    const body = new FormData(); body.append("file", file); body.append("model", document.getElementById("portalDocModel").value); body.append("team", document.getElementById("portalDocTeam").value); body.append("category", document.getElementById("portalDocCategory").value);
     // If we have a current draft, auto-replace it
     const replaceId = currentUploadDraftId || document.getElementById("portalReplaceDoc")?.value;
-    if(replaceId) body.append("replace_document_id",replaceId);
-    try{
-      const response=await fetch(`${API_BASE}/api/documents/upload`,{method:"POST",headers:portalAuthHeaders(),body});
-      const data=await response.json();if(!response.ok)throw new Error(data.detail||"Upload failed.");
-      // Track the draft ID for subsequent re-uploads
-      if (data.document?.id) {
+    if (replaceId) body.append("replace_document_id", replaceId);
+    try {
+      const response = await fetch(`${API_BASE}/api/documents/upload`, { method: "POST", headers: portalAuthHeaders(), body });
+      const data = await response.json(); if (!response.ok) throw new Error(data.detail || "Upload failed.");
+      // Track the draft ID for subsequent re-uploads — only when this
+      // upload was itself a replacement. A fresh "New Document" upload
+      // must leave the dropdown on "New Document".
+      const select = document.getElementById('portalReplaceDoc');
+      if (replaceId && data.document?.id) {
         currentUploadDraftId = data.document.id;
-        const select = document.getElementById('portalReplaceDoc');
         if (select) {
           const exists = Array.from(select.options).some(opt => opt.value === currentUploadDraftId);
           if (!exists) select.insertAdjacentHTML('beforeend', `<option value="${currentUploadDraftId}">${currentUploadDraftId} - Just Uploaded</option>`);
           select.value = currentUploadDraftId;
         }
+      } else {
+        currentUploadDraftId = null;
+        if (select) select.value = '';
       }
       // Render the score card
       resultEl.innerHTML = buildScoreCard(data, !!replaceId);
       animateScoreCard();
       wireScoreCardButtons();
       await loadKb();
-    }catch(err){resultEl.innerHTML=`<div class="score-card" style="padding:18px 24px"><p style="margin:0;color:#ff453a;font-weight:600;font-size:12px">${escapeHtml(err.message)}</p></div>`}finally{uploadZone.style.pointerEvents="";uploadZone.innerHTML=`<span class="portal-upload-icon" aria-hidden="true">↑</span><strong>Select or drop a PDF</strong><span>Maximum 15 MB · Engineering submissions go to QA approval.</span><span class="portal-upload-action">Choose PDF</span>`}
+    } catch (err) { resultEl.innerHTML = `<div class="score-card" style="padding:18px 24px"><p style="margin:0;color:#ff453a;font-weight:600;font-size:12px">${escapeHtml(err.message)}</p></div>` } finally { uploadZone.style.pointerEvents = ""; uploadZone.innerHTML = `<span class="portal-upload-icon" aria-hidden="true">↑</span><strong>Select or drop a PDF</strong><span>Maximum 15 MB · Engineering submissions go to QA approval.</span><span class="portal-upload-action">Choose PDF</span>` }
   };
-  uploadZone.addEventListener("click",chooseFile);uploadZone.addEventListener("keydown",event=>{if(event.key==="Enter"||event.key===" "){event.preventDefault();chooseFile()}});
-  ["dragenter","dragover","dragleave","drop"].forEach(name=>uploadZone.addEventListener(name,event=>{event.preventDefault();event.stopPropagation()}));
-  uploadZone.addEventListener("drop",event=>uploadPortalDocument(event.dataTransfer.files[0]));
+  uploadZone.addEventListener("click", chooseFile); uploadZone.addEventListener("keydown", event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); chooseFile() } });
+  ["dragenter", "dragover", "dragleave", "drop"].forEach(name => uploadZone.addEventListener(name, event => { event.preventDefault(); event.stopPropagation() }));
+  uploadZone.addEventListener("drop", event => uploadPortalDocument(event.dataTransfer.files[0]));
   verify();
 })();
