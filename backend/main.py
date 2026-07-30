@@ -240,7 +240,14 @@ app.add_middleware(
 # Load Model & FAQ data at startup
 # ---------------------------------------------------------------------------
 # Load lightweight ONNX-based semantic embedding model (FastEmbed - ~100MB RAM vs PyTorch 500MB+)
-embedding_model = TextEmbedding("sentence-transformers/all-MiniLM-L6-v2") if TextEmbedding else None
+try:
+    if TextEmbedding and not os.getenv("DISABLE_FASTEMBED"):
+        embedding_model = TextEmbedding("sentence-transformers/all-MiniLM-L6-v2")
+    else:
+        embedding_model = None
+except Exception as err:
+    logger.warning("Failed to initialize FastEmbed model, using lightweight embedding fallback: %s", err)
+    embedding_model = None
 
 
 def lightweight_embedding(text: str) -> np.ndarray:
@@ -1920,8 +1927,35 @@ async def upload_pdf(file: UploadFile = File(...), principal: dict = Depends(req
         )
 
 
+FRONTEND_DIR = Path(__file__).parent.parent / "frontend"
+
+@app.get("/")
+def serve_index():
+    index_path = FRONTEND_DIR / "index.html"
+    if index_path.exists():
+        return FileResponse(index_path)
+    return {"message": "AutoCare API is running"}
+
+
+@app.get("/admin")
+def serve_admin():
+    admin_path = FRONTEND_DIR / "admin.html"
+    if admin_path.exists():
+        return FileResponse(admin_path)
+    return {"message": "Admin portal"}
+
+
+@app.get("/{filename:path}")
+def serve_static_root(filename: str):
+    file_path = FRONTEND_DIR / filename
+    if file_path.is_file():
+        return FileResponse(file_path)
+    raise HTTPException(status_code=404, detail="Resource not found")
+
+
 if __name__ == "__main__":
     import uvicorn
     port = int(os.getenv("PORT", 8000))
     uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True)
+
 

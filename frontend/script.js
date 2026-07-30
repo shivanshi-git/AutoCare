@@ -1,7 +1,7 @@
 // ---------- Configuration ----------
 const BACKEND_RENDER_URL = window.RENDER_BACKEND_URL || "https://autocare-backend.onrender.com";
 const API_BASE = (window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost")
-  ? "http://127.0.0.1:8000"
+  ? (window.location.port === "8000" ? window.location.origin : "http://127.0.0.1:8000")
   : (window.location.origin.includes("onrender.com") && !window.location.origin.includes("-backend") ? BACKEND_RENDER_URL : window.location.origin);
 const API_KEY = "admin-secret-key"; // Default API key used in development
 
