@@ -30,11 +30,11 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel, Field
 import numpy as np
 import pypdf
-if not os.getenv("VERCEL"):
-    # pyrefly: ignore [missing-import]
+try:
     from fastembed import TextEmbedding
-else:
+except ImportError:
     TextEmbedding = None
+
 try:
     from openai import OpenAI
 except ImportError:
@@ -43,31 +43,8 @@ except ImportError:
 # Load environment configuration from root .env
 load_dotenv(Path(__file__).parent.parent / ".env")
 
-# Vercel functions can only write to /tmp. Seed a per-instance working copy of
-# the bundled JSON data so the existing local persistence layer remains usable.
 SOURCE_DATA_DIR = Path(__file__).parent
-DATA_DIR = Path("/tmp/autocare") if os.getenv("VERCEL") else SOURCE_DATA_DIR
-if DATA_DIR != SOURCE_DATA_DIR:
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
-    for seed_name in (
-        "users.json",
-        "admin_settings.json",
-        "audit_log.json",
-        "faqs.json",
-        "escalations.json",
-        "documents.json",
-        "dashboard_activity.json",
-        "autocare_process.json",
-        "unanswered_queries.log",
-    ):
-        source = SOURCE_DATA_DIR / seed_name
-        target = DATA_DIR / seed_name
-        if source.exists() and not target.exists():
-            shutil.copy2(source, target)
-    source_uploads = SOURCE_DATA_DIR / "uploads"
-    target_uploads = DATA_DIR / "uploads"
-    if source_uploads.exists() and not target_uploads.exists():
-        shutil.copytree(source_uploads, target_uploads)
+DATA_DIR = SOURCE_DATA_DIR
 
 # ---------------------------------------------------------------------------
 # Logging & Analytics for Knowledge Base Gaps

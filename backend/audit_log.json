@@ -1633,5 +1633,23 @@
       "category": "New Parts Details",
       "replaced": true
     }
+  },
+  {
+    "id": "audit_5be7d9f2c872",
+    "timestamp": "2026-07-30T15:47:07",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_627740e0fb24",
+    "details": {}
+  },
+  {
+    "id": "audit_87970b0279ae",
+    "timestamp": "2026-07-30T15:47:18",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_627740e0fb24",
+    "details": {}
   }
 ]
