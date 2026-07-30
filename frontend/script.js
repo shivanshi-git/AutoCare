@@ -1,8 +1,11 @@
 // ---------- Configuration ----------
 const BACKEND_RENDER_URL = window.RENDER_BACKEND_URL || "https://autocare-backend.onrender.com";
-const API_BASE = (window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost")
-  ? (window.location.port === "8000" ? window.location.origin : "http://127.0.0.1:8000")
-  : (window.location.origin.includes("onrender.com") && !window.location.origin.includes("-backend") ? BACKEND_RENDER_URL : window.location.origin);
+const overrideApiBase = localStorage.getItem("autocare_api_base");
+const API_BASE = overrideApiBase || (
+  (window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost")
+    ? (window.location.port === "8005" || window.location.port === "8000" ? window.location.origin : "http://127.0.0.1:8005")
+    : BACKEND_RENDER_URL
+);
 const API_KEY = "admin-secret-key"; // Default API key used in development
 
 let kb = [];
