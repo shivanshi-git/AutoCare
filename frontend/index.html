@@ -1009,12 +1009,16 @@
 
 <script>
 // ---------- Configuration ----------
-const BACKEND_RENDER_URL = window.RENDER_BACKEND_URL || "https://autocare-backend.onrender.com";
-const overrideApiBase = localStorage.getItem("autocare_api_base");
-const API_BASE = overrideApiBase || (
-  (window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost")
-    ? (window.location.port === "8005" || window.location.port === "8000" ? window.location.origin : "http://127.0.0.1:8005")
-    : BACKEND_RENDER_URL
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.has("api")) {
+  localStorage.setItem("API_BASE", urlParams.get("api"));
+}
+const API_BASE = window.API_BASE || localStorage.getItem("API_BASE") || (
+  window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost"
+    ? "http://127.0.0.1:8005"
+    : (window.location.hostname.includes("onrender.com") || window.location.hostname.includes("autocare"))
+      ? "https://autocare-backend-qdkf.onrender.com"
+      : window.location.origin
 );
 let portalToken = sessionStorage.getItem("autocare_portal_token") || "";
 let portalUser = null;
