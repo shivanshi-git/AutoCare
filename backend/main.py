@@ -912,17 +912,24 @@ def list_faqs(principal: dict = Depends(require_permission("view"))):
 def dashboard_summary(principal: dict = Depends(require_permission("view"))):
     """Return live QA dashboard metrics, trends, approvals, and overdue work."""
     now = datetime.now(timezone.utc)
+    now_naive = now.replace(tzinfo=None)
     settings = load_admin_settings()
     activity = load_json_list(DASHBOARD_ACTIVITY_PATH)
     escalations = load_json_list(ESCALATIONS_PATH)
-    today = now.date()
-    today_activity = [
-        item for item in activity
-        if datetime.fromisoformat(item["timestamp"]).date() == today
-    ]
+    today = now_naive.date()
+    today_activity = []
+    for item in activity:
+        ts = item.get("timestamp") if isinstance(item, dict) else None
+        if not ts:
+            continue
+        try:
+            if datetime.fromisoformat(str(ts).replace(" ", "T")).date() == today:
+                today_activity.append(item)
+        except (ValueError, TypeError):
+            continue
     open_tickets = [
         ticket for ticket in escalations
-        if str(ticket.get("status", "")).lower() != "resolved"
+        if isinstance(ticket, dict) and str(ticket.get("status", "")).lower() != "resolved"
     ]
     pending_approvals = [
         {
@@ -933,15 +940,17 @@ def dashboard_summary(principal: dict = Depends(require_permission("view"))):
             "created_at": faq.get("created_at"),
         }
         for faq in FAQS
-        if str(faq.get("status", "published")).lower() in {"pending", "draft", "review"}
+        if isinstance(faq, dict) and str(faq.get("status", "published")).lower() in {"pending", "draft", "review"}
     ]
     overdue_actions = []
     for ticket in open_tickets:
         try:
             opened_at = datetime.fromisoformat(str(ticket.get("timestamp", "")).replace(" ", "T"))
-        except ValueError:
+            if opened_at.tzinfo is not None:
+                opened_at = opened_at.astimezone(timezone.utc).replace(tzinfo=None)
+            age_hours = int((now_naive - opened_at).total_seconds() // 3600)
+        except (ValueError, TypeError):
             continue
-        age_hours = int((now - opened_at).total_seconds() // 3600)
         if age_hours >= 48:
             overdue_actions.append({
                 "id": ticket.get("id"),
@@ -953,15 +962,21 @@ def dashboard_summary(principal: dict = Depends(require_permission("view"))):
     trend = []
     for offset in range(6, -1, -1):
         day = today - timedelta(days=offset)
-        day_activity = [
-            item for item in activity
-            if datetime.fromisoformat(item["timestamp"]).date() == day
-        ]
+        day_activity = []
+        for item in activity:
+            ts = item.get("timestamp") if isinstance(item, dict) else None
+            if not ts:
+                continue
+            try:
+                if datetime.fromisoformat(str(ts).replace(" ", "T")).date() == day:
+                    day_activity.append(item)
+            except (ValueError, TypeError):
+                continue
         trend.append({
             "date": day.isoformat(),
             "label": day.strftime("%a"),
             "queries": len(day_activity),
-            "document_grounded": sum(bool(item.get("document_grounded")) for item in day_activity),
+            "document_grounded": sum(bool(item.get("document_grounded")) for item in day_activity if isinstance(item, dict)),
         })
     can_view_qa_documents = "upload" in ROLE_PERMISSIONS.get(principal["role"], set())
     documents_under_qa = [
