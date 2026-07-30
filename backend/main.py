@@ -1904,7 +1904,9 @@ async def upload_pdf(file: UploadFile = File(...), principal: dict = Depends(req
         )
 
 
-FRONTEND_DIR = Path(__file__).parent.parent / "frontend"
+FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend"
+if not FRONTEND_DIR.exists():
+    FRONTEND_DIR = Path(__file__).resolve().parent / "frontend"
 
 @app.get("/")
 def serve_index():
@@ -1924,6 +1926,8 @@ def serve_admin():
 
 @app.get("/{filename:path}")
 def serve_static_root(filename: str):
+    if filename in ("docs", "redoc", "openapi.json") or filename.startswith("api/"):
+        raise HTTPException(status_code=404, detail="Not Found")
     file_path = FRONTEND_DIR / filename
     if file_path.is_file():
         return FileResponse(file_path)
