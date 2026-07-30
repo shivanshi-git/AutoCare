@@ -18,7 +18,7 @@ import hashlib
 import hmac
 import secrets
 import shutil
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Optional
 
@@ -911,7 +911,7 @@ def list_faqs(principal: dict = Depends(require_permission("view"))):
 @app.get("/api/dashboard")
 def dashboard_summary(principal: dict = Depends(require_permission("view"))):
     """Return live QA dashboard metrics, trends, approvals, and overdue work."""
-    now = datetime.now()
+    now = datetime.now(timezone.utc)
     settings = load_admin_settings()
     activity = load_json_list(DASHBOARD_ACTIVITY_PATH)
     escalations = load_json_list(ESCALATIONS_PATH)

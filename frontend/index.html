@@ -3686,7 +3686,8 @@ loadKb().then(restoreWorkspaceState);
       renderStats(data.metrics,data.trend);
       renderQueue(data);
       renderPipeline(data.autocare_pipeline||{documents_under_qa:[],documents_under_qa_count:0,can_view_qa_documents:false,active_models:[],upcoming_models:[]});
-      document.getElementById("dashboardUpdatedAt").textContent=`Live data · updated ${new Date(data.generated_at).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})}`;
+      const genIso = data.generated_at ? (data.generated_at.endsWith("Z") || data.generated_at.includes("+") ? data.generated_at : data.generated_at + "Z") : new Date().toISOString();
+      document.getElementById("dashboardUpdatedAt").textContent=`Live data · updated ${new Date(genIso).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})}`;
     }catch(error){
       document.getElementById("dashboardUpdatedAt").textContent="Live dashboard data is temporarily unavailable";
     }
