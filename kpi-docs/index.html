@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mizenboshi KPI Documentation Portal</title>
+  <meta name="description" content="KPI documentation and interactive prototype clone of the Mizenboshi Knowledge Assistant dashboard.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- TOP HEADER BAR -->
+  <header class="top-menu-bar">
+    <div class="menu-title">📊 Mizenboshi Telemetry & KPI Specification docs</div>
+    <div class="top-actions">
+      <div style="position: relative; width: 220px;">
+        <input type="text" id="kpiSearchInput" placeholder="Search KPI parameters..." style="width:100%; background:var(--dash-card); border:1px solid var(--dash-border); border-radius:4px; padding:4px 8px 4px 26px; color:var(--dash-text); font-size:11.5px; outline:none">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute; left:8px; top:50%; transform:translateY(-50%); width:12px; height:12px; color:var(--dash-text-muted)"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </div>
+      <button class="tab-toggle-btn active" data-tab="replica">🔍 Inspector Replica</button>
+      <button class="tab-toggle-btn" data-tab="toc">📖 KPI Catalog Index</button>
+    </div>
+  </header>
+
+  <!-- APP FRAME LAYOUT -->
+  <div class="app-frame">
+
+    <!-- SPLIT CONTAINER -->
+    <div class="split-container" id="view-replica">
+
+      <!-- LEFT PANE: HIGH-FIDELITY DASHBOARD REPLICA -->
+      <div class="pane-left">
+        
+        <div class="dashboard-replica">
+          
+          <!-- SIDEBAR CLONE -->
+          <div class="rep-sidebar">
+            <div class="rep-brand">
+              <div class="rep-logo">M</div>
+              <div>
+                <div class="rep-brand-name">Mizenboshi</div>
+                <div style="font-size:9px; color:var(--dash-text-muted)">Knowledge Assistant</div>
+              </div>
+            </div>
+            
+            <div class="rep-group-title">Tools & Management</div>
+            <div class="rep-link active">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+              Dashboard
+            </div>
+            <div class="rep-link">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+              KPI Documentation
+            </div>
+            <div class="rep-link">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Legal & Policies
+            </div>
+            <div class="rep-link">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              AI Chat
+            </div>
+            <div class="rep-link">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+              Departments
+            </div>
+            <div class="rep-link">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 22s1-1 1-2V4s0-2 2-2h14s2 0 2 2v16s0 1 1 2H2z"/></svg>
+              Documents
+            </div>
+            <div class="rep-link">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+              Data Upload
+            </div>
+            <div class="rep-link">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              FAQs
+            </div>
+            <div class="rep-link">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              Search
+            </div>
+            <div class="rep-link">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+              My Workspace
+            </div>
+            <div class="rep-link">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+              Projects
+            </div>
+            
+            <!-- USER CARD COMPONENT CLONE -->
+            <div class="rep-user-card">
+              <div class="rep-user-info">
+                <div class="rep-user-avatar">QA</div>
+                <div>
+                  <div style="font-weight:600; color:var(--dash-text-bright)">QA Administrator</div>
+                  <div style="font-size:9.5px; color:var(--dash-text-muted)">QA Department</div>
+                </div>
+              </div>
+              <div class="rep-theme-row">
+                <button class="rep-theme-btn" data-theme="light">Light</button>
+                <button class="rep-theme-btn active" data-theme="dark">Dark</button>
+                <button class="rep-theme-btn" data-theme="auto">Auto</button>
+              </div>
+              <button class="rep-btn-logout">Log Out</button>
+              <div style="font-size:9px; color:var(--dash-text-muted); margin-top:8px; text-align:center">v0.2.0 - ACTIVE AR</div>
+            </div>
+          </div>
+
+          <!-- MAIN PANEL CLONE -->
+          <div class="rep-main">
+            
+            <!-- TOP BANNER -->
+            <div class="rep-top-banner">
+              <div class="rep-banner-left">QA knowledge activity across Engineering, Production, and Parts Quality</div>
+              <div class="rep-banner-right">
+                <div class="rep-switch annotated-element" data-target="live-switch">
+                  <div class="rep-switch-dot"></div>
+                  <span>Live data</span>
+                </div>
+                <button class="rep-btn-portal">QA/MD Admin Portal</button>
+              </div>
+            </div>
+
+            <!-- LIVE ACTIVITY TELEMETRY -->
+            <div style="font-size:11px; font-weight:700; text-transform:uppercase; margin-bottom:8px; color:var(--dash-text-muted)">Live activity</div>
+            <div class="rep-grid-4">
+              
+              <!-- Card 1: QA Queries -->
+              <div class="rep-kpi-card annotated-element selected" data-target="qa-queries">
+                <div class="rep-kpi-title">QA queries today</div>
+                <div class="rep-kpi-val">0</div>
+                <div class="rep-kpi-sub">Live from the QA Backend</div>
+                <div class="rep-kpi-graph">
+                  <div class="rep-kpi-bar" style="height: 10%"></div>
+                  <div class="rep-kpi-bar" style="height: 15%"></div>
+                  <div class="rep-kpi-bar" style="height: 8%"></div>
+                  <div class="rep-kpi-bar" style="height: 35%"></div>
+                  <div class="rep-kpi-bar" style="height: 20%"></div>
+                  <div class="rep-kpi-bar" style="height: 40%"></div>
+                  <div class="rep-kpi-bar" style="height: 50%"></div>
+                  <div class="rep-kpi-bar" style="height: 15%"></div>
+                  <div class="rep-kpi-bar" style="height: 30%"></div>
+                </div>
+              </div>
+
+              <!-- Card 2: Document Grounded -->
+              <div class="rep-kpi-card annotated-element" data-target="doc-grounded">
+                <div class="rep-kpi-title">Document grounded</div>
+                <div class="rep-kpi-val">0</div>
+                <div class="rep-kpi-sub">No queries yet</div>
+                <div class="rep-kpi-graph">
+                  <div class="rep-kpi-bar" style="height: 20%"></div>
+                  <div class="rep-kpi-bar" style="height: 10%"></div>
+                  <div class="rep-kpi-bar" style="height: 45%"></div>
+                  <div class="rep-kpi-bar" style="height: 12%"></div>
+                  <div class="rep-kpi-bar" style="height: 25%"></div>
+                  <div class="rep-kpi-bar" style="height: 5%"></div>
+                  <div class="rep-kpi-bar" style="height: 60%"></div>
+                  <div class="rep-kpi-bar" style="height: 35%"></div>
+                  <div class="rep-kpi-bar" style="height: 18%"></div>
+                </div>
+              </div>
+
+              <!-- Card 3: Open Tickets -->
+              <div class="rep-kpi-card annotated-element" data-target="open-tickets">
+                <div class="rep-kpi-title">Open QA tickets</div>
+                <div class="rep-kpi-val">0</div>
+                <div class="rep-kpi-sub">0 overdue</div>
+                <div class="rep-kpi-graph">
+                  <div class="rep-kpi-bar" style="height: 8%"></div>
+                  <div class="rep-kpi-bar" style="height: 20%"></div>
+                  <div class="rep-kpi-bar" style="height: 15%"></div>
+                  <div class="rep-kpi-bar" style="height: 30%"></div>
+                  <div class="rep-kpi-bar" style="height: 50%"></div>
+                  <div class="rep-kpi-bar" style="height: 12%"></div>
+                  <div class="rep-kpi-bar" style="height: 38%"></div>
+                  <div class="rep-kpi-bar" style="height: 22%"></div>
+                  <div class="rep-kpi-bar" style="height: 40%"></div>
+                </div>
+              </div>
+
+              <!-- Card 4: Approved Docs -->
+              <div class="rep-kpi-card annotated-element" data-target="approved-docs">
+                <div class="rep-kpi-title">Approved documents</div>
+                <div class="rep-kpi-val">8</div>
+                <div class="rep-kpi-sub">0 approvals pending</div>
+                <div class="rep-kpi-graph">
+                  <div class="rep-kpi-bar active" style="height: 30%"></div>
+                  <div class="rep-kpi-bar active" style="height: 45%"></div>
+                  <div class="rep-kpi-bar active" style="height: 20%"></div>
+                  <div class="rep-kpi-bar active" style="height: 60%"></div>
+                  <div class="rep-kpi-bar active" style="height: 40%"></div>
+                  <div class="rep-kpi-bar active" style="height: 50%"></div>
+                  <div class="rep-kpi-bar active" style="height: 80%"></div>
+                  <div class="rep-kpi-bar active" style="height: 35%"></div>
+                  <div class="rep-kpi-bar active" style="height: 100%"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- PIPELINE WORKSPACE Split -->
+            <div class="rep-grid-split">
+              
+              <!-- Documents Under QA -->
+              <div class="rep-section annotated-element" data-target="mizen-pipeline" style="grid-column: span 1">
+                <div class="rep-section-title">Documents under QA</div>
+                <div class="rep-section-sub">Verification checklist queue</div>
+                <div class="rep-pipe-upload" style="display:flex; align-items:center; gap:10px">
+                  <div class="rep-doc-icon">PDF</div>
+                  <div>
+                    <div style="font-weight:600; color:var(--dash-text-bright)">engineering_specifications.pdf</div>
+                    <div style="font-size:10px; color:var(--dash-text-muted)">Engineering Team 3 • v1</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Models In Process progress bars -->
+              <div class="rep-section annotated-element" data-target="mizen-pipeline" style="grid-column: span 1">
+                <div class="rep-section-title">Models in progress</div>
+                <div class="rep-section-sub">Checklist verification completion</div>
+                
+                <div class="rep-bar-row">
+                  <div class="rep-bar-info"><span>Model 1</span><span>4/5 documents</span></div>
+                  <div class="rep-progress"><div class="rep-progress-fill" style="width: 80%"></div></div>
+                </div>
+                <div class="rep-bar-row">
+                  <div class="rep-bar-info"><span>Model 2</span><span>2/5 documents</span></div>
+                  <div class="rep-progress"><div class="rep-progress-fill" style="width: 40%; background: var(--dash-orange)"></div></div>
+                </div>
+                <div class="rep-bar-row">
+                  <div class="rep-bar-info"><span>Model 3</span><span>0/5 documents</span></div>
+                  <div class="rep-progress"><div class="rep-progress-fill" style="width: 0%"></div></div>
+                </div>
+              </div>
+
+              <!-- Upcoming Models -->
+              <div class="rep-section annotated-element" data-target="mizen-pipeline" style="grid-column: span 1">
+                <div class="rep-section-title">Upcoming models</div>
+                <div class="rep-section-sub">Pipeline launch scheduling</div>
+                <div class="rep-upcoming-card">
+                  <div style="font-weight:600; color:var(--dash-text-bright)">Model 4</div>
+                  <div style="font-size:10px; color:var(--dash-text-muted); margin-top:2px">Planned start: Q4 2026</div>
+                  <span class="rep-badge-status rep-badge-gray" style="display:inline-block; margin-top:6px">Preparation</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- PRIORITY TABLE -->
+            <div class="rep-section annotated-element" data-target="priority-table">
+              <div class="rep-section-title">Model system priority overview</div>
+              <div class="rep-section-sub">Detailed validation checklists status per model target parameters</div>
+              
+              <table class="rep-table">
+                <thead>
+                  <tr>
+                    <th>Model</th>
+                    <th>Status</th>
+                    <th>Min Sections</th>
+                    <th>Priority 1</th>
+                    <th>Priority 2</th>
+                    <th>Priority 3</th>
+                    <th>Priority 4</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Model 1</strong></td>
+                    <td><span class="rep-badge-status rep-badge-blue">QA Review</span></td>
+                    <td>5/5</td>
+                    <td><div class="rep-circle-badge rep-circle-red">1</div></td>
+                    <td><div class="rep-circle-badge rep-circle-orange">4</div></td>
+                    <td><div class="rep-circle-badge rep-circle-green">2</div></td>
+                    <td><div class="rep-circle-badge rep-circle-green">4</div></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Model 2</strong></td>
+                    <td><span class="rep-badge-status rep-badge-yellow">WIP Progress</span></td>
+                    <td>5/5</td>
+                    <td><div class="rep-circle-badge rep-circle-red">0</div></td>
+                    <td><div class="rep-circle-badge rep-circle-orange">1</div></td>
+                    <td><div class="rep-circle-badge rep-circle-green">4</div></td>
+                    <td><div class="rep-circle-badge rep-circle-green">4</div></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Model 3</strong></td>
+                    <td><span class="rep-badge-status rep-badge-blue">Engineering Ingest</span></td>
+                    <td>5/5</td>
+                    <td><div class="rep-circle-badge rep-circle-red">0</div></td>
+                    <td><div class="rep-circle-badge rep-circle-orange">2</div></td>
+                    <td><div class="rep-circle-badge rep-circle-green">4</div></td>
+                    <td><div class="rep-circle-badge rep-circle-green">4</div></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Model 4</strong></td>
+                    <td><span class="rep-badge-status rep-badge-gray">Planned</span></td>
+                    <td>5/5</td>
+                    <td><div class="rep-circle-badge rep-circle-red">0</div></td>
+                    <td><div class="rep-circle-badge rep-circle-orange">2</div></td>
+                    <td><div class="rep-circle-badge rep-circle-gray">5</div></td>
+                    <td><div class="rep-circle-badge rep-circle-gray">5</div></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- WORK QUEUE -->
+            <div class="rep-grid-split" style="grid-template-columns: 1.2fr 1fr; margin-bottom:16px">
+              
+              <!-- QA Work Queue -->
+              <div class="rep-section annotated-element" data-target="work-queue">
+                <div class="rep-section-title">QA work queue</div>
+                <div class="rep-section-sub">Approvals that need attention</div>
+                
+                <div style="display:flex; gap:16px; margin-top:8px">
+                  <div style="flex:1">
+                    <div style="font-size:10px; text-transform:uppercase; color:var(--dash-text-muted); margin-bottom:4px">Pending approvals</div>
+                    <div style="padding:16px; border:1px dashed var(--dash-border); border-radius:6px; text-align:center; font-size:11.5px; color:var(--dash-text-muted)">
+                      No QA approvals pending
+                    </div>
+                  </div>
+                  <div style="flex:1">
+                    <div style="font-size:10px; text-transform:uppercase; color:var(--dash-text-muted); margin-bottom:4px">Overdue actions</div>
+                    <div style="padding:16px; border:1px dashed var(--dash-border); border-radius:6px; text-align:center; font-size:11.5px; color:var(--dash-text-muted)">
+                      No overdue actions
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Continue Working -->
+              <div class="rep-section annotated-element" data-target="work-queue">
+                <div class="rep-section-title">Continue working</div>
+                <div class="rep-section-sub">Quick link to documents you recently viewed</div>
+                <div style="padding:22px; border:1px dashed var(--dash-border); border-radius:6px; text-align:center; font-size:11.5px; color:var(--dash-text-muted); margin-top:8px">
+                  Documents you view will appear here for quick access
+                </div>
+              </div>
+            </div>
+
+            <!-- RECENTLY ADDED FILES -->
+            <div class="rep-section annotated-element" data-target="recently-added">
+              <div class="rep-section-title">Recently added files</div>
+              <div class="rep-section-sub">Latest approved QA specifications injected to grounding index</div>
+              
+              <div class="rep-pdf-grid">
+                <div class="rep-pdf-card">
+                  <div style="display:flex; align-items:center; gap:8px">
+                    <div class="rep-doc-icon" style="background:var(--dash-purple)">PDF</div>
+                    <div>
+                      <div style="font-weight:600; color:var(--dash-text-bright)">Engineering drawings.pdf</div>
+                      <div style="font-size:9.5px; color:var(--dash-text-muted)">v1.0 • 2026-08-04</div>
+                    </div>
+                  </div>
+                  <button class="rep-pdf-btn">Preview document</button>
+                </div>
+                <div class="rep-pdf-card">
+                  <div style="display:flex; align-items:center; gap:8px">
+                    <div class="rep-doc-icon" style="background:var(--dash-purple)">PDF</div>
+                    <div>
+                      <div style="font-weight:600; color:var(--dash-text-bright)">Engineering drawings.pdf</div>
+                      <div style="font-size:9.5px; color:var(--dash-text-muted)">v1.0 • 2026-08-04</div>
+                    </div>
+                  </div>
+                  <button class="rep-pdf-btn">Preview document</button>
+                </div>
+                <div class="rep-pdf-card">
+                  <div style="display:flex; align-items:center; gap:8px">
+                    <div class="rep-doc-icon" style="background:var(--dash-purple)">PDF</div>
+                    <div>
+                      <div style="font-weight:600; color:var(--dash-text-bright)">Engineering drawings.pdf</div>
+                      <div style="font-size:9.5px; color:var(--dash-text-muted)">v1.0 • 2026-08-04</div>
+                    </div>
+                  </div>
+                  <button class="rep-pdf-btn">Preview document</button>
+                </div>
+                <div class="rep-pdf-card">
+                  <div style="display:flex; align-items:center; gap:8px">
+                    <div class="rep-doc-icon" style="background:var(--dash-purple)">PDF</div>
+                    <div>
+                      <div style="font-weight:600; color:var(--dash-text-bright)">Engineering drawings.pdf</div>
+                      <div style="font-size:9.5px; color:var(--dash-text-muted)">v1.0 • 2026-08-04</div>
+                    </div>
+                  </div>
+                  <button class="rep-pdf-btn">Preview document</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT PANE: ACTIVE KPI INSPECTOR PANEL -->
+      <div class="pane-right">
+        <div id="inspectorBody">
+          <!-- Injected by app.js when clicking elements -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- MAIN STATIC INDEX VIEW (CATALOG NODE) -->
+    <div class="pane-left hidden" id="view-toc" style="flex:1; padding:32px 48px">
+      <h2 style="margin-top:0">📖 Mizenboshi Telemetry & KPI Specification Catalog</h2>
+      <p style="color:var(--dash-text-muted)">Click any card below to open the element replica and inspect its metrics formulas.</p>
+      
+      <div class="toc-grid" id="tocGrid">
+        <!-- Injected by app.js -->
+      </div>
+    </div>
+
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

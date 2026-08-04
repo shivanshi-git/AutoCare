@@ -1651,5 +1651,57 @@
     "action": "user.login",
     "target": "usr_627740e0fb24",
     "details": {}
+  },
+  {
+    "id": "audit_13f44d2fc402",
+    "timestamp": "2026-07-30T16:40:38",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_627740e0fb24",
+    "details": {}
+  },
+  {
+    "id": "audit_482e5d41903b",
+    "timestamp": "2026-07-30T16:40:49",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "user.login",
+    "target": "usr_627740e0fb24",
+    "details": {}
+  },
+  {
+    "id": "audit_ecf4fbb17c4f",
+    "timestamp": "2026-07-30T16:41:54",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "document.uploaded",
+    "target": "doc_703db73dc70a4296a4909a3023e78658",
+    "details": {
+      "name": "DBMS_SAGAR[2].pdf",
+      "approval_state": "Draft",
+      "score": 0,
+      "model": "Model 1",
+      "team": "Engineering Team 1",
+      "category": "New Parts Details",
+      "replaced": false
+    }
+  },
+  {
+    "id": "audit_38f3be32172b",
+    "timestamp": "2026-07-30T16:42:07",
+    "actor": "QA Administrator",
+    "role": "QA Admin",
+    "action": "document.uploaded",
+    "target": "doc_aff8d33bf4704e508f8812b9c9343c69",
+    "details": {
+      "name": "IMPS00087346337.pdf",
+      "approval_state": "Draft",
+      "score": 0,
+      "model": "Model 1",
+      "team": "Engineering Team 1",
+      "category": "New Parts Details",
+      "replaced": true
+    }
   }
 ]
