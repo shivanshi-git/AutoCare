@@ -1040,9 +1040,14 @@
 
   <script>
     // ---------- Configuration & State ----------
-    const BACKEND_RENDER_URL = window.RENDER_BACKEND_URL || "https://autocare-backend.onrender.com";
-    const overrideApiBase = localStorage.getItem("autocare_api_base");
-    const API_BASE = overrideApiBase || (
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has("api")) {
+      localStorage.setItem("API_BASE", urlParams.get("api"));
+      localStorage.setItem("autocare_api_base", urlParams.get("api"));
+    }
+    const BACKEND_RENDER_URL = window.RENDER_BACKEND_URL || "https://autocare-backend-qdkf.onrender.com";
+    const overrideApiBase = localStorage.getItem("API_BASE") || localStorage.getItem("autocare_api_base");
+    const API_BASE = window.API_BASE || overrideApiBase || (
       (window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost")
         ? (window.location.port === "8005" || window.location.port === "8000" ? window.location.origin : "http://127.0.0.1:8005")
         : BACKEND_RENDER_URL

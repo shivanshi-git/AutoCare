@@ -1009,12 +1009,16 @@
 
 <script>
 // ---------- Configuration ----------
-const BACKEND_RENDER_URL = window.RENDER_BACKEND_URL || "https://autocare-backend.onrender.com";
-const overrideApiBase = localStorage.getItem("autocare_api_base");
-const API_BASE = overrideApiBase || (
-  (window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost")
-    ? (window.location.port === "8005" || window.location.port === "8000" ? window.location.origin : "http://127.0.0.1:8005")
-    : BACKEND_RENDER_URL
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.has("api")) {
+  localStorage.setItem("API_BASE", urlParams.get("api"));
+}
+const API_BASE = window.API_BASE || localStorage.getItem("API_BASE") || (
+  window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost"
+    ? "http://127.0.0.1:8005"
+    : (window.location.hostname.includes("onrender.com") || window.location.hostname.includes("autocare"))
+      ? "https://autocare-backend-qdkf.onrender.com"
+      : window.location.origin
 );
 let portalToken = sessionStorage.getItem("autocare_portal_token") || "";
 let portalUser = null;
@@ -3674,17 +3678,27 @@ loadKb().then(restoreWorkspaceState);
     target.innerHTML=docs.length?`<div class="continue-grid">${docs.map(doc=>`<button class="continue-card" type="button" data-continue-doc="${escapeHtml(doc.id)}"><span class="file-icon">PDF</span><span><span class="continue-name">${escapeHtml(doc.name)}</span><span class="continue-meta">${escapeHtml(doc.model)} · ${escapeHtml(doc.team)}</span></span></button>`).join("")}</div>`:`<div class="dashboard-empty">Documents you preview will appear here for quick access.</div>`;
     target.querySelectorAll("[data-continue-doc]").forEach(button=>button.onclick=()=>openDocumentPreview(button.dataset.continueDoc));
   };
+  let dashboardRetryCount=0;
   const loadDashboard=async()=>{
     try{
       const response=await fetch(`${API_BASE}/api/dashboard`,{headers:portalAuthHeaders()});
-      if(!response.ok)throw new Error("Dashboard unavailable");
+      if(!response.ok)throw new Error(`HTTP ${response.status}`);
       const data=await response.json();
       renderStats(data.metrics,data.trend);
       renderQueue(data);
       renderPipeline(data.autocare_pipeline||{documents_under_qa:[],documents_under_qa_count:0,can_view_qa_documents:false,active_models:[],upcoming_models:[]});
-      document.getElementById("dashboardUpdatedAt").textContent=`Live data · updated ${new Date(data.generated_at).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})}`;
+      const genIso = data.generated_at ? (data.generated_at.endsWith("Z") || data.generated_at.includes("+") ? data.generated_at : data.generated_at + "Z") : new Date().toISOString();
+      document.getElementById("dashboardUpdatedAt").textContent=`Live data · updated ${new Date(genIso).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})}`;
+      dashboardRetryCount=0;
     }catch(error){
-      document.getElementById("dashboardUpdatedAt").textContent="Live dashboard data is temporarily unavailable";
+      console.warn("Dashboard fetch attempt failed:",error);
+      if(dashboardRetryCount<4){
+        dashboardRetryCount++;
+        document.getElementById("dashboardUpdatedAt").textContent=`Connecting to live QA backend (attempt ${dashboardRetryCount}/4)…`;
+        setTimeout(loadDashboard,4000);
+      }else{
+        document.getElementById("dashboardUpdatedAt").textContent="Live dashboard data is temporarily unavailable";
+      }
     }
     renderContinueWorking();
   };

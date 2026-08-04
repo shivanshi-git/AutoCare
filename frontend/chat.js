@@ -48,6 +48,8 @@
     try {
       const response = await fetch(`${API_BASE}/api/auth/me`, { headers: portalAuthHeaders() });
       if (!response.ok) throw new Error();
+      const contentType = response.headers.get("content-type") || "";
+      if (!contentType.includes("application/json")) throw new Error();
       const data = await response.json(); applyUser(data.user); hideGate(); await loadKb(); window.renderWorkspace?.();
     } catch { sessionStorage.removeItem("autocare_portal_token"); portalToken = ""; showGate("Your session expired. Please sign in again.") }
   };
@@ -56,7 +58,14 @@
     const button = form.querySelector("button"); button.disabled = true; button.textContent = "Signing in…";
     try {
       const response = await fetch(`${API_BASE}/api/auth/login`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username: document.getElementById("portalUsername").value, password: document.getElementById("portalPassword").value }) });
-      const data = await response.json(); if (!response.ok) throw new Error(data.detail || "Sign-in failed.");
+      const contentType = response.headers.get("content-type") || "";
+      let data;
+      if (contentType.includes("application/json")) {
+        data = await response.json();
+      } else {
+        throw new Error(`Backend returned invalid response (${response.status}). Ensure backend is live at ${API_BASE}`);
+      }
+      if (!response.ok) throw new Error(data.detail || "Sign-in failed.");
       portalToken = data.token; sessionStorage.setItem("autocare_portal_token", portalToken); applyUser(data.user); hideGate(); form.reset(); await loadKb();
     } catch (err) { error.textContent = err.message; error.style.display = "block" } finally { button.disabled = false; button.textContent = "Sign in" }
   });
